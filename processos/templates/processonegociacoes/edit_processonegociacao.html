@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        {{title}}
+    </div>
+    <div style="color:black; font-style: bold; font-size: 1rem; border-bottom: 1px solid white;">
+        Processo N° {{ numprocesso }} | Cliente {{ clienteprocesso }} | Situação: {{ statusprocesso }}
+    </div>
+
+    <form method="post">
+
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.processo.errors }}
+        {{ form.dtnegociacao.errors }}
+        {{ form.vlrtotaloriginal.errors }}
+        {{ form.valordebito.errors }}
+        {{ form.valoracres.errors }}
+        {{ form.valordesc.errors }}
+        {{ form.novoprazo.errors }}
+        {{ form.novovalor.errors }}
+        {{ form.dtprivencto.errors }}
+        {{ form.valorparcela.errors }}
+        {{ form.motivo.errors }}
+        <hr>
+
+        <b>FINANCEIRO DO PROCESSO</b> - Linha de Crédito: {{ linhacredito }}<br><br>
+        <div style="max-height: 480px; overflow-y: auto;">
+            <table class="table table-striped">
+                {% if qsdebito %}
+                    <thead class="thead-dark align-middle">
+                        <tr>
+                            <th width="20%"><small>Parcela</small></th>
+                            <th width="20%"><small>Emissão</small></th>
+                            <th width="20%"><small>Valor Original</small></th>
+                            <th width="20%"><small>Valor Parcela</small></th>
+                            <th width="20%"><small>Vencimento</small></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in qsdebito %}
+                    <tr>
+                        <td class="align-middle"> <small>{{ i.numparcela }} </small></td>
+                        <td class="align-middle"> <small>{{ i.dtemissao|date:"SHORT_DATE_FORMAT" }} </small></td>
+                        <td class="align-middle"> <small>{{ i.valororiginal }} </small></td>
+                        <td class="align-middle"> <small>{{ i.valorparcela }} </small></td>
+                        <td class="align-middle"> <small>{{ i.dtvencimento|date:"SHORT_DATE_FORMAT" }} </small></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot class="tfoot-inverse align-middle">
+                        <tr>
+                            <th width="20%"><small><b>Total >>> </b></small></th>
+                            <th width="20%"></th>
+                            <th width="20%"><small><b>{{ total_debito1|floatformat:"2" }}</b></small></th>
+                            <th width="20%"><small><b>{{ total_debito2|floatformat:"2" }}</b></small></th>
+                            <th width="20%"></th>
+                        </tr>
+                    </tfoot>
+                {% endif %}
+            </table>
+        </div>
+        <hr>
+        <table class="table table-striped">
+            <tr>
+                <td class="align-left" width="10%">
+                    <label for="{{ form.dtnegociacao.id_for_label }}">Data da Renegociação:<span style="color: red;">*</span></label>
+                    {{ form.dtnegociacao }}
+                </td>
+                <td class="align-left" width="5%"></td>
+                <td class="align-left" width="10%"></td>
+                <td class="align-left" width="5%"></td>
+                <td class="align-left" width="20%"></td>
+                <td class="align-left" width="10%">
+                    <button type="button" class="btn ghost-red" onclick="reajustadebito_cmulta()"
+                            title="Acumula os totais de débito considerando Multa e Juros">
+                    <i class="fa fa-calculator fa-fw" style="font-size:20px;color:black;"></i></button>
+                </td>
+                <td class="align-left" width="10%">
+                    <button type="button" class="btn ghost-red" onclick="reajustadebito_smulta()"
+                            title="Acumula os totais de débito desprezando a Multa">
+                    <i class="fa fa-calculator fa-fw" style="font-size:20px;color:green;"></i><small>s/M</small></button>
+                </td>
+            </tr>
+        </table>
+        <hr>
+        <p><b>CONDIÇÕES DA RENEGOCIAÇÃO/REFINANCIAMENTO</b></p>
+        <div class="form-row">
+            <div class="form-group col-md-02">
+                <label for="{{ form.vlrtotaloriginal.id_for_label }}">Valor Capital:</label>
+                <input type="text" id="id_vlrtotaloriginal" style="background-color:gray;color:white;" {{ form.vlrtotaloriginal }}/>
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.valordebito.id_for_label }}">Valor Débito:</label>
+                <input type="text" id="id_valordebito" style="background-color:gray;color:white;" {{ form.valordebito }}/>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-02">
+                <label for="{{ form.valoracres.id_for_label }}">Acréscimo:</label>
+                <input type="text" id="id_valoracres1" style="background-color:#4682B4;color:white;" {{ form.valoracres }}/>
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.valordesc.id_for_label }}">Desconto:</label>
+                <input type="text" id="id_valordesc1" style="background-color:#4682B4;color:white;" {{ form.valordesc }}/>
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.dtprivencto.id_for_label }}">Primeiro Vencto.:<span style="color: red;">*</span></label>
+                {{ form.dtprivencto }}
+            </div>
+            <div class="form-group col-md-01">
+                <label for="{{ form.prazoaprovado.id_for_label }}">Novo Prazo:<span style="color: red;">*</span></label>
+                {{ form.novoprazo }}
+            </div>
+        </div>
+        <hr>
+        <p><b>AVALISTAS</b></p>
+        {{ formset_avalistas.management_form }}
+        {% for form in formset_avalistas %}
+            {{ form.id }}
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.avalista.id_for_label }}">Nome:<span style="color: red;">*</span></label>
+                        {{ form.avalista }}
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="{{ form.graurelacao.id_for_label }}">Grau Relação:<span style="color: red;">*</span></label>
+                        {{ form.graurelacao }}
+                    </div>
+                    <div class="form-group col-md-5">
+                        <label for="{{ form.observacao.id_for_label }}">Observações:</label>
+                        {{ form.observacao }}
+                    </div>
+                    <div class="form-group col-md-1">
+                        <label for="{{ form.delete.id_for_label }}">Excluir:</label>
+                        {{ form.DELETE }}
+                    </div>
+                </div>
+        {% endfor %}
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-02">
+                {% if modelocalculo == '1' %}
+                    <button type="button" class="btn ghost-red" onclick="calculaparcela_modelo1()"
+                            title="Calcula as novas parcelas com base no Modelo 1">
+                        <i class="fa fa-calculator fa-fw" style="font-size:20px;color:black;"></i>
+                        <small>Calcula - Mod1</small>
+                    </button>
+                {% else %}
+                    <button type="button" class="btn ghost-red" onclick="calculaparcela_modelo2()"
+                            title="Calcula as novas parcelas com base no Modelo 2">
+                        <i class="fa fa-calculator fa-fw" style="font-size:20px;color:black;"></i>
+                        <small>Calcula - Mod2</small>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-02">
+                <label for="{{ form.valorparcela.id_for_label }}">Valor das Parcelas:</label>
+                <input type="text" id="id_valorparcela" style="background-color:gray;color:white;" {{ form.valorparcela }}/>
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.novovalor.id_for_label }}">Novo Valor Dívida:</label>
+                <input type="text" id="id_novovalor" style="background-color:gray;color:white;" {{ form.novovalor }}/>
+            </div>
+        </div>
+        <hr>
+        <b>Motivo da Renegociação</b><span style="color: red;">*</span>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                {{ form.motivo }}
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="align-middle">
+            {% if perms.processos.change_negociacao %}
+                {% if not negociacao.pk or negociacao.is_financeiro == False %}
+                    <button type="submit" class="btn ghost-green"><small>{{ savebtn }}</small></button>
+                {% endif %}
+            {% endif %}
+            {% if perms.processos.delete_negociacao and negociacao.is_financeiro == False %}
+                <a href="{% url 'delete-processonegociacao' negociacao.pk 'normal' %}" class="btn ghost-red"><small>Apaga</small></a>
+            {% endif %}
+            {% if perms.processos.view_negociacao and negociacao.pk %}
+                <a href="{% url 'print-aditivocontrato' negociacao.pk 'normal' %}" class="btn ghost-green"><small>Imprime Aditivo</small></a>
+            {% endif %}
+            <a href="{% url 'processoanegociar-list' %}" class="btn ghost-button"><small>Retorna</small></a>
+        </div>
+
+<!--    &lt;!&ndash; Button trigger modal &ndash;&gt;-->
+<!--    &lt;!&ndash; Modal &ndash;&gt;-->
+
+<!--        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">-->
+<!--          <div class="modal-dialog" role="document">-->
+<!--            <div class="modal-content">-->
+<!--              <div class="modal-header">-->
+<!--                  <h4 class="modal-title" id="myModalLabel">Detalhe da Dívida</h4>-->
+<!--              </div>-->
+<!--              <div class="modal-body">-->
+<!--                  <table class="table table-css">-->
+<!--                      <thead class="thead-inverse align-middle">-->
+<!--                          <tr>-->
+<!--                              <th width="5%"><small><b>Parcela</b></small></th>-->
+<!--                              <th width="10%"><small><b>Emissão</b></small></th>-->
+<!--                              <th width="10%"><small><b>Valor</b></small></th>-->
+<!--                              <th width="10%"><small><b>Vencimento</b></small></th>-->
+<!--                          </tr>-->
+<!--                      </thead>-->
+<!--                      <tbody>-->
+<!--                          {% for i in qsdebito %}-->
+<!--                              <tr>-->
+<!--                                  <td class="align-middle"><small>{{ i.numparcela }}</small></td>-->
+<!--                                  <td class="align-middle"> <small>{{ i.dtemissao|date:"SHORT_DATE_FORMAT" }} </small></td>-->
+<!--                                  <td class="align-middle"> <small>{{ i.valorparcela|floatformat:"2" }} </small></td>-->
+<!--                                 <td class="align-middle"> <small>{{ i.dtvencimento|date:"SHORT_DATE_FORMAT" }} </small></td>-->
+<!--                              </tr>-->
+<!--                          {% endfor %}-->
+<!--                      </tbody>-->
+<!--                  </table>-->
+<!--                  <br><small>* Para maiores informações acessar a movimentação financeira do processo em negociação.</small><br>-->
+<!--              </div>-->
+<!--              <div class="modal-footer">-->
+<!--                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+    </form>
+
+{% include "rodape.html" %}
+
+<script>
+
+    <!-- Cálculo da fórmula da prestação pelo método 1-->
+    function calculaparcela_modelo1() {
+
+        var v0 = document.getElementById("id_valordebito").value;
+        var n = document.getElementById("id_novoprazo").value;
+        var a = document.getElementById("id_valoracres1").value;
+        var d = document.getElementById("id_valordesc1").value;
+
+        var p = 0.00;
+        var parrend = 0.00;
+
+        var m = 0.00;
+        var marrend = 0.00;
+
+        var perc_multa = 0.00;
+        var perc_juros = 0.00;
+
+        if ((v0 > 0) && (n > 0)) {
+            m = parseFloat(v0) + parseFloat(a) - parseFloat(d);
+            marrend = m.toFixed(2);
+            p = m / n;
+            parrend = p.toFixed(2);
+        }
+        else {
+            alert ("O valor aprovado e/ou prazo não foram preenchidos... Verifique.");
+        }
+
+        document.getElementById('id_valorparcela').value=parrend;
+        document.getElementById('id_novovalor').value=marrend;
+    }
+
+    <!-- Cálculo da fórmula da prestação pelo método 2 - Tabela Price
+    fonte: https://educacionalplenus.com.br/formula-de-prestacoes-da-tabela-price/
+    -->
+    function calculaparcela_modelo2() {
+        const v0 = document.getElementById("id_valordebito").value;
+        const a = document.getElementById("id_valoracres1").value;
+        const d = document.getElementById("id_valordesc1").value;
+        const n = document.getElementById("id_novoprazo").value;
+
+        const i = "{{ juros_linha|stringformat:".6f" }}" / 100;
+
+        var p = 0.00;
+        var parrend = 0.00;
+
+        var m = 0.00;
+        var marrend = 0.00;
+
+        if ((v0 > 0) && (n > 0)) {
+            m = parseFloat(v0) + parseFloat(a) - parseFloat(d);
+            marrend = m.toFixed(2);
+            p = m * (i * ((1 + i) ** n)) / (((1 + i) ** n) - 1);
+            parrend = p.toFixed(2);
+        }
+        else {
+            alert ("O valor do débito e/ou prazo não foram preenchidos... Verifique.");
+        }
+
+        document.getElementById('id_valorparcela').value=parrend;
+        document.getElementById('id_novovalor').value=(parrend * n).toFixed(2);
+    }
+
+    function reajustadebito_cmulta() {
+
+        const data_final = document.getElementById("id_dtnegociacao").value;
+
+        const multa = 1.02;
+        const juros = 0.00033173;
+        const multaboleto = 1.95
+
+        const context_numparcela = {{ lista_debito_parcelas }};
+        const context_valores1 = {{ lista_debito_valores1 }};
+        const context_valores2 = {{ lista_debito_valores2 }};
+        const context_datas = {{ lista_debito_datas|safe }};       // safe para sumprimir os caracteres '&#x27;'
+
+        var dias_vencidos = 0;
+        var total_dias = 0;
+        var valor_parcela = 0.00;
+        var valor_totaloriginal = 0.00;
+        var valor_juros = 0.00;
+        var valor_parcelareaj = 0.00;
+        var debitoreaj = 0.00;
+        var valor_multajuros = 0.00;
+        var meses_vencidos = 0;
+
+        for (i = 0; i < context_numparcela.length; i++) {
+            data_inicial = context_datas[i];
+            valor_totaloriginal = valor_totaloriginal + context_valores1[i];
+            valor_parcela = context_valores2[i];
+
+            <!-- Calcula a multa e juros de cada parcela -->
+            dias_vencidos = (new Date(data_final) - new Date(data_inicial)) / (1000 * 60 * 60 * 24);
+            if (dias_vencidos > 0)
+            {
+                valor_juros = valor_parcela * dias_vencidos * parseFloat(juros);
+                valor_parcelareaj = (valor_parcela + parseFloat(valor_juros.toFixed(2))) * multa;
+                debitoreaj = debitoreaj + valor_parcelareaj;
+            }
+            else
+            {
+                debitoreaj = debitoreaj + valor_parcela;
+            }
+
+            <!-- Calcula a multa sobre cada boleto vencido em função do número de meses atrasado -->
+            const dataInicial = new Date(data_inicial);
+            const dataFinal = new Date(data_final);
+
+            const anos = dataFinal.getFullYear() - dataInicial.getFullYear();
+            const meses = (dataFinal.getMonth() - dataInicial.getMonth()) - 1;
+
+            const meses_vencidos = (anos * 12) + meses;
+
+            if ((meses_vencidos > 0) && (i < 12)) {
+                debitoreaj = debitoreaj + (multaboleto * meses_vencidos);
+            }
+        }
+
+        valor_multajuros = debitoreaj - valor_totaloriginal;
+
+<!--        debitoreaj = debitoreaj.toFixed(2);-->
+<!--        valor_multajuros = valor_multajuros.toFixed(2);-->
+
+        document.getElementById('id_valordebito').value=debitoreaj.toFixed(2);
+        document.getElementById('id_vlrtotaloriginal').value=valor_totaloriginal.toFixed(2);
+        document.getElementById('id_valormultajuros').value=valor_multajuros.toFixed(2);
+    }
+
+    function reajustadebito_smulta() {
+
+        const data_final = document.getElementById("id_dtnegociacao").value;
+
+        const multa = 1;
+        const juros = 0.00033173;
+
+        const context_numparcela = {{ lista_debito_parcelas }};
+        const context_valores1 = {{ lista_debito_valores1 }};
+        const context_valores2 = {{ lista_debito_valores2 }};
+        const context_datas = {{ lista_debito_datas|safe }};       // safe para sumprimir os caracteres '&#x27;'
+        //alert (context_datas);
+
+        var dias_vencidos = 0;
+        var total_dias = 0;
+        var valor_parcela = 0.00;
+        var valor_totaloriginal = 0.00;
+        var valor_juros = 0.00;
+        var valor_parcelareaj = 0.00;
+        var debitoreaj = 0.00;
+
+        for (i = 0; i < context_numparcela.length; i++) {
+            data_inicial = context_datas[i];
+            valor_totaloriginal = valor_totaloriginal + context_valores1[i];
+            valor_parcela = context_valores2[i];
+
+            dias_vencidos = (new Date(data_final) - new Date(data_inicial)) / (1000 * 60 * 60 * 24);
+            if (dias_vencidos > 0)
+            {
+                valor_juros = valor_parcela * dias_vencidos * parseFloat(juros);
+                valor_parcelareaj = (valor_parcela + parseFloat(valor_juros.toFixed(2))) * multa;
+                debitoreaj = debitoreaj + valor_parcelareaj;
+            }
+            else
+            {
+                debitoreaj = debitoreaj + valor_parcela;
+            }
+        }
+
+        debitoreaj = debitoreaj.toFixed(2);
+        document.getElementById('id_valordebito').value=debitoreaj;
+        document.getElementById('id_vlrtotaloriginal').value=valor_totaloriginal.toFixed(2);;
+
+    }
+
+<!--    // Get the modal-->
+<!--    var modal = document.getElementById("myModal");-->
+
+<!--    // Get the button that opens the modal-->
+<!--    var btn = document.getElementById("myBtn");-->
+
+<!--    // When the user clicks the button, open the modal-->
+<!--    btn.onclick = function() {-->
+<!--      modal.style.display = "block";-->
+<!--    }-->
+
+<!--    // When the user clicks anywhere outside of the modal, close it-->
+<!--    window.onclick = function(event) {-->
+<!--      if (event.target == modal) {-->
+<!--        modal.style.display = "none";-->
+<!--      }-->
+<!--    }-->
+
+</script>
+
+{% endblock content %}

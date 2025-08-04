@@ -1,0 +1,198 @@
+{% load static %}
+
+{% block content %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 20pt; height: 90t; font-weight: bold; font-size: 14pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 100pt; height: 670pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 770pt; height: 80pt; font-size: 10pt;
+        }
+</style>
+</head>
+<body>
+    <div id="header_content">
+<!--        <img src="/home/evdias/Projects/microcredito2/static/media/logoPMCG.png" width="210" height="70">-->
+        <br>
+        {{ linhalogo1 }}<br>
+        {{ linhalogo2 }}<br>
+        {{ linhalogo3 }}<br>
+        <hr size="0.5">
+        <br>
+    </div>
+    <div id="footer_content">
+        <hr size="0.5">
+        <p align="center">
+            Rua Coronel Ponciano de Azeredo Furtado,47 | Pq. Santo Amaro | Campos dos Goytacazes/RJ<br><br>
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <br>
+    <table>
+        <tr>
+            <td></td><td><h2 align="justify"><b>Aditivo de rerratificação ao contrato de abertura de crédito, da linha
+            {{ negociacao.processo.linhacredito.nome }}, em que são partes: {% if negociacao.processo.clientepf %}
+            {{ negociacao.processo.clientepf.nome }} {% else %} {{ negociacao.processo.clientepj.razaosocial }} {% endif %},
+            doravante denominado FINANCIADO(A) e de outro lado o MUNICÍPIO DE CAMPOS DOS GOYTACAZES, doravante denominado
+            FINANCIADOR, tendo como Agente Financeiro o BANCO DO BRASIL S.A., na forma abaixo.</b></h2></td>
+        </tr>
+    </table>
+    <br>
+    <h2 align="justify">
+        <p>CLÁUSULA PRIMEIRA – DO OBJETO: </p>O presente aditivo tem por objeto a rerratificação do contrato de abertura
+        de crédito firmado entre o <u>FINANCIADOR</u>, MUNICÍPIO DE CAMPOS DOS GOYTACAZES, inscrito no CNPJ o sob o nº
+        29.116.894/0001-61, com sede na Rua Coronel Ponciano Azevedo Furtado, nº 47, Bairro Parque Santo Amaro,
+        CEP: 28010-040, neste ato representado pelo FUNDO DE DESENVOLVIMENTO DE CAMPOS DOS GOYTACAZES – FUNDECAM,
+        inscrito no CNPJ sob o nº 21545238/0001-72, com sede na Avenida José Alves Azevedo, nº 259, Bairro Centro,
+        CEP: 28025-496, criado pela Lei de nº 7.084/2001 alterada pelas Leis nº 8144/2009 e nº 8250/2012, com o
+        objetivo da implantação, ampliação e reforma de empreendimentos empresariais localizados no município, por meio
+        do seu CONSELHO GESTOR do FUNDECAM, instituído por meio do Decreto n.º 262 de 20 de Novembro de 2001, que tem
+        por seu atual representante o presidente {{ parametro.representanteconselho }}, criada pelo Prefeito Municipal,
+        {{ parametro.representantegoverno}}, e o <u><b>FINANCIADO(A) – </b></u>
+        {% if negociacao.processo.clientepf %}
+            Sr(a) <b>{{ negociacao.processo.clientepf.nome }}</b>, {{ negociacao.processo.clientepf.nacionalidade }},
+            {{ negociacao.processo.clientepf.estadocivil|default_if_none:"" }}, {{ negociacao.processo.clientepf.profissao|default_if_none:"" }},
+            residente à {{ negociacao.processo.clientepf.logradouro }} - {{ negociacao.processo.clientepf.numimovel }},
+            {{ negociacao.processo.clientepf.bairro }}, {{ negociacao.processo.clientepf.cidade }} - CEP:
+            {{ negociacao.processo.clientepf.cep }}, RG: {{ negociacao.processo.clientepf.numrg }}/
+            {{ negociacao.processo.clientepf.orgexpedicao|default_if_none:"---" }}, CPF: {{ negociacao.processo.clientepf.numcpf }}
+            e CNPJ: {{ negociacao.processo.empresa.numcnpj|default_if_none:"" }}, mediante garantia de FIANÇA,
+            {% for avalista in avalistas %}
+                Sr.(a) <b>{{ avalista.avalista.nome }}</b>, {{ avalista.avalista.nacionalidade }}, {{ avalista.avalista.estadocivil|default_if_none:"" }},
+                {{ avalista.avalista.profissao|default_if_none:"" }}, portador(a) do RG de n° {{ avalista.avalista.numrg }}/
+                {{ avalista.avalista.orgexpedicao|default_if_none:"---"}}, inscrito(a) no CPF de n°
+                {{ avalista.avalista.numcpf }}, residente à {{ avalista.avalista.logradouro }}, {{ avalista.avalista.numimovel }},
+                {{ avalista.avalista.bairro }}, CEP: {{ avalista.avalista.cep }}, {{ avalista.avalista.cidade }},
+            {% endfor %}
+        {% else %}
+            <b>{{ negociacao.processo.clientepj.razaosocial }}</b> inscrita no Cadastro Nacional de Pessoa
+            Jurídica sob o n° {{ negociacao.processo.clientepj.numcnpj }} com sede à {{ negociacao.processo.clientepj.logradouro }}
+            - {{ negociacao.processo.clientepj.numimovel }}, {{ negociacao.processo.clientepj.bairro }},
+            {{ negociacao.processo.clientepj.cidade }} - CEP: {{ negociacao.processo.clientepj.cep }}, neste ato representado
+            por seu sócio administrador(a),
+            {% for socio in socios %}
+                o(a) Sr.(a) {{ socio.socio.nome }}, {{ socio.socio.nacionalidade }},
+                {{ socio.socio.estadocivil|default_if_none:"" }}, {{ socio.socio.profissao|default_if_none:"" }},
+                residente à {{ socio.socio.logradouro }} - {{ socio.socio.numimovel }},
+                {{ socio.socio.bairro }}, {{ socio.socio.cidade }} -CEP: {{ nsocio.socio.cep }},
+                RG: {{ socio.socio.numrg }} - {{ socio.socio.orgexpedicao|default_if_none:"" }},
+                CPF: {{ socio.socio.numcpf|default_if_none:"" }} e;
+            {% endfor %}
+            mediante garantia de FIANÇA,
+            {% for avalista in avalistas %}
+                Sr.(a) <b>{{ avalista.avalista.nome }}</b>, {{ avalista.avalista.nacionalidade }},
+                {{ avalista.avalista.estadocivil|default_if_none:"" }},
+                {{ avalista.avalista.profissao|default_if_none:"" }}, portador(a) do RG de n° {{ avalista.avalista.numrg }}/
+                {{ avalista.avalista.orgexpedicao|default_if_none:"---"}}, inscrito(a) no CPF de n°
+                {{ avalista.avalista.numcpf }}, residente à {{ avalista.avalista.logradouro }}, {{ avalista.avalista.numimovel }},
+                {{ avalista.avalista.bairro }}, CEP: {{ avalista.avalista.cep }}, {{ avalista.avalista.cidade }},
+            {% endfor %}
+        {% endif %}
+        tendo por <u><b>AGENTE FINANCEIRO:</b></u> {{ parametro.agentefinanceiro }}, no tocante aos prazos e forma de
+        pagamento, nos termos seguintes:
+
+        <p><b>CLÁUSULA SEGUNDA – DA FINALIDADE DO ADITIVO: </b></p> Renegociar a dívida, oriunda do contrato de abertura de
+        crédito firmado entre as partes, referente ao processo Nº {{ negociacao.processo.numprocesso }} em data
+        {{ negociacao.processo.dtprocesso|date:"SHORT_DATE_FORMAT"  }}, convencionando novo cronograma de pagamento,
+        tendo em conta a inadimplência verificada, nos termos da cláusula abaixo.
+
+        <p><b>CLÁUSULA TERCEIRA - DO PRAZO E FORMA DE PAGAMENTO:</b></p> Encontra-se a dívida, já corrigida,
+        {% if negociacao.is_refis %}
+            <b><i><u>nos termos da Lei Nº 9.544 de 24 de outubro de 2024 do Refis Microcredito – 2024</u></i></b>,
+        {% endif %}
+        ora confessada, elevada em <b>{{ negociacao.dtnegociacao|date:"SHORT_DATE_FORMAT" }}</b>, a <b>R$ {{ valordivida|floatformat:2 }}
+        ({{ valordivida_extenso }}).</b> Prometem os devedores pagar a dívida resultante deste contrato, em entrada
+        de R$ {{ primeiraparcela|floatformat:2 }} ({{ primeiraparcela_extenso }}) + <b>{{ negociacao.novoprazo|add:-1 }}</b> prestações
+        mensais e consecutivas, correspondendo cada uma delas, nas datas de seus respectivos vencimentos, a parcela de
+        <b>R$ {{ ultimaparcela|floatformat:2 }} ({{ ultimaparcela_extenso }}) </b> acrescida dos encargos proporcionais aos
+        valores nominais e encargos adicionais integrais quando for o caso, apurados no período, nos termos das cláusulas
+        3ª e 4ª do contrato firmado entre as partes, conforme determinação da Lei nº 8142/2012 de criação do Microcrédito
+        no Município de Campos dos Goytacazes, vencendo a primeira parcela em
+        <b>{{ negociacao.dtprivencto|date:"SHORT_DATE_FORMAT" }}</b> e a última em data
+        <b>{{ ultimovencimento|date:"SHORT_DATE_FORMAT" }} </b>, obrigando-se o financiador a liquidar todas as
+        responsabilidades resultantes deste contrato quando a última parcela for paga, mediante a irrestrita quitação ao
+        financiado(a).
+        <p><b>CLÁUSULA QUARTA - DA FIGURA DO(A) FIADOR(A):</b></p> Neste ato, os fiadores
+        {% for avalista in avalistasneg %}
+            Sr.(a) <b>{{ avalista.avalista.nome }}</b>, {{ avalista.avalista.nacionalidade }},
+            {{ avalista.avalista.profissao|default_if_none:"" }}, portador(a) do RG de n° {{ avalista.avalista.numrg }}/
+            {{ avalista.avalista.orgexpedicao|default_if_none:"---"}}, inscrito(a) no CPF de n° {{ avalista.avalista.numcpf }},
+            residente à {{ avalista.avalista.logradouro }}, {{ avalista.avalista.numimovel }}, {{ avalista.avalista.bairro }},
+            CEP: {{ avalista.avalista.cep }}, {{ avalista.avalista.cidade }}, {{ avalista.avalista.estadocivil|default_if_none:"" }}
+            {% if avalista.avalista.conjuge %} COM {{ avalista.avalista.conjuge }} {% else %} {% endif %};
+        {% endfor %}
+        declaram ciência dos termos do contrato principal, dos valores e da forma de pagamento, anuindo expressamente
+        ao pacto no tocante ao cumprimento de todas as obrigações assumidas, renunciando ao benefício de ordem e,
+        ocorrendo o inadimplemento contratual, autorizando, após a notificação, encaminhar documentos relativos
+        a presente operação e informações cadastrais aos cadastros restritivos do serviço de proteção ao crédito, com
+        posterior inclusão na Dívida ativa para cobrança judicial.
+
+    <p>Ficam ratificados todos os termos, cláusulas e condições da Escritura de Abertura de Crédito, sobretudo, a cláusula
+        da garantia de fiança legalmente constituída e aceita pelas partes, conforme assinaturas abaixo:
+    </p>
+    <br>
+    <br>
+    Campos dos Goytacazes (RJ), {{ emissao|date }}. <br><br><br>
+
+    ___________________________________________________________________<br>
+    FINANCIADOR: <b>MUNICÍPIO DE CAMPOS DOS GOYTACAZES</b>, por meio do <b>FUNDECAM</b>, por seu presidente.
+    <br>
+    <br>
+    <br>
+    ___________________________________________________________________<br>
+    FINANCIADO: {% if negociacao.processo.clientepf %}
+                       {{ negociacao.processo.clientepf.nome }} - CPF: {{ negociacao.processo.clientepf.numcpf }}<br>
+                {% else %}
+                       {{ negociacao.processo.clientepj.razaosocial }} - CNPJ: {{ negociacao.processo.clientepj.numcnpj }}<br>
+                {% endif %}
+    <br>
+    <br>
+        {% for i in avalistasneg %}
+            ___________________________________________________________________<br>
+            FIADOR(A): {{ i.avalista.nome }} - CPF: {{ i.avalista.numcpf }}<br>
+        <br>
+            {% if i.avalista.conjuge %}
+                ___________________________________________________________________<br>
+                CÔNJUGE DO FIADOR(A): {{ i.avalista.conjuge }} - CPF: {{ i.avalista.cpfconjuge }}<br>
+            {% endif %}
+        <br>
+        {% endfor %}
+        
+        <br>
+        {% for socio in socios %}
+            ___________________________________________________________________<br>
+            SÓCIO(A): {{ socio.socio.nome }} - CPF: {{ socio.socio.numcpf|default_if_none:"" }}<br>
+        <br>
+        {% endfor %}
+
+
+    ___________________________________________________________________<br>
+    AGENTE FINANCEIRO: BANCO DO BRASIL S.A.<br>
+    <br>
+    <br>
+
+    TESTEMUNHAS
+    <br>
+    <br>
+        _______________________________________________________________________<br>
+        RENATA VIEIRA PACHECO - CPF: 076.280.267-70
+    <br>
+    <br>
+        _______________________________________________________________________<br>
+        GUSTAVO PORFÍRIO DE AZEVEDO VIANA - CPF: 027.017.647-00
+    <br>
+</h2>
+
+</body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,441 @@
+{% load static %}
+
+<html lang="pt">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/bootstrap.min.css' %}">
+
+    <!-- Main CSS, then Sidebar CSS and Dialog Box CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dialogbox.css' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link href="https://cdn.datatables.net/v/bs4/dt-2.0.0/datatables.min.css" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+
+    <title>SIAMICRO - {% block title %}Title Missing{% endblock title %}</title>
+
+<style>
+    /* General Page Styling */
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f8f9fa; /* Background color */
+        color: #212529;
+        line-height: 1.6;
+    }
+
+    .titlefont {
+        font-weight: bold;
+        color: #007bff; /* Primary color for the title */
+    }
+
+    /* Sidebar Styling */
+    #sidebar {
+        background-color: #343a40;
+        color: #ffffff;
+        min-height: 100vh; /* Full screen height */
+        padding-top: 20px;
+        transition: all 0.3s ease; /* Smooth transition for sidebar */
+    }
+
+    .sidebar-text {
+        color: #adb5bd;
+        font-size: 1rem;
+        padding: 10px 15px;
+    }
+
+    .sidebar-text:hover {
+        background-color: #495057;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .sidebar-header {
+        text-align: center;
+        padding: 10px;
+        background-color: #4682B4;
+        /* background-color: #007bff; */
+        color: white;
+    }
+
+    .right-arrow {
+        float: right;
+    }
+
+    .sidebar-subitem {
+        padding-left: 30px;
+    }
+
+    /* Buttons */
+    .sidebar-button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: none;
+        background: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .sidebar-button:hover {
+        background-color: #495057;
+        color: white;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .close-btn {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: #007bff;
+    }
+
+    .close-btn:hover {
+        color: #dc3545;
+    }
+
+    /* Custom Scrollbar */
+    #sidebar::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #sidebar::-webkit-scrollbar-thumb {
+        /* background-color: #007bff; */
+        background-color: #5e6369;
+        border-radius: 4px;
+    }
+
+    /* Dropdown Animations */
+    .collapse.show {
+        transition: height 0.3s ease;
+    }
+
+    /* Table Styling for Datatables */
+    table.dataTable thead {
+        /* background-color: #007bff; */
+        background-color: #5e6369;
+        color: white;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 35vh;
+        border: 1mm ridge #4682B4;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .slide {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .slide.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+
+</style>
+
+</head>
+<body>
+
+    <!-- Dialog Box CSS -->
+    <div id="dialogoverlay"></div>
+    <div id="dialogbox">
+        <div class="align-middle">
+            <div id="dialogboxhead"></div>
+            <div id="dialogboxbody"></div>
+            <div id="dialogboxfoot"></div>
+        </div>
+    </div>
+
+    <main id="wrapper">
+
+        {% if user.is_authenticated %}
+
+        <nav id="sidebar">
+
+            <button id="sidebarCollapse" class="btn btn-primary d-md-none">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <div class="sidebar-header align-middle">
+                <a class="navbar-brand titlefont align-middle mr-4" href="{% url 'home' %}"><h4>SIAMICRO</h4></a>
+                <div class="align-middle"><small><b>Versão 2025-06-09.1</b></small></div>
+            </div>
+            <ul class="list-unstyled sidebar-components">
+                {# <p class="sidebar-paragraph">Dummy Heading</p> #}
+                <li>
+                    <a class="sidebar-text sidebar-button" href="{% url 'home' %}">
+                        <i class="fa fa-home fa-fw fa-1x"></i> Página Principal</a>
+                </li>
+                <li>
+                    <a href="#tabelasSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
+                        <i class="fa fa-table fa-fw fa-1x"></i> Tabelas Básicas</a>
+                    <ul class="collapse list-unstyled" id="tabelasSubmenu">
+                        {% if perms.tabelas.view_config %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'configs-list' %}">Configs</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_feriado %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'feriados-list' %}">Feriados</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_banco %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'bancos-list' %}">Bancos</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_cidade %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'cidades-list' %}">Cidades</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_bairro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'bairros-list' %}">Bairros</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_estadocivil %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'estadoscivis-list' %}">Estado Civil</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_regimebens %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'regimesbens-list' %}">Regimes de Bens</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_linhacredito %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'linhascredito-list' %}">Linhas de Crédito</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_finalidadecredito %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'finalidadescredito-list' %}">Finalidade do Crédito</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_setornegocio %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'setoresnegocio-list' %}">Setores de Negócio</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_ramoatividade %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'ramosatividade-list' %}">Ramos de Atividade</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_profissao %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'profissoes-list' %}">Profissões</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_veiculo %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'veiculos-list' %}">Veículos - Bem Garantidor</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_localizacao %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'localizacoes-list' %}">Localizações</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_graurelacao %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'grausrelacao-list' %}">Grau de Relação</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_situacaopessoa %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'situacoespessoa-list' %}">Situações da Pessoa</a> </li>
+                        {% endif %}
+                        {% if perms.tabelas.view_tipofonterefer %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'tiposfonterefer-list' %}">Tipos Fonte Referência</a> </li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li>
+                    <a href="#processosSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
+                        <i class="fa fa-files-o"></i> Processos</a>
+                    <ul class="collapse list-unstyled" id="processosSubmenu">
+                        {% if perms.processos.view_pessoafisica %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'pessoasfisicas-list' %}">Cadastro de Clientes/Avalistas</a> </li>
+                        {% endif %}
+                        {% if perms.processos.view_pessoajuridica %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'pessoasjuridicas-list' %}">Cadastro de Empresas</a> </li>
+                        {% endif %}
+                        {% if perms.processos.view_processo %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'processos-list' %}">Processos</a> </li>
+                        {% endif %}
+                        {% if perms.processos.view_processo %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'processosmov-list' %}">Movimentação</a> </li>
+                        {% endif %}
+                        {% if perms.processos.view_processo %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'comites-list' %}">Comitês</a> </li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li>
+                    <a href="#financeiroSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
+                        <i class="fa fa-money fa-fw"></i> Financeiro</a>
+                    <ul class="collapse list-unstyled" id="financeiroSubmenu">
+                        {% if perms.processos.add_fechamento %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'fechamentos-list' %}">Fechamento Mensal</a></li>
+                        {% endif %}
+                        {% if perms.processos.add_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'processofaturar-list' %}">Gera Parcelas (Normal)</a></li>
+                        {% endif %}
+                        {% if perms.processos.add_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'processofaturarnegoc-list' %}">Gera Parcelas (Negociação)</a></li>
+                        {% endif %}
+                        {% if perms.processos.view_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'processofaturado-list' %}">Recebimento Títulos</a></li>
+                        {% endif %}
+                        {% if perms.processos.delete_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'titulosacancelar-list' %}">Cancelamento de Títulos</a></li>
+                        {% endif %}
+                        {% if perms.processos.view_negociacao %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'processoanegociar-list' %}">Renegociação/REFIS</a></li>
+                        {% endif %}
+                        {% if perms.processos.view_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'simulacao-tela' %}">Simulador/Orçamento</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li>
+                    <a class="dropdown-toggle sidebar-text right-arrow sidebar-button" href="{% url 'relatorios' %}">
+                    <i class="fa fa-print fa-fw"></i> Relatórios</a>
+                </li>
+                <li>
+                    <a href="#arquivosSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
+                        <i class="fa fa-book fa-fw"></i> Arquivos</a>
+                    <ul class="collapse list-unstyled" id="arquivosSubmenu">
+                        {% if perms.processos.add_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'envio-list' %}">Geração do Arquivo Remessa</a></li>
+                        {% endif %}
+                        {% if perms.processos.change_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'construcao' %}">Cancelamento do Arquivo de Envio</a></li>
+                        {% endif %}
+                        {% if perms.processos.change_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'retorno-list' %}">Baixa do Arquivo de Retorno</a></li>
+                        {% endif %}
+                        {% if perms.processos.change_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'construcao' %}">Cancelamento do Arquivo de Retorno</a></li>
+                        {% endif %}
+                        {% if perms.processos.change_financeiro %}
+                        <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'construcao' %}">Movimentação do Retorno (Baixa Automática)</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li>
+                    <a href="#UserSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button">
+                        <i class="fa fa-user fa-fw"></i> Usuário {{ request.user.username }}</a>
+                    <ul class="collapse list-unstyled" id="UserSubmenu">
+                        {% if request.user.is_superuser %}
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'admin:index' %}">Admin Page</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'logsmenu' %}">Ver Logs</a> </li>
+<!--                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'logs-list' %}">Ver Logs</a> </li>-->
+                        {% endif %}
+                    </ul>
+                </li>
+                <li>
+                    <a class="dropdown-toggle sidebar-text right-arrow sidebar-button" href="{% url 'about' %}">
+                    <i class="fa fa-pencil fa-fw"></i> Sobre</a>
+                </li>
+                <li> <a class="dropdown-toggle sidebar-text right-arrow sidebar-button" href="{% url 'logout' %}">
+                    <i class="fa fa-sign-out fa-fw"></i> Sair</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="content">
+            <div class="container-fluid">
+                {% if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-12">
+                        {% block content %}{% endblock content %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+
+    </main>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
+    <script src="{% static 'bootstrap/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+
+    <script src="https://cdn.datatables.net/v/bs4/dt-2.0.0/datatables.min.js"></script>
+
+    <!-- Script para máscaras -->
+    {% block scripts %}
+    <script src="{% static 'js/jquery.mask.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $("#id_numcnpj").mask("00.000.000/0000-00");
+            $("#id_numcpf").mask("000.000.000-00");
+            $("#id_cpfconjuge").mask("000.000.000-00");
+            $("#id_telfixo").mask("(00) 0000-0000");
+            $("#id_telcelular1").mask("(00) 00000-0000");
+            $("#id_telcelular2").mask("(00) 00000-0000");
+            $("#id_telefone").mask("(00) 00000-0000");
+            $("#id_cep").mask("00000-000");
+            $("#id_numprocesso").mask("0000/0000");
+            $("#id_numprotocolo").mask("0000.000.000000-A-AA");
+            $("#id_placa").mask("AAA0A00");
+            $("#id_rendaliqempresa").mask('0.000.000.000,00', { reverse: true });
+            $("#id_rendaalugueis").mask('0.000.000.000,00', { reverse: true });
+            $("#id_rendaliqtotal").mask('0.000.000.000,00', { reverse: true });
+            $("#id_limite").mask('0000000000.00', { reverse: true });
+            $("#id_orcamentoanual").mask('0000000000.00', { reverse: true });
+            $("#id_cota1").mask('000.00', { reverse: true });
+            $("#id_cota2").mask('000.00', { reverse: true });
+            $("#id_cota3").mask('000.00', { reverse: true });
+            $("#id_taxasugerida").mask('0,0000000000', { reverse: false });
+            $("#id_taxaaprovada").mask('0,0000000000', { reverse: false });
+            $("#id_valorcoberto").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valorsolicitado").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valorsolicitado1").mask('0000000000.00', { reverse: true });
+            $("#id_valorrendanegoc").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valorrenda").mask('0000000000.00', { reverse: true });
+            $("#id_valormulta").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valorjuros").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valorfinal").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valoracres").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valordesc").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valoracres1").mask('0000000000.00', { reverse: true });
+            $("#id_valordesc1").mask('0000000000.00', { reverse: true });
+            $("#id_valorpago").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valorfixo_sugerido").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valorgiro_sugerido").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valorfixo_aprovado").mask('0.000.000.000,00', { reverse: true });
+            $("#id_valorgiro_aprovado").mask('0.000.000.000,00', { reverse: true });
+        });
+    </script>
+    {% endblock %}
+
+    <!-- Rodapé fixo ao final da página -->
+    <footer class="text-center mt-4 py-3" style="background-color: #4682B4; color: white;">
+        <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3" style="row-gap: 0.5rem; column-gap: 2rem; flex-wrap: wrap;">
+            <span><i class="fa fa-copyright"></i> <strong>2025 SIAMICRO</strong></span>
+            <span><i class="fa fa-code"></i> Desenvolvido por <strong>UMBRELLA SISTEMAS</strong></span>
+            <span><i class="fa fa-cogs"></i> Versão <strong>{{ nomebase }}</strong></span>
+            <span><i class="fa fa-university"></i> Licenciado para <strong>FUNDESSAN - PMSJB</strong></span>
+        </div>
+    </footer>
+
+</body>
+</html>

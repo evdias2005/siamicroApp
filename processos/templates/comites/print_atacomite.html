@@ -1,0 +1,83 @@
+{% load static %}
+
+{% block content %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 20pt; height: 90t; font-weight: bold; font-size: 14pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 110pt; height: 660pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 760pt; height: 70pt; font-size: 10pt;
+        }
+</style>
+</head>
+<body>
+    <div id="header_content">
+<!--        <img src="/home/evdias/Projects/microcredito2/static/media/logoPMCG.png" width="210" height="70">-->
+        <br>
+        {{ linhalogo1 }}<br>
+        {{ linhalogo2 }}<br>
+        {% if linhalogo3 %}
+            {{ linhalogo3 }}<br>
+        {% endif %}
+        <hr size="0.5">
+    </div>
+    <div id="footer_content">
+        <hr size="0.5">
+        <p align="center">
+            Rua Coronel Ponciano de Azeredo Furtado,47 | Pq. Santo Amaro | Campos dos Goytacazes/RJ<br><br>
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <h1 align="center">
+        ATA DA REUNIÃO DO COMITÊ DE CRÉDITO MUNICIPAL
+    </h1>
+    <h2 align="justify">
+        Aos {{ datacomite }}, na agência central, reuniram-se os membros abaixo assinado para análise e avaliação
+        das solicitações de crédito referente aos clientes que estão pré-enquadrados nos requisitos básicos do programa
+        de Microcrédito de Campos dos Goytacazes – FUNDECAM. Após análise, por seus membros, o comitê resolve aprovar o
+        financiamento
+        {% for parecer in parecerescomite %}
+             para a LINHA DO(A) {{ parecer.processo.linhacredito.nome }}:
+            {% if parecer.processo.clientepf %}
+                {{ parecer.processo.clientepf.nome }}, CPF {{ parecer.processo.clientepf.numcpf}},
+                CNPJ {{ parecer.processo.empresa.numcnpj|default_if_none:"" }}
+            {% else %}
+                {% for responsavel in responsaveisempresa %}
+                    {% if responsavel.pessoajuridica == parecer.processo.clientepj %}
+                        {{ responsavel.socio.nome }} - CPF {{ responsavel.socio.numcpf }}
+                    {% endif %}
+                {% endfor %}
+                , responsável(s) pela empresa {{ parecer.processo.clientepj.razaosocial }},
+                CNPJ {{ parecer.processo.empresa.numcnpj|default_if_none:"" }}
+            {% endif %}
+            , para investimento em capital (Fixo de R$ {{ parecer.valorfixo_aprovado }} + Giro de
+            R$ {{ parecer.valorgiro_aprovado }}) em {{ parecer.prazoaprovado }}x de R$ {{ parecer.valorparcela }};
+        {% endfor %}
+        não foi levantada nenhuma questão de ordem pelos membros do Comitê na exposição do pleito. Ao fim da
+        apresentação das propostas acima, perfazendo o valor total de R$ {{ totalaprovado }} de {{ qtdeaprovada }}
+        proposta(s) e análise dos membros do Comitê, foi aprovado o financiamento, dando por encerrada a Reunião com as
+        assinaturas exigidas para tal.
+    <br>
+    <br>
+        <br>
+        {% for membro in membroscomite %}
+            ___________________________________________________________________<br>
+            {{ membro.operador.user.first_name }} {{ membro.operador.user.last_name }} - CPF: {{ membro.operador.numcpf }}<br>
+            P/{{ membro.operador.secretaria }}<br>
+        <br>
+        {% endfor %}
+
+</h2>
+</body>
+</html>
+
+{% endblock %}

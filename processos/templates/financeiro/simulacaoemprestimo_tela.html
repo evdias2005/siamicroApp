@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} Recebimentos {% endblock title %}
+
+{% block content %}
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        Simulador de Empréstimo - Orçamento
+    </div>
+    <hr>
+    <p><b>Dados</b></p>
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.linhacredito.errors }}
+        {{ form.numcpf.errors }}
+        {{ form.valorrenda.errors }}
+        {{ form.valorsolicitado1.errors }}
+        {{ form.nparcelas.errors }}
+        {{ form.taxa_am.errors }}
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <label for="{{ form.linhacredito.id_for_label }}">Linha de Crédito:</label>
+                {{ form.linhacredito }}
+            </div>
+        </div>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ form.numcpf.id_for_label }}">Nº CPF:</label>
+                {{ form.numcpf }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.valorrenda.id_for_label }}">Valor Renda (R$):</label>
+                {{ form.valorrenda }}
+            </div>
+        </div>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.valorsolicitado1.id_for_label }}">Valor Solicitado:</label>
+                {{ form.valorsolicitado1 }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.nparcelas.id_for_label }}">Nº Parcelas:</label>
+                {{ form.nparcelas }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.taxa_am.id_for_label }}">% Taxa a.m.:</label>
+                {{ form.taxa_am }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label>Valor das parcelas:</label>
+                <input type="text" id="id_valorparcela" style="background-color:gray;color:white;" {{ form.valorparcela }}>
+            </div>
+        </div>
+
+        <br><br>
+        <div class="align-middle">
+            <button type="submit" class="btn ghost-green" onclick="calculaparcela()">Calcula</button>
+            <button type="reset" class="btn ghost-blue">Limpa</button>
+            <a href="{% url 'home' %}" class="btn ghost-button">Retorna</a>
+        </div>
+    </form>
+
+<script>
+<!-- Cálculo da fórmula da prestação pelo método da Tabela Price
+fonte: https://educacionalplenus.com.br/formula-de-prestacoes-da-tabela-price/
+-->
+
+    function calculaparcela() {
+        const v0 = document.getElementById("id_valorsolicitado1").value;
+        const v1 = document.getElementById("id_valorrenda").value * 0.30;
+        const n = document.getElementById("id_nparcelas").value;
+        const i = document.getElementById("id_taxa_am").value / 100;
+
+        var p = 0.00;
+        var parrend = 0.00;
+
+        if ((v0 > 0) && (v1 > 0) && (n > 0)) {
+            p = v0 * (i * ((1 + i) ** n)) / (((1 + i) ** n) - 1);
+            parrend = p.toFixed(2);
+        }
+        else {
+            alert ("\n\ERRO" + "\n\n" + "O Valor a ser financiado ou o valor da renda ou o número de parcelas não foi digitado. Verifique.")
+        }
+
+        if (p > v1) {
+            alert ("\n\AVISO" + "\n\n" + "O Valor da parcela calculada excede a capacidade mensal de pagamento (30% da Renda) do solicitante que é de \n\nR$ " + v1)
+        }
+
+        document.getElementById('id_valorparcela').value=parrend;
+    }
+
+</script>
+
+{% endblock %}

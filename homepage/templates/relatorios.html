@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios{% endblock title %}
+
+{% block content %}
+
+<meta http-equiv="refresh" content="180">
+
+<div class="container-fluid my-4">
+    <div class="text-center" style="color:#4682B4; font-weight: bold; font-size: 2rem;">Menu de Relatórios</div>
+    <hr style="width: 60px; border: 2px solid #4682B4; margin-bottom: 2rem;">
+
+    <!-- CATEGORIA: CADASTROS -->
+    <h5 class="mb-3 text-secondary"><i class="fa fa-id-card-o mr-2"></i>Cadastros</h5>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mb-4">
+        <div class="col">
+            {% if perms.processos.view_pessoasfisicas %}
+                <a href="{% url 'listapesfisicas-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-user mr-2"></i>Clientes / Avalistas
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_pessoasjuridicas %}
+                <a href="{% url 'listapesjuridicas-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-building mr-2"></i>Empresas
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'dadoscadastraisclientes-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-address-book mr-2"></i>Dados Cadastrais (Fiorilli)
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- CATEGORIA: PROCESSOS -->
+    <h5 class="mb-3 text-secondary"><i class="fa fa-folder-open mr-2"></i>Processos</h5>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mb-4">
+        <div class="col">
+            {% if perms.processos.view_processo %}
+                <a href="{% url 'listaprocessos-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-list mr-2"></i>Processos
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_parecer %}
+                <a href="{% url 'processoscomite-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-group mr-2"></i>Processos Comitê
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'autorizadoscomite-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-check-square-o mr-2"></i>Autorizados Comitê
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_processo %}
+                <a href="{% url 'processospendentes-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-clock-o mr-2"></i>Processos Pendentes
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- CATEGORIA: FINANCEIRO -->
+    <h5 class="mb-3 text-secondary"><i class="fa fa-money mr-2"></i>Financeiro</h5>
+
+    <!-- Primeiros 4 itens -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mb-0">
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'titulosareceber-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-credit-card mr-2"></i>Títulos a Receber
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'recebimentos-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-calendar-check-o mr-2"></i>Recebimentos no Período
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'recebimentos1-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-line-chart mr-2"></i>Recebimentos2 (Contábil)
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'liberacaovalores-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-unlock-alt mr-2"></i>Liberação de Valores
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Separação com margem superior (1 linha de espaço visual) -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mt-3">
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'movimentos-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-exchange mr-2"></i>Movimentação Financeira
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'renegociacoes-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-refresh mr-2"></i>Renegociações no Período
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <br>
+
+    <!-- CATEGORIA: INADIMPLÊNCIA / RESULTADOS -->
+    <h5 class="mb-3 text-secondary"><i class="fa fa-warning mr-2"></i>Inadimplência / Resultados</h5>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mb-4">
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'dividaativa-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-ban mr-2"></i>Dívida Ativa
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'inadimplentes-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-times-circle-o mr-2"></i>Inadimplentes - Geral
+                </a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if perms.processos.view_financeiro %}
+                <a href="{% url 'resumoatendimentos-tela' %}" class="btn btn-steelblue btn-block py-3 h-100 shadow-sm">
+                    <i class="fa fa-bar-chart mr-2"></i>Resumo de Atendimentos
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

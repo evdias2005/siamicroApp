@@ -1,0 +1,138 @@
+<html>
+
+<head>
+<style>
+    @page {
+        size: a4 landscape;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 750pt; top: 30pt; height: 100pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 750pt; top: 120pt; height: 400pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 750pt; top: 530pt; height: 60pt; font-size: 8pt;
+        }
+    }
+</style>
+</head>
+<body>
+    <div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+        <h2 align="center"><<< EXTRATO FINANCEIRO DO CLIENTE >>></h2>
+    <hr size="1">
+    </div>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    {% for processo in processo %}
+    <table>
+        <tr>
+            <td><b>Cliente</b></td><td><b>Processo</b></td><td><b>Data Processo</b></td>
+        </tr>
+        <tr>
+            {% if processo.clientepf %}
+                <td><b>{{ processo.clientepf.nome }}</b></td>
+            {% else %}
+                <td><b>{{ processo.clientepj.razaosocial }}</b></td>
+            {% endif %}
+            <td>{{ processo.numprocesso }}</td>
+            <td>{{ processo.dtprocesso|date:"SHORT_DATE_FORMAT" }}</td>
+        </tr>
+        <tr>
+            <td><b>Crédito Liberado</b></td>
+        </tr>
+        <tr>
+            {% for parecer in parecer %}
+                <td><b>{{ parecer.vlrtotalaprovado }} em {{ parecer.prazoaprovado }} parcelas de R$ {{ parecer.valorparcela }} </b></td>
+            {% endfor %}
+        </tr>
+    </table>
+    {% endfor %}
+    <br>
+    <p align="center"><b>DADOS DO EXTRATO</b></p>
+    <table class="thead-inverse align-middle">
+        <tr>
+            <th width="4%"><b>Id</b></th>
+            <th width="3%"><b>Pc</b></th>
+            <th width="7%"><b>Emissão</b></th>
+            <th width="7%"><b>Valor</b></th>
+            <th width="7%"><b>Vencimento</b></th>
+            <th width="6%"><b>Multa</b></th>
+            <th width="6%"><b>Juros</b></th>
+            <th width="6%"><b>Acréscimos</b></th>
+            <th width="6%"><b>Descontos</b></th>
+            <th width="7%"><b>Valor Pago</b></th>
+            <th width="7%"><b>Dt.Pgto</b></th>
+            <th width="8%"><b>Situação</b></th>
+            <th width="27%"><b>Observações</b></th>
+        </tr>
+    </table>
+    <hr size="0.5">
+
+    {% for parcela in financeiro %}
+        <table>
+            <tr>
+                <td width="4%" align="center"> {{ parcela.id }}</td>
+                <td width="2%" align="center"> {{ parcela.numparcela }}</td>
+                <td width="7%" align="center"> {{ parcela.dtemissao|date:"SHORT_DATE_FORMAT" }}</td>
+                <td width="7%" align="center"> {{ parcela.valorparcela|floatformat:"2" }}</td>
+                <td width="7%" align="center"> {{ parcela.dtvencimento|date:"SHORT_DATE_FORMAT" }}</td>
+                <td width="6%" align="center"> {{ parcela.valormulta|floatformat:"2" }}</td>
+                <td width="6%" align="center"> {{ parcela.valorjuros|floatformat:"2" }}</td>
+                <td width="6%" align="center"> {{ parcela.valoracres|floatformat:"2" }}</td>
+                <td width="6%" align="center"> {{ parcela.valordesc|floatformat:"2" }}</td>
+                <td width="7%" align="center"> {{ parcela.valorpago|floatformat:"2" }}</td>
+                <td width="7%" align="center"> {{ parcela.dtpagamento|date:"SHORT_DATE_FORMAT" }}</td>
+                {% if parcela.status == 'A' %} <td width="8%" align="center"><small>EM ABERTO</small></td>
+                    {% elif parcela.status == 'P' %} <td width="8%" align="center"><small>PAGO</small></td>
+                    {% elif parcela.status == 'N' %} <td width="8%" align="center"><small>NEGOCIADA</small></td>
+                    {% elif parcela.status == 'C' %} <td width="8%" align="center"><small>CANCELADA</small></td>
+                {% endif %}
+                {% if parcela.observacao %}
+                    <td width="27%" align="left"><small> {{ parcela.observacao }} </small></td>
+                {% endif %}
+            </tr>
+        </table>
+    {% endfor%}
+    <br>
+    <table>
+        <tr>
+            <td><b>----------------</b></td>
+            <td><b>----------------</b></td>
+            <td></td>
+            <td><b>-----------------</b></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><b>Totais >>></b></td>
+            <td><b>{{ totalparcelas|floatformat:"2" }}</b></td>
+            <td><b></b></td>
+            <td><b>{{ totalpago|floatformat:"2" }}</b></td>
+            <td><b>Total em Aberto:</b></td>
+            <td><b>{{ totalaberto|floatformat:"2" }}</b></td>
+        </tr>
+    </table>
+    <br>
+    <hr>
+    <br>
+    <table>
+        <tr>
+            <td><b>Valor Total: R$ ___________________, sendo Capital R$ ___________________,
+            Juros de R$ ____________, Multa de R$ ____________, atualizado em ___/___/_______. </b></td>
+        </tr>
+    </table>
+    <br>
+
+    <br>
+    <br>
+</body>
+</html>

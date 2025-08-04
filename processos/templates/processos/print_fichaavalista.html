@@ -1,0 +1,255 @@
+<html xmlns="http://www.w3.org/1999/html">
+
+{% load static %}
+
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 20pt; height: 110t; font-size: 14pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 130pt; height: 630pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 770pt; height: 60pt; font-size: 10pt;
+        }
+</style>
+</head>
+<body>
+    <div id="header_content">
+        <img src="{% static 'media/logoPMCG.png' %}">
+        <br>
+        {{ linhalogo1}}<br>
+        {{ linhalogo2 }}<br>
+        {{ linhalogo3 }}<br>
+        <hr size="0.5">
+    </div>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    {% for avalista in avalistas %}
+    <h1><p align="center">AVALISTA</p></h1>
+    <h2>
+    <table>
+        <tr>
+            <td width="50%"><u>Nome</u></td><td width="15%"><u>Processo</u></td><td width="20%"><u>Data Processo</u></td><td width="25%"><u>N° Protocolo</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.avalista.nome }} </td>
+            <td>{{ avalista.processo.numprocesso }}</td><td>{{ avalista.processo.dtprocesso|date:"SHORT_DATE_FORMAT" }}</td><td>{{ avalista.processo.numprotocolo }}</td>
+        </tr>
+    </table>
+    <hr>
+    <p><b>1. DADOS PESSOAIS</b></p>
+    <table>
+        <tr>
+            <td width="50%"><u>Nome</u></td><td width="20%"><u>CPF</u></td><td width="30%"><u>Data Nascimento</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.avalista.nome }}</td><td>{{ avalista.avalista.numcpf }}</td><td>{{ avalista.avalista.dtnascimento|date:"SHORT_DATE_FORMAT" }}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td width="40%"><u>RG</u></td><td width="30%"><u>Nacionalidade</u></td><td width="30%"><u>Naturalidade</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.avalista.numrg }} - {{ avalista.avalista.orgexpedrg }} / {{ avalista.avalista.ufexpedrg }}</td>
+            <td>{{ avalista.avalista.nacionalidade }}</td><td>{{ avalista.avalista.naturalidade|default_if_none:"" }}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td width="50%"><u>Logradouro</u></td><td width="20%"><u>Complememto</u></td><td width="30%"><u>Bairro</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.avalista.logradouro }} - {{ avalista.avalista.numimovel }}</td><td>{{ avalista.avalista.complemento }}</td><td>{{ avalista.avalista.bairro|default_if_none:"" }}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td width="50%"><u>Cidade</u></td><td width="20%"><u>CEP</u></td><td width="30%"><u>Tempo reside (anos)</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.avalista.cidade }}</td><td>{{ avalista.avalista.cep }}</td>
+            <td>{{ avalista.avalista.temporesidencia }} - Própria (S/N) {% if avalista.avalista.is_residpropria %} Sim {% else %} Não {% endif %}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td width="15%"><u>Telefone(s) : </u></td><td> {{ avalista.avalista.telfixo }} | {{ avalista.avalista.telcelular1 }} |  {{ avalista.avalista.telcelular2 }}</td>
+        </tr>
+    </table>
+    <hr>
+    <b>2. DADOS COMPLEMENTARES DO AVALISTA</b>
+    <table>
+        <tr>
+            <td width="50%"><u>Profissão</u></td><td width="30%"><u>Escolaridade</u></td><td width="20%"><u>Estado Civil</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.avalista.profissao }}</td>
+            <td>{%   if avalista.avalista.escolaridade == '01' %} FUNDAMENTAL INCOMPLETO
+                {% elif avalista.avalista.escolaridade == '02' %} FUNDAMENTAL COMPLETO
+                {% elif avalista.avalista.escolaridade == '03' %} MÉDIO INCOMPLETO
+                {% elif avalista.avalista.escolaridade == '04' %} MÉDIO COMPLETO
+                {% elif avalista.avalista.escolaridade == '05' %} TÉCNICO NÍVEL MÉDIO
+                {% elif pavalista.avalista.escolaridade == '06' %} SUPERIOR INCOMPLETO
+                {% elif avalista.avalista.escolaridade == '07' %} SUPERIOR COMPLETO
+                {% elif avalista.avalista.escolaridade == '08' %} PÓS-GRADUAÇÃO
+                {% elif avalista.avalista.escolaridade == '09' %} MESTRADO
+                {% else %} DOUTORADO {% endif %}
+            </td>
+            <td>{{ avalista.avalista.estadocivil }}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td width="40%"><u>Regime de Bens</u></td><td width="30%"><u>N° de Filhos</u></td><td width="30%"><u>N° de Dependentes</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.avalista.regimebens }}</td><td>{{ avalista.avalista.numfilhos }}</td><td>{{ avalista.avalista.numdependentes }}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td width="50%"><u>Nome do Pai</u></td><td width="50%"><u>Nome da Mãe</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.avalista.nomepai }}</td><td>{{ avalista.avalista.nomemae }}</td>
+        </tr>
+    </table>
+    <hr>
+    <p>
+        <b>3. CÔNJUGE OU COMPANHEIRO(A)</b>
+    </p>
+    <table>
+        <tr>
+            {% if processo.clientepf.conjuge %}
+                <td>{{ avalista.avalista.conjuge }}</td><td> - CPF: {{ avalista.avalista.cpfconjuge }}</td>
+            {% else %}
+                <td>*************************************************</td>
+            {% endif %}
+        </tr>
+    </table>
+    <hr>
+    <p><b>4. DADOS DO NEGÓCIO</b></p>
+    <table>
+        <tr>
+            <td width="50%"><u>Nome da Empresa</u></td><td width="20%"><u>Início Atividades</u></td><td width="30%"><u>Ramo de Atividade</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.processo.empresa.razaosocial }} - {{ avalista.processo.empresa.numcnpj }}</td><td>{{ avalista.processo.empresa.dtiniatividade|date:"SHORT_DATE_FORMAT" }}</td>
+            <td>{{ avalista.processo.empresa.ramoatividade|default_if_none:"" }}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td width="40%"><u>Setor</u></td><td width="20%"><u>Função</u></td><td width="20%"><u>Inscr.Estadual</u></td>
+            <td width="20%"><u>Inscr.Municipal</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.processo.empresa.setornegocio|default_if_none:"" }}</td><td>{{ avalista.processo.empresa.funcao|default_if_none:"" }}</td>
+            <td>{{ avalista.processo.empresa.numinscest|default_if_none:"" }}</td>
+            <td>{{ avalista.processo.empresa.numinscmun|default_if_none:"" }}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td width="40%"><u>Logradouro</u></td><td width="20%"><u>Bairro</u></td><td width="10%"><u>CEP</u></td><td width="30%"><u>Cidade</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.processo.empresa.logradouro }} , {{ avalista.processo.empresa.numimovel|default_if_none:"" }} - {{ avalista.processo.empresa.complemento|default_if_none:"" }}</td>
+            <td>{{ avalista.processo.empresa.bairro|default_if_none:"" }}</td><td>{{ avalista.processo.empresa.cep|default_if_none:"" }}</td><td>{{ avalista.processo.empresa.cidade }}</td>
+        </tr>
+    </table>
+    <hr>
+    <p><b>5. FONTES DE RENDA FORMAL DO AVALISTA</b></p>
+    <table>
+        <tr>
+            <td width="50%"><u>Nome da Empresa</u></td><td width="20%"><u>Data Admissão</u></td><td width="30%"><u>Cargo</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.processo.clientepf.rendaempresa }}</td><td>{{ avalista.processo.clientepf.dtadmissempresa|date:"SHORT_DATE_FORMAT" }}</td><td>{{ avalista.processo.clientepf.cargoempresa }}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td width="40%"><u>N° Benefício</u></td><td width="20%"><u>Renda Líquida (R$)</u></td><td width="20%"><u>Renda Aluguéis (R$)</u></td><td width="20%"><u>Renda Líquida Total</u></td>
+        </tr>
+        <tr>
+            <td>{{ avalista.processo.clientepf.numbeneficio }}</td><td>{{ avalista.processo.clientepf.rendaliqempresa }}</td><td>{{ avalista.processo.clientepf.rendaalugueis }}</td><td>{{ avalista.processo.clientepf.rendaliqtotal }}</td>
+        </tr>
+    </table>
+    <hr>
+    <p><b>6. REFERÊNCIAS</b></p>
+    {% if avalista.processo.banco %}
+        <table>
+            <tr>
+                <td width="40%"><u>Banco</u></td><td width="20%"><u>Agência</u></td><td width="20%"><u>Conta</u></td><td width="20%"><u>Tipo</u></td>
+            </tr>
+            <tr>
+                <td>{{ avalista.processo.banco }}</td><td>{{ avalista.processo.agencia }}</td><td>{{ avalista.processo.conta }}</td><td>{% if avalista.processo.tipconta == '1' %} C/C {% else %} POUPANÇA {% endif %}</td>
+            </tr>
+        </table>
+    {% endif %}
+    <table>
+        <tr>
+            <td width="40%"><u>Fonte</u></td><td width="20%"><u>Nome/Empresa</u></td><td width="20%"><u>Telefone</u></td><td width="20%"><u>Conceito</u></td>
+        </tr>
+    </table>
+    {% for referencia in referencias %}
+        <table>
+            <tr>
+                <td width="40%">{% if referencia.tipo == 'P' %} PESSOAL
+                {% elif referencia.tipo == 'F' %} FORNECEDOR
+                {% elif referencia.tipo == 'C' %} CLIENTE
+                {% elif referencia.tipo == 'O' %} COMERCIAL
+                {% else %} OUTRO {% endif %} </td><td width="20%">{{ referencia.nome }}</td><td width="20%">{{ referencia.telefone }}</td><td width="20%">{{ referencia.conceito }}</td>
+            </tr>
+        </table>
+    {% endfor%}
+    <hr>
+    <p><b>7. INFORMAÇÕES SOBRE PONTOS DE REFERÊNCIAS (Facilitar o acesso ao local do negócio/residência)</b></p>
+        {{ avalista.processo.pontoreferencia }}
+    <br>
+    <hr>
+    <p><b>8. AGENTE DE CRÉDITO</b></p>
+        {{ avalista.processo.criado_por.first_name }} {{ processo.criado_por.last_name }}
+    <br>
+    <hr>
+    <p><b>9. OBSERVAÇÕES</b></p>
+        {{ avalista.processo.observacao }}
+    <br>
+    <br>
+    <p align="justify"> Declaro(amos) serem verdadeiras as informações prestadas, responsabilizando-me(nos) na forma da lei,
+        conforme o Artigo 299 do Código Penal; e autorizo(amos) a consulta de meus(nossos) dados junto ao SISBACEN,
+        SPC / SERASA e Referências Pessoais, Comerciais e Bancárias, bem como, realizar ações de cobrança em caso
+        de inadimplemento.</p>
+    <br>
+    <br>
+    Local e Data __________________________________________________________________________________
+    <br>
+    <br>
+
+    <table>
+    <tr>
+        <td><b>_________________________________________</b></td><td><b>{% if processo.clientepf.conjuge %} _________________________________________ {% endif %}</b></td>
+    </tr>
+    <tr>
+        <td>{{ avalista.avalista.nome }}</td><td>{% if avalista.avalista.conjuge %} {{ avalista.avalista.conjuge }} {% endif %}</td>
+        <br>
+    </tr>
+    </table>
+    </h2>
+    <div style="page-break-after: always"></div>
+    {%endfor%}
+</body>
+</html>

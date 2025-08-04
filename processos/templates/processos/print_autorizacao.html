@@ -1,0 +1,77 @@
+{% load static %}
+
+{% block content %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 20pt; height: 90t; font-weight: bold; font-size: 14pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 110pt; height: 660pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 760pt; height: 70pt; font-size: 10pt;
+        }
+</style>
+</head>
+<body>
+    <div id="header_content">
+<!--        <img src="/home/evdias/Projects/microcredito2/static/media/logoPMCG.png" width="210" height="70">-->
+        <br>
+        {{ linhalogo1 }}<br>
+        {{ linhalogo2 }}<br>
+        {{ linhalogo3 }}<br>
+        <hr size="0.5">
+        <br>
+    </div>
+    <div id="footer_content">
+        <p align="right">{{ texto_hash }}</p>
+        <hr size="0.5">
+        <p align="center">
+            Rua Coronel Ponciano de Azeredo Furtado,47 | Pq. Santo Amaro | Campos dos Goytacazes/RJ<br><br>
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <br>
+    <table>
+        <tr>
+            <td></td><td><h2 align="justify">Campos dos Goytacazes (RJ), {{ emissao|date }}.</b></h2></td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <h2 align="justify">
+        O Fundo de Desenvolvimento de Campos dos Goytacazes - FUNDECAM, com inscrição no CNPJ sob o nº 21.545.238/0001-72,
+        com sede na Avenida José Alves de Azevedo, nº 259, Bairro Centro, CEP: 28025-496, informa que o <b>cliente
+        {{ processo.clientepf.nome }}</b>, inscrito(a) no CPF sob o nº {{ processo.clientepf.numcpf }}, <b>teve a sua
+        solicitação de financiamento, pelo programa FUNDECAM TÁXI, aprovada</b> na reunião do Comitê de Crédito do
+        FUNDECAM nº {{ numreuniao }} realizada em {{ dtcomite }}.<br><br>
+
+        Deste modo, <b>este Fundo AUTORIZA o faturamento do Veículo</b> {{ processo.veiculo.marca }} -
+        {{ processo.veiculo.modelo }}, Ano {{ processo.veiculo.anofabr }}, em nome de {{ processo.clientepf.nome }},
+        CPF Nº {{ processo.clientepf.numcpf }}, <b>considerado o valor pré-aprovado de R$ {{ valortotal_aprovado }}
+        ({{ valortotal_extenso }})</b>, para pagamento.<br><br>
+
+        A finalização da operação está condicionada ao envio da <b>nota fiscal, mediante a alienação fiduciária em favor
+        do FUNDECAM</b>, conforme informações acima.<br><br>
+
+        Solicitamos o envio, em tempo hábil, dos dados bancários do vendedor ou do boleto, para a realização do trâmite
+        de pagamento da Prefeitura Municipal.
+
+        <br><br><br><br>
+
+        Paulo Gustavo Barbosa de Abreu<br>
+        Gerente de Crédito do FUNDECAM <br>
+        Matrícula: 41.458<br>
+
+    </h2>
+
+</body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+# triggers SQLITE para PRODUTO
+
+CREATE TRIGGER TRG_PRODUTO_INS
+AFTER INSERT
+ON INVENTORY_STOCK
+FOR EACH ROW 
+BEGIN 
+    insert into tabelas_log (data, evento) values (datetime('now'), 'INSERIDO REGISTRO DE No. ' || NEW.ID || ' (' || NEW.NAME || ') NA TABELA DE PRODUTO/ITEM');
+END;
+
+CREATE TRIGGER TRG_PRODUTO_UPD
+AFTER UPDATE
+ON INVENTORY_STOCK
+FOR EACH ROW 
+BEGIN 
+    insert into tabelas_log (data, evento) values (datetime('now'), 'ALTERADO O REGISTRO DE No. ' || NEW.ID || ' (' || NEW.NAME || ') NA TABELA DE PRODUTO/ITEM');
+END;
+
+
+# triggers SQLITE para CLIENTE
+
+CREATE TRIGGER TRG_CLIENTE_INS
+AFTER INSERT
+ON TRANSACTIONS_CLIENTE
+FOR EACH ROW 
+BEGIN 
+    insert into tabelas_log (data, evento) values (datetime('now'), 'INSERIDO REGISTRO DE No. ' || NEW.ID || ' (' || NEW.NOME || ') NA TABELA DE CLIENTE');
+END;
+
+CREATE TRIGGER TRG_CLIENTE_UPD
+AFTER UPDATE
+ON TRANSACTIONS_CLIENTE
+FOR EACH ROW 
+BEGIN 
+    insert into tabelas_log (data, evento) values (datetime('now'), 'ALTERADO O REGISTRO DE No. ' || NEW.ID || ' (' || NEW.NOME || ') NA TABELA DE CLIENTE');
+END;
+
+
+# triggers SQLITE para FUNCIONARIO
+
+CREATE TRIGGER TRG_FUNCIONARIO_INS
+AFTER INSERT
+ON TABELAS_FUNCIONARIO
+FOR EACH ROW 
+BEGIN 
+    insert into tabelas_log (data, evento) values (datetime('now'), 'INSERIDO REGISTRO DE No. ' || NEW.ID || ' (' || NEW.NOME || ') NA TABELA DE FUNCIONARIO');
+END;
+
+CREATE TRIGGER TRG_FUNCIONARIO_UPD
+AFTER UPDATE
+ON TABELAS_FUNCIONARIO
+FOR EACH ROW 
+BEGIN 
+    insert into tabelas_log (data, evento) values (datetime('now'), 'ALTERADO O REGISTRO DE No. ' || NEW.ID || ' (' || NEW.NOME || ') NA TABELA DE FUNCIONARIO');
+END;
+
+
+
+# triggers SQLITE para ORDEMSERVICO
+
+CREATE TRIGGER TRG_ORDEMSERVICO_INS
+AFTER INSERT
+ON TRANSACTIONS_ORDEMSERVICO
+FOR EACH ROW 
+BEGIN 
+    insert into tabelas_log (data, evento) values (datetime('now'), 'INSERIDO REGISTRO DE No. ' || NEW.ID || ' (' || NEW.NOME || ') NA TABELA DE ORDEM DE SERVIÇO');
+END;
+
+CREATE TRIGGER TRG_ORDEMSERVICO_UPD
+AFTER UPDATE
+ON TRANSACTIONS_ORDEMSERVICO
+FOR EACH ROW 
+BEGIN 
+    insert into tabelas_log (data, evento) values (datetime('now'), 'ALTERADO O REGISTRO DE No. ' || NEW.ID || ' (' || NEW.NOME || ') NA TABELA DE ORDEM DE SERVIÇO');
+END;
+

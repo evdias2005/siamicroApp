@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        {{title}}
+    </div>
+    <div style="color:black; font-style: bold; font-size: 1rem; border-bottom: 1px solid white;">
+        Processo N° {{ numprocesso }} |
+        Cliente {{ clienteprocesso }} |
+        Status: {% if statusprocesso == 'P' %} Em andamento
+        {% elif statusprocesso == 'A' %} Em andamento - A
+        {% elif statusprocesso  == 'R' %} Em andamento - R
+        {% elif statusprocesso == 'C' %} Cancelado
+        {% elif statusprocesso == '1' %} 1° Parecer
+        {% elif statusprocesso == '2' %} 2° Parecer
+        {% elif statusprocesso == 'F' %} Finalizado
+        {% elif statusprocesso == 'N' %} Negociado
+        {% elif statusprocesso == 'X' %} Negado
+        {% endif %}
+    </div>
+
+    <form method="post">
+
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.processo.errors }}
+        {{ form.dtcomite.errors }}
+        {{ form.valorfixo_sugerido.errors }}
+        {{ form.valorgiro_sugerido.errors }}
+        {{ form.valorfixo_aprovado.errors }}
+        {{ form.valorgiro_aprovado.errors }}
+        {{ form.taxasugerida.errors }}
+        {{ form.taxaaprovada.errors }}
+        {{ form.prazosugerido.errors }}
+        {{ form.prazoaprovado.errors }}
+        {{ form.dtprivencto.errors }}
+        {{ form.valorparcela.errors }}
+        {{ form.dtliberacao.errors }}
+        {{ form.pareceragente.errors }}
+        {{ form.motivonegativa.errors }}
+        {{ form.conceito.errors }}
+        {{ form.tipo.errors }}
+        <hr>
+        <b><center>PARECER DO AGENTE DE CRÉDITO</center></b>
+        <div class="form-row">
+            <div class="form-group col-md-1">
+                <label for="{{ form.conceito.id_for_label }}">Conceito:</label>
+                {{ form.conceito }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.tipo.id_for_label }}">Tipo:</label>
+                {{ form.tipo }}
+            </div>
+            <div class="form-group col-md-9">
+                <label for="{{ form.pareceragente.id_for_label }}">Parecer do Agente:</label>
+                {{ form.pareceragente }}
+            </div>
+        </div>
+        <br>
+        <b>Condições do Financiamento a ser Aprovado (Sugestão)</b>
+        <div class="form-row">
+            <div class="form-group col-md-02">
+                <label for="{{ form.valorfixo_sugerido.id_for_label }}">Valor Fixo:</label>
+                {{ form.valorfixo_sugerido }}
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.valorgiro_sugerido.id_for_label }}">Valor Giro:</label>
+                {{ form.valorgiro_sugerido }}
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.taxasugerida.id_for_label }}">Taxa Sugerida (a.m.):</label>
+                {{ form.taxasugerida }}
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.prazosugerido.id_for_label }}">Prazo Sugerido:</label>
+                {{ form.prazosugerido }}
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.valorparc_sugerido.id_for_label }}">Valor da Parcela:</label>
+                {{ form.valorparc_sugerido }}
+            </div>
+        </div>
+        <hr>
+        <b><center>PARECER DO GERENTE DE CRÉDITO</center></b>
+        <div class="form-row">
+            <div class="form-group col-md-03">
+                <label for="{{ form.dtparecer.id_for_label }}">Data do Comitê:</label>
+                {{ form.dtcomite }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2 align-middle">
+                <label for="{{ form.is_negado.id_for_label }}">Processo Negado:</label><br>
+                {{ form.is_negado }}
+            </div>
+            <div class="form-group col-md-10">
+                <label for="{{ form.motivonegativa.id_for_label }}">Se negativa, Qual o motivo?:</label>
+                {{ form.motivonegativa }}
+            </div>
+        </div>
+        <br>
+        <b>Condições do Financiamento Aprovado</b>
+        <div class="form-row">
+             <div class="form-group col-md-02">
+                <label for="{{ form.valorfixo_aprovado.id_for_label }}">Valor Fixo:</label>
+                {{ form.valorfixo_aprovado }}
+             </div>
+             <div class="form-group col-md-02">
+                <label for="{{ form.valorgiro_aprovado.id_for_label }}">Valor Giro:</label>
+                {{ form.valorgiro_aprovado }}
+             </div>
+             <div class="form-group col-md-02">
+                <label for="{{ form.taxaaprovada.id_for_label }}">Taxa Aprovada (a.m.):</label>
+                {{ form.taxaaprovada }}
+             </div>
+             <div class="form-group col-md-02">
+                <label for="{{ form.prazoaprovado.id_for_label }}">Prazo Aprovado:</label>
+                {{ form.prazoaprovado }}
+             </div>
+        </div>
+        <br>
+        <b>Cálculo das Parcelas</b>
+        <div class="form-row">
+            <div class="form-group col-md-03">
+                <button type="button" align="center" class="btn ghost-red" onclick="calculaparcela_modelo2()">
+                    <i class="fa fa-calculator fa-fw" style="font-size:20px;color:black;"></i><small>Calcula</small></button>
+                    <input type="text" id="id_valorparcela" style="background-color:gray;color:white;" {{ form.valorparcela }}/>
+            </div>
+        </div>
+<!--        <div class="form-row">-->
+<!--            <div class="form-group col-md-03">-->
+<!--                <button type="button" align="center" class="btn ghost-red" onclick="calculaparcela()">-->
+<!--                    <i class="fa fa-calculator fa-fw" style="font-size:20px;color:black;"></i><small>Calcula</small></button>-->
+<!--                    <input type="text" id="id_valorparcela" style="background-color:#ddd;color:#00f;" {{ form.valorparcela }}/>-->
+<!--            </div>-->
+<!--        </div>-->
+        <hr>
+        <div class="align-middle">
+            {% if perms.processos.change_parecer2 %}
+                {% if statusprocesso == 'R' or statusprocesso == '1' or statusprocesso == '2' %}
+                    <button type="submit" class="btn ghost-green" onclick="msgconfirmacao()">{{ savebtn }}</button>
+                {% endif %}
+            {% endif %}
+            {% if title == "Novo Parecer" %}
+                <button type="reset" class="btn ghost-blue">Limpa</button>
+            {% endif %}
+            {% if perms.processos.delete_parecer2 %}
+                {% if statusprocesso == '1' or statusprocesso == '2' %}
+                    <a href="{% url 'delete-processoparecer' parecer.pk %}" class="btn ghost-red">Apaga</a>
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'processos-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+    </form>
+    {% include "../rodape.html" %}
+
+<script>
+    <!-- Cálculo da fórmula da prestação pelo método 2 - Tabela Price
+    fonte: https://educacionalplenus.com.br/formula-de-prestacoes-da-tabela-price/
+    -->
+    function calculaparcela_modelo2() {
+        var v1 = document.getElementById("id_valorfixo_aprovado").value;
+        var v2 = document.getElementById("id_valorgiro_aprovado").value;
+        var n = document.getElementById("id_prazoaprovado").value;
+        var i = document.getElementById("id_taxaaprovada").value;
+
+        var vtotal = 0.00;
+        <!-- Necessária a substituição dos caracteres de vírgula e ponto decimal para reconhecimento como float -->
+        v1 = v1.replaceAll(".", "").replace(",", ".");
+        v2 = v2.replaceAll(".", "").replace(",", ".");
+        i = i.replaceAll(".", "").replace(",", ".");
+        i = parseFloat(i) / 100;
+        vtotal = parseFloat(v1) + parseFloat(v2);
+
+        var p = 0.00;
+        var parrend = 0.00;
+
+        if ((vtotal > 0) && (n > 0)) {
+            p = vtotal * (i * ((1 + i) ** n)) / (((1 + i) ** n) - 1);
+            parrend = p.toFixed(2);
+        }
+
+        document.getElementById('id_valorparcela').value=parrend;
+    }
+</script>
+
+<script>
+    function msgconfirmacao() {
+        const numprocesso = "{{ numprocesso }}";
+        alert ("Será gravado o parecer referente ao Processo N° " + numprocesso);
+    }
+</script>
+
+<!--<script>-->
+<!--&lt;!&ndash; Cálculo da fórmula da prestação pelo método da Tabela Price-->
+<!--fonte: https://educacionalplenus.com.br/formula-de-prestacoes-da-tabela-price/-->
+<!--&ndash;&gt;-->
+
+<!--    function calculaparcela() {-->
+<!--        const v0 = document.getElementById("id_valoraprovado").value;-->
+<!--        const n = document.getElementById("id_prazoaprovado").value;-->
+<!--        const i = document.getElementById("id_taxaaprovada").value / 100;-->
+
+<!--&lt;!&ndash;        alert (i);&ndash;&gt;-->
+
+<!--        var p = 0.00;-->
+<!--        var parrend = 0.00;-->
+
+<!--        if ((v0 > 0) && (n > 0)) {-->
+<!--            p = v0 * (i * ((1 + i) ** n)) / (((1 + i) ** n) - 1);-->
+<!--            parrend = p.toFixed(2);-->
+<!--        }-->
+<!--&lt;!&ndash;        else {&ndash;&gt;-->
+<!--&lt;!&ndash;            alert ("O valor aprovado e/ou prazo não foram preenchidos... Verifique.");&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--        document.getElementById('id_valorparcela').value=parrend;-->
+<!--    }-->
+
+<!--</script>-->
+
+{% endblock content %}

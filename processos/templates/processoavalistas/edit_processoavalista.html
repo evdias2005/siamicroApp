@@ -1,0 +1,126 @@
+{{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        {{title}}
+    </div>
+    <div style="color:black; font-style: bold; font-size: 1rem; border-bottom: 1px solid white;">
+        Processo N° {{ numprocesso }} | Cliente {{ clienteprocesso }} | Situação: {{ statusprocesso }}
+    </div>
+    <hr>
+
+    <form method="post">
+
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.avalista.errors }}
+        {{ form.graurelacao.errors }}
+        {{ form.observacao.errors }}
+        {{ form.negociacao.errors }}
+
+        <p>
+        <b>Dados Pessoais</b>
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <label for="{{ form.avalista.id_for_label }}">Avalista:</label>
+                {% if title != "Novo Avalista" %}
+                    <button type="button" class="btn ghost-blue" data-toggle="modal" data-target="#myModal1">
+                        <i class="fa fa-eye fa-fw" style="font-size:17px;color:black;"></i><small>Detalhes</small>
+                    </button>
+                {% endif %}
+                {{ form.avalista }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.graurelacao.id_for_label }}">Grau de Relação:</label>
+                {{ form.graurelacao }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.negociacao.id_for_label }}">Referente a Negociação:</label>
+                {{ form.negociacao }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="{{ form.observacao.id_for_label }}">Observação:</label>
+                {{ form.observacao }}
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="align-middle">
+            {% if perms.processos.change_avalista or perms.processos.add_avalista %}
+                {% if flagstatus == 'P' or flagstatus == 'A' or flagstatus == 'R' or flagstatus == 'N' %}
+                    <button type="submit" class="btn ghost-green" onclick="msgconfirmacao()"><small>{{ savebtn }}</small></button>
+                {% endif %}
+            {% endif %}
+            {% if title == "Novo Avalista" %}
+                <button type="reset" class="btn ghost-blue"><small>Limpa</small></button>
+            {% endif %}
+            {% if delbtn %}
+                {% if perms.processos.delete_avalista %}
+                    {% if flagstatus == 'P' or flagstatus == 'A' or flagstatus == 'R' %}
+                        <a href="{% url 'delete-processoavalista' avalista.pk %}" class="btn ghost-red"><small>Apaga</small></a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'processos-list' %}" class="btn ghost-button"><small>Retorna</small></a>
+        </div>
+        
+    <!-- Button trigger modal -->
+    <!-- Modal -->
+        <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                <h4 class="modal-title" id="myModalLabel1">Detalhes do Avalista</h4>
+              </div>
+              <div class="modal-body">
+                  <p><b><u>Dados Pessoais</u></b></p>
+                  <b>Nome: {{ nome }} </b> <br>
+                  <b>RG: </b> {{ numrg }} - {{ orgexpedrg }} | Sexo: {{ sexo }} <br>
+                  <b>CPF: </b> {{ numcpf }} <br>
+                  <b>Dt.Nasc.: </b> {{ dtnascimento }} <br>
+                  <b>Nome Mãe: </b> {{ nomemae }} <br>
+                  <b>Nome Pai: </b> {{ nomepai }} <br>
+                  <b>Cônjuge: </b> {{ conjuge }} <br>
+                  <b>CPF do Cônjuge: </b> {{ cpfconjuge }} <br>
+                  <b>Observação: </b> {{ observacao }} <br>
+                  <br>
+                  <p><b><u>Endereço/Contato</u></b></p>
+                  <b>Logradouro: </b> {{ logradouro }}, {{ numimovel }} - {{ complemento }} <br>
+                  <b>Bairro: </b> {{ bairro }} <br>
+                  <b>Cidade: </b> {{ cidade }} <br>
+                  <b>CEP: </b> {{ cep }} <br>
+                  <b>Telefone(s): </b> {{ telefones }} <br>
+                  <br>
+                  <p><b><u>Fonte de Renda Formal do Avalista</u></b></p>
+                  <b>Empresa: </b> {{ rendaempresa }} <br>
+                  <b>Renda Líquida: </b> {{ rendaliqempresa }} <br>
+                  <br><small>* Para maiores informações acessar o cadastro completo do avalista.</small><br>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+    <br>
+    <br>
+    {% include "../rodape.html" %}
+
+<script>
+    function msgconfirmacao() {
+        const numprocesso = "{{ numprocesso }}";
+        alert ("Será gravado o parecer referente ao Processo N° " + numprocesso);
+    }
+</script>
+
+{% endblock content %}

@@ -1,0 +1,162 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+<html lang="pt">
+
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/bootstrap.min.css' %}">
+
+    <!-- Main CSS, then Sidebar CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">
+
+    <title>SIAMICRO - Sobre</title>
+
+    <style>
+        body {
+            background-color: #2e2e2e; /* Tom de cinza escuro, menos intenso que o preto */
+            color: #e0e0e0; /* Texto claro */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-header {
+            color: #1a3d6b; /* Azul escuro para os títulos */
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .login-subheader {
+            color: #B3B3B3;
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .version {
+            text-align: center;
+            color: #999;
+        }
+
+        .content-section {
+            background-color: #A9A9A9; /* Fundo levemente mais claro para o formulário */
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        legend {
+            color: #1a3d6b; /* Azul escuro */
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .ghost-button {
+            background-color: transparent;
+            border: 2px solid #1a3d6b;
+            color: #1a3d6b;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .ghost-button:hover {
+            background-color: #1a3d6b;
+            color: #fff;
+        }
+
+        .ghost-red {
+            background-color: transparent;
+            border: 2px solid #ff4b4b;
+            color: #ff4b4b;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .ghost-red:hover {
+            background-color: #ff4b4b;
+            color: #fff;
+        }
+
+        a {
+            color: #1a3d6b; /* Links em azul escuro */
+        }
+
+        a:hover {
+            color: #fff;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="login-header">SIAMICRO</div>
+<div class="login-subheader">Sistema Integrado de Administração do Microcrédito</div>
+<div class="version"><small><b>Versão 2025-06-09.1</b></small></div>
+
+<br><br>
+
+<div class="row d-flex justify-content-center">
+    <div class="col-md-8">
+        {% if user.is_authenticated %}
+            <div class="border-top pt-3 text-center">
+                <a href="{% url 'home' %}" class="btn ghost-button">Volta</a>
+            </div>
+        {% endif %}
+        <hr>
+        <div class="align-middle">
+            <h3 style="color:#4682B4">| Sobre |</h3> <br>
+                <p align="justify" style="color:#A9A9A9">
+                    SIAMICRO é um sistema criado para a administração e gestão operacional do Microcrédito no Município de Campos dos Goytacazes.
+                    O software é capaz de gerenciar os processos do empréstimo desde a entrada do cliente até a concessão final
+                    do valor solicitado com base na linha de crédito compatível com o modelo de negócio. Monitora também, através
+                    de painéis e relatórios, como encontra-se a situação financeira de cada cliente que solicitou o empréstimo.
+                    Possui também um módulo que permite a renegociação de dívidas contraídas com o empréstimo e não puderam ser quitadas.
+                </p>
+        </div>
+        <hr>
+        <div class="align-middle">
+            <h3 style="color:#4682B4">| Funcionalidades |</h3> <br>
+                <p align="justify" style="color:#A9A9A9">
+                    - Gráfico interativo mostrando os empréstimos e andamento dos processos por fase<br>
+                    - Registro das tabelas básicas do sistema como Parâmetros Gerais, Feriados, Bancos, Cidades, Bairros, Linhas de Crédito,
+                    Finalidade dos Créditos, Setores de Negócio, Ramos e Atividadees, Regimes de Bens, Profissões<br>
+                    - Cadastro e movimentação de clientes, avalistas e empresas<br>
+                    - Gestão do Processo dos Empréstimos desde os cadastro inicial do Cliente passando pela criação do processos e os demais
+                    cadastro de avalistas e referências do cliente<br>
+                    - Movimentação de Processos (rastreabilidade dos processos dentro dos setores da unidade)
+                    - Faturamento e controle dos Títulos a Receber<br>
+                    - Relatório de Títulos a Receber<br>
+                    - Ficha financeira do Cliente<br>
+                    - Parecer do Gerente de Crédito e Comitê<br>
+                    - Emissão dos Contratos e Pareceres<br>
+                    - Controle de renegociação de Empréstimos<br>
+                    - Relatórios Estatísticos por Modalidade de Empréstimo<br>
+                    - Relatório e acompanhamento dos Inadimplentes, com sinalização para envio a Dívida Ativa<br>
+                    - Relatórios Contábeis<br>
+                    - Relatório de Processos Autorizados pelo Comitê<br>
+                    - Relatório de Recebimentos no Período<br>
+                    - Relatórios Diversos (Clientes, AvaliStas, Empresas, Processos, ...)<br>
+                    - Log das principais tabelas transacionadas no sistema<br>
+                </p>
+            <br>
+        </div>
+    </div>
+</div>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
+    <script src="{% static 'bootstrap/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+
+</body>
+
+</html>
+

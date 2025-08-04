@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% load static %}
+
+{% block title %} Relação dos Processos Pendentes{% endblock title %}
+
+{% block content %}
+
+{% include "../stylemsg.html" %}
+
+<div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        Relação dos Processos Pendentes
+    </div>
+    <hr>
+    <p><b>Seleção e filtros</b></p>
+    <form enctype="multipart/form-data" method="post" id="relatorioForm">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.data_ini.id_for_label }}">Data Processo (Inicial):</label>
+                {{ form.data_ini }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.data_fin.id_for_label }}">Data Processo (Final):</label>
+                {{ form.data_fin }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ form.linhacredito.id_for_label }}">Linha de Crédito:</label>
+                {{ form.linhacredito }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ form.finalidadecredito.id_for_label }}">Finalidade do Crédito:</label>
+                {{ form.finalidadecredito }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ form.criado_por.id_for_label }}">Agente:</label>
+                {{ form.criado_por }}
+            </div>
+        </div>
+        {% include "../botoesrodape.html" %}
+    </form>
+
+    <div id="loading-message">
+        <img src="{% static 'media/loading-gif-transparent-10.gif' %}"  style="width: 60px; height: 60px;">
+        <p>Aguarde!!! Relatório sendo gerado...</p>
+    </div>
+
+    <script>
+        document.getElementById("relatorioForm").onsubmit = function(e) {
+            e.preventDefault();  // Evita o comportamento padrão de envio de formulário
+
+            // Mostra a mensagem de "Aguarde"
+            document.getElementById("loading-message").style.display = "block";
+
+            // Faz o envio do formulário via AJAX
+            var formData = new FormData(this);
+
+            fetch("{% url 'processospendentes-tela' %}", {  // Altere para a URL correta
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            }).then(response => response.blob())
+              .then(blob => {
+                  // Cria um link temporário para baixar o PDF gerado
+                  var link = document.createElement('a');
+                  link.href = window.URL.createObjectURL(blob);
+                  link.download = "relatorio.pdf";
+                  link.click();
+
+                  // Oculta a mensagem de "Aguarde" após o download
+                  document.getElementById("loading-message").style.display = "none";
+              })
+              .catch(error => {
+                  console.error('Erro ao gerar relatório:', error);
+                  document.getElementById("loading-message").style.display = "none";
+              });
+        };
+    </script>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} Lista de Configurações {% endblock title %}
+
+
+{% block content %}
+    
+    <div class="row" style="color: #4682B4; font-style: bold; font-size: 1.5rem;">
+        <div class="col-md-8">Lista de Configurações</div>
+        <div class="col-md-4">
+            {% if perms.tabelas.add_config %}
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-config' %}"><i class="fa fa-plus-square fa-fw fa-1x"></i>
+                <small>Configuração</small></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+
+    <div style="border-bottom: 1px solid white;"></div>
+
+    <table class="table table-striped">
+
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="5%"><small>Id</small></th>
+                <th width="1%"><small> </small></th>
+                <th width="30%"><small>Nome</small></th>
+                <th width="9%"><small>Exercício</small></th>
+                <th width="10%"><small>%Multa</small></th>
+                <th width="10%"><small>%Juros</small></th>
+                <th width="15%"><small>Mod.Cálculo</small></th>
+                <th width="10%"><small>Ações</small></th>
+            </tr>
+        </thead>
+
+    {% if object_list %}
+
+        <tbody>
+            {% for configuracao in object_list %}
+            <tr>
+                <td class="align-middle"> <small>{{ configuracao.id }} </small></td>
+                <td class="align-middle"><small>{% if configuracao.is_deleted %} <i class="fa fa-ban fa-fw fa-1x" style="color:red"></i> {% else %}  {% endif %}</small></td>
+                <td class="align-left"> <small>{{ configuracao.nome }} </small></td>
+                <td class="align-middle"> <small>{{ configuracao.exercicio }} </small></td>
+                <td class="align-middle"> <small>{{ configuracao.multa }} </small></td>
+                <td class="align-middle"> <small>{{ configuracao.juros }} </small></td>
+                <td class="align-middle"> <small>{% if configuracao.modelocalculo_financ == '1' %} MODELO 1 {% else %} MODELO 2 - PRICE {% endif %} </small></td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if perms.tabelas.change_config %}
+                            <a href="{% url 'edit-config' configuracao.pk %}" class="btn ghost-button"><i class="fa fa-edit fa-fw fa-1x"></i></a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <br><br><br><br><br><br><br><br>
+    <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>
+
+    {% endif %}
+
+
+{% endblock content %}

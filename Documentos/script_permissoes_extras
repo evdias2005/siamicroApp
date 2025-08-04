@@ -1,0 +1,20 @@
+
+-- Atenção: antes de rodar o script, verificar os ids para os content_type do financeiro e parecer
+
+select * from auth_permission ap where codename = 'add_financeiro' or codename = 'add_parecer'
+
+
+insert into auth_permission (name, content_type_id, codename) values ('Can add parecer 1', 44, 'add_parecer1');
+insert into auth_permission (name, content_type_id, codename) values ('Can change parecer 1', 44, 'change_parecer1'); 
+insert into auth_permission (name, content_type_id, codename) values ('Can delete parecer 1', 44, 'delete_parecer1'); 
+insert into auth_permission (name, content_type_id, codename) values ('Can view parecer 1', 44, 'view_parecer1'); 
+
+insert into auth_permission (name, content_type_id, codename) values ('Can add parecer 2', 44, 'add_parecer2');
+insert into auth_permission (name, content_type_id, codename) values ('Can change parecer 2', 44, 'change_parecer2'); 
+insert into auth_permission (name, content_type_id, codename) values ('Can delete parecer 2', 44, 'delete_parecer2'); 
+insert into auth_permission (name, content_type_id, codename) values ('Can view parecer 2', 44, 'view_parecer2');
+
+insert into auth_permission (name, content_type_id, codename) values ('Can down titulo', 54, 'down_titulo');
+insert into auth_permission (name, content_type_id, codename) values ('Can reverse titulo', 54, 'reverse_titulo'); 
+insert into auth_permission (name, content_type_id, codename) values ('Can delete titulo', 54, 'delete_titulo'); 
+

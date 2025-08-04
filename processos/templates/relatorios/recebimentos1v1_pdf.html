@@ -1,0 +1,102 @@
+{% load static %}
+<html>
+<head>
+
+    <style>
+    @page {
+        size: a4 landscape;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 750pt; top: 30pt; height: 100pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 750pt; top: 120pt; height: 400pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 750pt; top: 530pt; height: 60pt; font-size: 8pt;
+        }
+    }
+    </style>
+
+<div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+    <p align="center"><b><<< RELATÓRIO DOS RECEBIMENTOS - CONTABILIDADE (vr.1) >>></b></p>
+</div>
+</head>
+
+<body>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    {% for itemsubtot in qssubtot %}
+        <hr size="0.5">
+        <b>Recebimentos em: {{ itemsubtot.dtpagamento }}</b>
+        <br>
+        <table>
+            <tr>
+            <td width="25%"><b><small>Cliente</small></b></td>
+            <td align="right" width="8%"><b><small>Valor Crédito</small></b></td>
+            <td align="right" width="8%"><b><small>Parcela</small></b></td>
+            <td align="right" width="8%"><b><small>Juros Financ</small></b></td>
+            <td align="right" width="8%"><b><small>Total Parcela</small></b></td>
+            <td align="right" width="8%"><b><small>Acréscimos</small></b></td>
+            <td align="right" width="8%"><b><small>Descontos</small></b></td>
+            <td align="right" width="8%"><b><small>Valor Pago</small></b></td>
+            <td align="center" width="5%"><b><small>Refer</small></b></td>
+            <td width="7%"><b><small>CPF</small></b></td>
+            <td width="7%"><b><small>CNPJ</small></b></td>
+            </tr>
+        </table>
+        <br>
+        {% for item in qs %}
+            {% ifequal itemsubtot.dtpagamento item.dtpagamento %}
+            <table>
+            <tr>
+                <td width="25%"><small> {% if item.processo.clientepf %} {{ item.processo.clientepf.nome }}
+                    {% else %} {{ item.processo.clientepj.razaosocial }} {% endif %}</small></td>
+                <td align="right" width="8%"><small>
+                    {% if item.parecer_id %}
+                        {{ item.parecer.vlrtotalaprovado|floatformat:2  }}
+                    {% else %}
+                        {{ item.negociacao.vlrtotaloriginal|floatformat:2  }}
+                    {% endif %}
+                </small></td>
+                <td align="right" width="8%"><small> {{ item.valororiginal|floatformat:2 }} </small></td>
+                <td align="right" width="8%"><small> {{ item.jurosfinanc|floatformat:2 }} </small></td>
+                <td align="right" width="8%"><small> {{ item.valorparcela|floatformat:2 }} </small></td>
+                <td align="right" width="8%"><small> {{ item.acresctotal }} </small></td>
+                <td align="right" width="8%"><small> {{ item.valordesc }} </small></td>
+                <td align="right" width="8%"><small> {{ item.valorpago }} </small></td>
+                <td align="center" width="5%"><small> {{ item.numparcela }} / {{ item.parecer.prazoaprovado }} </small></td>
+                <td width="7%"><small> {{ item.processo.clientepf.numcpf|default_if_none:"" }} </small></td>
+                <td width="7%"><small> {{ item.processo.empresa.numcnpj|default_if_none:"" }} </small></td>
+            </tr>
+            </table>
+            {% endifequal %}
+        {% endfor %}
+        <br>
+        <table>
+        <tr><b>
+            <td width="34%"><b>Subtotais >>></b></td>
+            <td align="right" width="7%"><b>{{ itemsubtot.subtotoriginal|floatformat:"2" }}</b></td>
+            <td width="1%"> </td>
+            <td align="right" width="7%"><b>{{ itemsubtot.subtotjurosfinanc|floatformat:"2" }}</b></td>
+            <td width="1%"> </td>
+            <td align="right" width="7%"><b>{{ itemsubtot.subtotparcela|floatformat:"2" }}</b></td>
+            <td width="1%"> </td>
+            <td align="right" width="7%"><b>{{ itemsubtot.subtotacres|floatformat:"2" }}</b></td>
+            <td width="1%"> </td>
+            <td align="right" width="7%"><b>{{ itemsubtot.subtotdesc|floatformat:"2" }}</b></td>
+            <td width="1%"> </td>
+            <td align="right" width="7%"><b>{{ itemsubtot.subtotpago|floatformat:"2" }}</b></td>
+        </b></tr>
+        </table>
+    {% endfor %}
+</body>
+</html>

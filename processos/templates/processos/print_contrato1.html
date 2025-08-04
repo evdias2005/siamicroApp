@@ -1,0 +1,276 @@
+{% load static %}
+
+{% block content %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 20pt; height: 90t; font-weight: bold; font-size: 14pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 110pt; height: 660pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 760pt; height: 70pt; font-size: 10pt;
+        }
+</style>
+</head>
+<body>
+    <div id="header_content">
+<!--        <img src="/home/evdias/Projects/microcredito2/static/media/logoPMCG.png" width="210" height="70">-->
+        <br>
+        {{ linhalogo1 }}<br>
+        {{ linhalogo2 }}<br>
+        {{ linhalogo3 }}<br>
+        <p align="right"><b>Protocolo Nº {{ processo.numprotocolo }}</b></p>
+        <hr size="0.5">
+        <br>
+    </div>
+    <div id="footer_content">
+        <hr size="0.5">
+        <p align="center">
+            Rua Coronel Ponciano de Azeredo Furtado,47 | Pq. Santo Amaro | Campos dos Goytacazes/RJ<br><br>
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <br>
+    <table>
+        <tr>
+            <td></td><td><h2 align="justify">CONTRATO DE ABERTURA DE CRÉDITO QUE ENTRE SI CELEBRAM  <b>{% if processo.clientepf %}
+            O FINANCIADO {{ processo.clientepf.nome }} {% else %} A EMPRESA {{ processo.clientepj.razaosocial }} {% endif %}</b>
+            E O <b>MUNICÍPIO DE CAMPOS DOS GOYTACAZES (RJ)</b>, POR INTERMÉDIO DO FUNDO DE DESENVOLVIMENTO DE CAMPOS - FUNDECAM,
+            TENDO COMO AGENTE FINANCEIRO O BANCO DO BRASIL S/A, COM RECURSOS DO PROGRAMA MUNICIPAL DE MICROCRÉDITO, CRIADO
+            PELA LEI Nº 8142/2009, NOS TERMOS DO DECRETO Nº 258/2011 - <b>FUNDECAM {{ processo.linhacredito.nome }}.</b></h2></td>
+        </tr>
+    </table>
+    <br>
+    <h2 align="justify">
+    <p>
+        <b>FINANCIADOR: MUNICÍPIO DE CAMPOS DOS GOYTACAZES</b>, inscrito no CNPJ/MF sob o nº 29.116.894/0001-61,
+        com sede à Rua Coronel Ponciano Azevedo Furtado, 47, nesta cidade, neste ato representado pelo
+        <b>FUNDO DE DESENVOLVIMENTO DE CAMPOS DOS GOYTACAZES - FUNDECAM, inscrito no CNPJ sob o nº 21.545.238/0001-72,
+        com sede na Avenida José Alves Azevedo, nº 259, Bairro Centro, CEP: 28025-496, criado pela Lei de nº 7.084/2001
+        alterada pelas Leis nº 8144/2009 e nº 8250/2012, com o objetivo da implantação, ampliação e reforma dos
+        empreendimentos empresariais localizados no município, por meio do seu CONSELHO GESTOR do FUNDECAM, instituído
+        por meio do Decreto n.º 262 de 20 de Novembro de 2001, que tem por seu atual representante o presidente
+        {{ parametro.representanteconselho }} criada pelo Prefeito Municipal, {{ parametro.representantegoverno}}
+    <p>
+        <u><b>AGENTE FINANCEIRO:</b></u> {{ parametro.agentefinanceiro }}
+    </p>
+    <p>
+        {% if processo.clientepf %}
+        FINANCIADO: Sr(a) <b>{{ processo.clientepf.nome }}</b>, {{ processo.clientepf.nacionalidade }},
+        {{ processo.clientepf.estadocivil|default_if_none:"" }}, {{ processo.clientepf.profissao|default_if_none:"" }},
+        residente à {{ processo.clientepf.logradouro }} - {{ processo.clientepf.numimovel }}, {{ processo.clientepf.bairro }},
+        {{ processo.clientepf.cidade }} - CEP: {{ processo.clientepf.cep }}, RG: {{ processo.clientepf.numrg }} -
+        {{ processo.clientepf.orgexpedicao|default_if_none:"" }}, CPF: {{ processo.clientepf.numcpf }} e CNPJ:
+        {{ processo.empresa.numcnpj|default_if_none:"" }}
+        {% else %}
+        FINANCIADO: <b>{{ processo.clientepj.razaosocial }}</b> inscrita no Cadastro Nacional de Pessoa Jurídica sob o n°
+        {{ processo.clientepj.numcnpj }} com sede à {{ processo.clientepj.logradouro }} - {{ processo.clientepj.numimovel }},
+        {{ processo.clientepj.bairro }}, {{ processo.clientepj.cidade }} - CEP: {{ processo.clientepj.cep }}, neste ato
+        representado por seu(s) sócio(s) administrador(es),
+        {% for socio in socios %}
+            o(a) Sr.(a) {{ socio.socio.nome }}, {{ socio.socio.nacionalidade }},
+            {{ socio.socio.estadocivil|default_if_none:"" }}, {{ socio.socio.profissao|default_if_none:"" }},
+            residente à {{ socio.socio.logradouro }} - {{ socio.socio.numimovel }}, {{ socio.socio.bairro }},
+            {{ socio.socio.cidade }} - CEP: {{ socio.socio.cep }}, RG: {{ socio.socio.numrg }} -
+            {{ socio.socio.orgexpedicao|default_if_none:"" }}, CPF: {{ socio.socio.numcpf|default_if_none:"" }};
+        {% endfor %}
+        {% endif %}
+    </p>
+    <p>1. PREÂMBULO</p>
+    <p>I. FINANCIADOR: Município de Campos dos Goytacazes, CNPJ sob o nº 29.116.894/0001/61, por meio do Fundo de
+        Desenvolvimento de Campos dos Goytacazes/RJ - FUNDECAM, CNPJ/MF nº 21.545.238/0001-72;
+    </p>
+    <p>II. FINANCIADO: <b>{% if processo.clientepf %} {{ processo.clientepf.nome }} {% else %}
+        {{ processo.clientepj.razaosocial }} {% endif %}</b>, qualificado acima;
+    </p>
+    <p>III. VALOR DO CRÉDITO E FORMA DE UTILIZAÇÃO: R$ {{ valortotal_aprovado }} ({{ valortotal_extenso }})
+        para {{ processo.finalidadecredito }}, para utilização em parcela única;
+    </p>
+    <p>IV. ENCARGOS FINANCEIROS: {{ processo.linhacredito.textotxcontrato }}
+    </p>
+    <p>V. PRAZOS E FORMA DE PAGAMENTO: prazo de {{ prazoaprovado }} ({{ prazoextenso }}) meses e
+        pagamento em {{ prazoaprovado }} ({{ prazoextenso }}) prestações mensais iguais e consecutivas no valor de R$
+        {{ valorparcela }} ({{ parcelaextenso }}), acrescidas dos encargos dispostos neste instrumento, por boleto bancário;
+    </p>
+    <p>VI. GARANTIAS: Fiança do(s) Sr.(s): {% for avalista in avalistas %}
+                                           {{ avalista.avalista.nome }}, {{ avalista.avalista.nacionalidade|default_if_none:"" }},
+                                           {{ avalista.avalista.estadocivil|default_if_none:"" }},
+                                           {{ avalista.avalista.profissao|default_if_none:"" }}, residente à
+                                           {{ avalista.avalista.logradouro }} - n° {{ avalista.avalista.numimovel|default_if_none:"" }} - ,
+                                           {{ avalista.avalista.complemento|default_if_none:"" }},
+                                           {{ avalista.avalista.bairro|default_if_none:"" }}, {{ avalista.avalista.cidade }} - CEP: {{ avalista.avalista.cep }},
+                                           RG: {{ avalista.avalista.numrg|default_if_none:"" }}, CPF: {{ avalista.avalista.numcpf }};
+                                           {% endfor %}
+    </p>
+    <p>VII. AGENTE FINANCEIRO: Banco do Brasil S/A, Agência Campos dos Goytacazes (RJ);</p>
+    <p>VIII. CONTA E AGÊNCIA DA FINANCIADA: {{ processo.banco.nome }},
+        {% if processo.tipconta == '1' %} C/CORRENTE PF
+        {% elif processo.tipconta == '2' %} C/POUPANÇA PF
+        {% elif processo.tipconta == '3' %} C/CORRENTE PJ
+        {% else %} C/POUPANÇA PJ
+        {% endif %} Nº {{ processo.conta }} - Agência: {{ processo.agencia }}.
+    </p>
+    <p>2. FINALIDADE E FORMA DE UTILIZAÇÃO DO CRÉDITO</p>
+    {% if processo.porquedonegocio %} O crédito aberto destina-se a {{ processo.porquedonegocio }} {% endif %}<br>
+    O valor do crédito ora aberto e aceito pelo(a) FINANCIADO(A) será transferido pelo BANCO DO BRASIL S.A., por solicitação
+    e autorização do FUNDECAM, destinado única e exclusivamente, ao empréstimo/financiamento de:<br>
+
+    <b>a) Investimento Fixo no valor de R$ {{ valorfixo_aprovado }} ({{ valorfixo_extenso }})</b> - preferencialmente diretamente ao fornecedor,
+       mediante a apresentação da Nota Fiscal ou na conta corrente/pessoa jurídica do(a) financiado(a) devendo comprovar
+       a aplicação fornecendo a documentação pertinente;<br>
+    <b>b) Investimento de Giro no valor de R$ {{ valorgiro_aprovado }} ({{ valorgiro_extenso }})</b> - diretamente na conta corrente/ pessoa jurídica
+       do(a) financiado(a), fornecendo a documentação necessária.
+
+    <p>3. ENCARGOS FINANCEIROS E DEMAIS ACESSÓRIOS</p>
+    Sobre o empréstimo/financiamento ora concedido, serão devidos juros à taxa efetiva mensal indicada neste instrumento,
+    debitados, capitalizados e exigidos mensalmente inclusive durante o período de carência, ao fim do qual o saldo
+    devedor apurado servirá de base para cálculo das parcelas de amortização, de acordo com o Sistema Price.
+    <p>4. ENCARGOS POR INADIMPLEMENTO</p>
+    Ocorrendo o inadimplemento de qualquer obrigação contratual ou legal que determine o vencimento antecipado da dívida,
+    assim como no caso de atraso no pagamento da obrigação em seu vencimento, a dívida ficará sujeita, desde o inadimplemento
+    e até o seu efetivo pagamento, aos encargos financeiros adicionais a seguir, em substituição aos encargos básicos
+    pactuados: juros de mora de 1%(hum por cento) ao mês, incidentes sobre o saldo devedor diário
+    atualizado, mais multa convencional de 2%(dois por cento) sobre o valor do saldo devedor atualizado.<br>
+    a) Serão de responsabilidade do financiado e serão incluídos no saldo devedor, todas as tarifas/valores necessários
+    à manutenção de título vencido, à baixa e emissão de novo documento de pagamento, independente das sanções
+    previstas na presente cláusula.
+    <p>5. DAS GARANTIAS E DA RENÚNCIA AO BENEFÍCIO DE ORDEM</p>
+    Comparece e assina o presente instrumento, o(a) FIADOR(A),qualificado(s) no preâmbulo, anuindo expressamente ao
+    pactuado no tocante ao cumprimento de todas as obrigações assumidas, principal,encargos pactuados, multas, impostos,
+    custas, honorários advocatícios,etc., renunciando desde já ao benefício de ordem constante do artigo 827 do Código
+    Civil.
+    <p>6. REFORÇO DE GARANTIA</p>
+    O CONSELHO GESTOR poderá, a qualquer tempo, exigir reforço de garantia em qualquer caso em que se torne necessária a
+    medida, devendo a CONTRATANTE conceder esse reforço, no prazo em que for solicitado, sob pena de vencimento
+    antecipado de todo o contrato, independentemente de interpelação ou notificação judicial ou extrajudicial.
+    <p>7. PROCURAÇÃO</p>
+    Constitui-se o(a) CONTRATANTE e o (a) FIADOR(A) mutuamente procuradores, com recíprocos e especiais poderes, irrevogáveis
+    e irretratáveis para receber citação, uns em nomes de outros, em caso de eventual ação oriunda deste instrumento,
+    podendo,ainda, receber intimações, bem como todos e quaisquer atos processuais que se tornem necessários para o
+    normal e regular andamento do processo competente.
+    <p>8. DO DESEMBOLSO</p>
+    O(A) contratado(a) fica ciente de que o desembolso dos recursos por parte do AGENTE FINANCEIRO, nomeado no item VII
+    do preâmbulo, está na dependência da sua efetiva liberação pelo COMITÊ DE MICROCRÉDITO e CONSELHO GESTOR, estando,
+    pois, o AGENTE FINANCEIRO, isento de qualquer responsabilidade pelo descumprimento dos respectivos cronogramas.
+    <p>9. DO VENCIMENTO EXTRAORDINÁRIO</p>
+    O(A) CONTRATANTE declara-se ciente que na falta de cumprimento de qualquer das obrigações por ele assumidas não só
+    neste título, como em outros instrumentos que porventura tenha firmado ou venha firmar com a Prefeitura do Município
+    de Campos dos Goytacazes, ou no caso de recuperação judicial ou falência, ou, ainda, pela ocorrência de quaisquer
+    dos casos de antecipação legal do vencimento, poderá a Prefeitura do Município de Campos dos Goytacazes considerar
+    vencidas, de pleno direito, as operações de crédito existentes se exigir o total da dívida delas resultante,
+    independentemente de aviso ou interpelação judicial ou extrajudicial.<br><br>
+    Parágrafo Único: Caso o(a) FINANCIADO(A), durante a vigência do financiamento, venha a transferir seu domicílio
+    comercial ou instalações para outro município, o FINANCIADOR considerará a dívida vencida extraordinariamente,
+    exigindo sua imediata liquidação.
+    <p>10. CLÁUSULA ESPECIAL</p>
+    A falta de cumprimento de quaisquer das obrigações do(a) CONTRATANTE, assumidas não só neste instrumento, como em
+    outro que porventura tenha firmado ou venha firmar com o COMITÊ DE MICROCRÉDITO e CONSELHO GESTOR, por intermédio
+    do AGENTE FINANCEIRO, ou ainda, pela ocorrência de qualquer fato que justifique a antecipação legal do vencimento,
+    poderá o CONSELHO GESTOR considerar vencidos de pleno direito, os contratos de crédito existentes e exigir o total
+    da dívida deles resultantes, independentemente de aviso extrajudicial ou interpelação judicial. Será passível também,
+    de vencimento extraordinário do contrato, com a imediata sustação de qualquer desembolso e a consequente exigibilidade
+    do crédito, se for comprovada a aplicação dos recursos do financiamento em finalidade diversa da prevista no preâmbulo.
+    <p>11. OUTRAS CONDIÇÕES E OBRIGAÇÕES</p>
+    a) Os pagamentos serão efetuados, preferencialmente, através de Boleto Bancário, podendo, em casos especiais, ser
+    realizado na Agência do BANCO DO BRASIL S.A. acima indicada, através de crédito na conta corrente a ser fornecida
+    pelo FUNDECAM.<br>
+    b) O saldo apurado na operação será considerado como líquido e certo, para efeito de cobrança judicial ou extrajudicial,
+    após a discriminação de todos os valores, entre eles os créditos, débitos, taxas, índices, juros, atualização monetária
+    e outros encargos financeiros previstos neste instrumento.<br>
+    c) As pessoas que assinam o presente instrumento representando o(a) CONTRATANTE e/ou o(a) FIADOR(A), declaram sob as
+    penas da lei, assumindo todas as responsabilidades de caráter civil e criminal decorrentes, que se encontram
+    investidas dos competentes poderes de ordem legal e societária para tanto, motivo pelo qual assegurarão, em qualquer
+    hipótese, a veracidade da presente declaração.<br>
+    d) Em caso de cobrança em processo contencioso ou não, judicial ou administrativo, incidirá o percentual de 10%
+    (dez por cento) sobre o principal e acessórios do débito, a título de honorários advocatícios.<br>
+    e) Sem prejuízo do vencimento deste instrumento, poderá o mesmo ser declarado rescindido pelo CONSELHO GESTOR do
+    FUNDECAM, sendo exigível de imediato o saldo devedor, juros, comissão, demais encargos financeiros e tudo o mais que
+    for devido, independentemente de qualquer aviso, interpelação judicial ou extrajudicial, em caso de falta de pagamento
+    do principal e encargos financeiros ajustados, ou qualquer outro inadimplemento que a critério do Conselho Gestor ou
+    do Comitê de Crédito coloque em risco a segurança do seu crédito.<br>
+    f) Na hipótese de inadimplemento, o (a) FINANCIADO e o(a) FIADOR(A) autorizam neste ato o FUNDECAM, após prévia e
+    expressa notificação, a divulgar e encaminhar documentos relativos a presente operação e informações inclusive
+    cadastrais, aos cadastros restritivos do Serviço de Proteção ao Crédito, após e inscrevê-los na Dívida Ativa em até
+    180 (cento e oitenta) dias após os vencimentos, para efeito de cobrança judicial ou extrajudicial.<br>
+    g) A movimentação dos recursos originários de operações de crédito disponibilizados pelo BANCO DO BRASIL S.A. ao(à)
+    CONTRATANTE em sua conta de depósito, segue as regras estabelecidas no instrumento que regulamenta a abertura e a
+    manutenção de contas de depósito, inclusive no que se refere a agendamento de transferência de recursos através dos
+    mecanismos que o BANCO DO BRASIL S.A. disponibilizar ao(à) CONTRATANTE, assim como através de cheques, cujas regras
+    e limites também estarão contidas no citado instrumento.<br>
+    h) O(A) CONTRATANTE e o(a) FIADOR(A) declaram ter lido previamente o presente instrumento e tendo conhecimento sobre
+    todas as cláusulas e condições, declaram que receberam uma via deste instrumento.<br>
+    i) Obrigam-se o (a) CONTRATANTE e o (a) FIADOR(A) a manterem atualizados os seus endereços, ficando cientes que o
+    não cumprimento desta cláusula eximirá o FUNDECAM quanto a responsabilidade pelo envio de eventuais correspondências
+    a eles dirigidas.
+    <br>
+    <p>12. DA PRESTAÇÃO DE CONTAS</p>
+    Deverá o financiado apresentar, no prazp de 30 dias após a liberação do crédito, as notas fiscais dos produtos
+    adquiridos, sob pena de, não o fazendo, ser considerado irregular o contrato e, de consequência, ser declarado o seu
+    vencimento antecipado.
+    <br>
+    <p>13. FORO</p>
+    O foro competente para dirimir quaisquer dúvidas ou questões que se originem do presente instrumento será o de Campos
+    dos Goytacazes-RJ. E por estarem assim justos e contratados, firmam o presente instrumento em 03(três) vias de igual
+    teor e para um só efeito, na presença de 02(duas) testemunhas.
+    <br>
+    <br><br>
+    Campos dos Goytacazes (RJ), {{ emissao|date }}. <br><br><br>
+
+    ___________________________________________________________________<br>
+    FINANCIADOR:Prefeitura Municipal de Campos dos Goytacazes
+    <br>
+    <br>
+    ___________________________________________________________________<br>
+    FINANCIADO: {% if processo.clientepf %}
+                       {{ processo.clientepf.nome }}<br>
+                       CPF: {{ processo.clientepf.numcpf }}<br>
+                {% else %}
+                       {{ processo.clientepj.razaosocial }}<br>
+                       CNPJ: {{ processo.clientepj.numcnpj }}<br>
+                {% endif %}
+    <br>
+    <br>
+        {% for i in avalistas %}
+            ___________________________________________________________________<br>
+            FIADOR(A): {{ i.avalista.nome }}<br>
+            CPF: {{ i.avalista.numcpf }}<br>
+        <br>
+            {% if i.avalista.conjuge %}
+                ___________________________________________________________________<br>
+                CÔNJUGE DO FIADOR(A): {{ i.avalista.conjuge }}<br>
+                CPF: {{ i.avalista.cpfconjuge }}<br>
+            {% endif %}
+        <br>
+        {% endfor %}
+
+    ___________________________________________________________________<br>
+    AGENTE FINANCEIRO<br>
+    Banco do Brasil S.A. - Agência Campos dos Goytacazes<br>
+    <br>
+    <br>
+
+    TESTEMUNHAS
+    <br>
+    <br>
+        _______________________________________________________________________<br>
+        {{ parametro.testemunha1 }}
+    <br>
+    <br>
+    <br>
+        _______________________________________________________________________<br>
+        {{ processo.criado_por.first_name }} {{ processo.criado_por.last_name }}
+    <br>
+    <br>
+</h2>
+
+</body>
+</html>
+
+{% endblock %}

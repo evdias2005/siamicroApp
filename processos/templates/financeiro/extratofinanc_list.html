@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+
+{% block title %} Extrato Financeiro {% endblock title %}
+
+
+{% block content %}
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        Extrato Financeiro do Cliente
+    </div>
+    <div class="row" style="color: black; font-style: bold; font-size: 1rem;">
+        <div class="col-md-11">Processo Nº {{ processo_numprocesso }} | Cliente: {{ processo_cliente }}
+        </div>
+    </div>
+    <hr>
+    <table class="table table-striped table-bordered" style="width:100%" id="tabela-listar">
+
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="5%"><small>Id</small></th>
+                <th width="5%"><small>Pc</small></th>
+                <th width="15%"><small>Origem</small></th>
+                <th width="5%"><small>Emissão</small></th>
+                <th width="10%"><small>Vlr.Parcela</small></th>
+                <th width="5%"><small>Vencimento</small></th>
+                <th width="10%"><small>Vlr.Pago</small></th>
+                <th width="35%"><small>Status</small></th>
+                <th width="10%"><small>Ações</small></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for parcela in object_list %}
+            <tr>
+                <td class="align-middle"><small> {{ parcela.id }} </small></td>
+                <td class="align-middle"><small> {{ parcela.numparcela }} </small></td>
+                <td class="align-middle"><small> {% if parcela.negociacao_id %} Negoc.n°: {{ parcela.negociacao_id }}
+                    {% else %} Parecer n°: {{ parcela.parecer_id }} {% endif %} </small></td>
+                <td class="align-middle"><small> {{ parcela.dtemissao|date:"SHORT_DATE_FORMAT" }} </small></td>
+                <td class="align-middle"><small> {{ parcela.valorparcela }} </small></td>
+                <td class="align-middle"><small> {{ parcela.dtvencimento|date:"SHORT_DATE_FORMAT" }} </small></td>
+                <td class="align-middle"><small> {{ parcela.valorpago }} </small></td>
+                <td class="align-middle">
+                    {% if parcela.status == 'A' %}
+                        {% if parcela.dtvencimento|date:"Y-m-d" < parcela.data_dia|date:"Y-m-d"  %}
+                            <i class="fa fa-exclamation-triangle fa-1x" style="color:red"></i><small> Em aberto há {{ parcela.dias_atraso }} dias.</small>
+                        {% else %}
+                            <small>Em aberto (a vencer)</small>
+                        {% endif %}
+                    {% endif %}
+                    {% if parcela.status == 'C' %}
+                        <small>Cancelado em {{ parcela.data_edicao|date:"SHORT_DATE_FORMAT"}} </small>
+                    {% endif %}
+                    {% if parcela.status == 'P' %}
+                        {% if parcela.valoracres == 0 and parcela.valordesc == 0 %}
+                            <small>Pago em {{ parcela.dtpagamento|date:"SHORT_DATE_FORMAT"}}. </small>
+                        {% endif %}
+                        {% if parcela.valoracres > 0 and parcela.valordesc > 0 %}
+                            <small>Pago em {{ parcela.dtpagamento|date:"SHORT_DATE_FORMAT"}} c/ acrescimo de {{ parcela.valoracres }} e desconto de {{ parcela.valordesc }}. </small>
+                        {% endif %}
+                        {% if parcela.valoracres > 0 and parcela.valordesc == 0 %}
+                            <small>Pago em {{ parcela.dtpagamento|date:"SHORT_DATE_FORMAT"}} c/ acrescimo de {{ parcela.valoracres }}. </small>
+                        {% endif %}
+                        {% if parcela.valoracres == 0 and parcela.valordesc > 0 %}
+                            <small>Pago em {{ parcela.dtpagamento|date:"SHORT_DATE_FORMAT"}} c/ desconto de {{ parcela.valordesc }}. </small>
+                        {% endif %}
+                    {% endif %}
+                    {% if parcela.status == 'N' %}
+                        <small>Parcela negociada.</small>
+                    {% endif %}
+                </td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if parcela.status == 'A' %}
+                            {% if perms.processos.down_titulo %}
+                                <a href="{% url 'edit-processofaturado' parcela.id %}" class="btn ghost-gray" title="Realizar o recebimento da parcela"><i class="fa fa-money fa-fw fa-1x"></i></a>
+                            {% endif %}
+                            {% if perms.processos.delete_titulo %}
+                                <a href="{% url 'cancel-processofaturado' parcela.id %}" class="btn ghost-red" title="Realizar o cancelamento da parcela"><i class="fa fa-ban fa-fw fa-1x"></i></a>
+                            {% endif %}
+                        {% endif %}
+                        {% if parcela.status == 'P' %}
+                           {% if perms.processos.reverse_titulo %}
+                               <a href="{% url 'estorn-processofaturado' parcela.id %}" class="btn ghost-green" title="Realizar o estorno da parcela"><i class="fa fa-undo fa-fw fa-1x"></i></a>
+                           {% endif %}
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+<!--                <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>-->
+            {% endfor %}
+        </tbody>
+        <tfoot class="tfoot-inverse align-middle">
+            <tr>
+                <th width="5%"></th>
+                <th width="5%"></th>
+                <th width="15%"><small><b>Totais:</b></small></th>
+                <th width="5%"></th>
+                <th width="10%"><small><b>{{ valor_total|floatformat:"2" }}</b></small></th>
+                <th width="5%"></th>
+                <th width="10%"><small><b>{{ valor_pago|floatformat:"2" }}</b></small></th>
+                <th width="35%"><small><b>Em aberto: {{ valor_aberto|floatformat:"2" }}</b></small></th>
+                <th width="10%"></th>
+            </tr>
+        </tfoot>
+    </table>
+    <hr>
+
+        <br>
+        <div class="align-middle">
+            <a href="{% url 'print-extratofatura' processo_id %}" class="btn ghost-yellow">Imprime</a>
+            <a href="{% url 'processofaturado-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+
+    {% block scripts %}
+    <script>
+        $(document).ready(function(){
+            $("#tabela-listar").DataTable({
+                responsive: true,
+                "pageLength": 10,
+                "language": {
+                    "search": "Procurar:",
+                    "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                    "infoFiltered": " (filtrado de _MAX_ registros no total)",
+                    "lengthMenu": "Mostrar _MENU_ registros",
+                    "paginate": {
+                        "first": "<<",
+                        "last": ">>",
+                        "next": ">",
+                        "previous": "<"
+                    },
+                    "zeroRecords": "Não foram encontrados registros!!!",
+                    "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                }
+            });
+        });
+    </script>
+    {% endblock %}
+
+{% endblock content %}

@@ -1,0 +1,148 @@
+<html xmlns="http://www.w3.org/1999/html">
+
+{% load static %}
+
+{% block content %}
+
+<head>
+    <style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 20pt; height: 90t; font-size: 14pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 100pt; height: 650pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 770pt; height: 60pt; font-size: 10pt;
+        }
+</style>
+</head>
+<body>
+    <div id="header_content">
+        <img src="{% static 'media/logoPMCG.png' %}" style="width: 100px; height: 100px;">
+        <br>
+        {{ linhalogo1}}<br>
+        {{ linhalogo2 }}<br>
+        {{ linhalogo3 }}<br>
+        <hr size="0.5">
+    </div>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <h1 align="center">PARECER FINAL - Processo: {{ parecer.processo.numprocesso }} </h1>
+    <hr size="0.5">
+    <h2>
+    <p align="center">DADOS DO FINANCIAMENTO</p>
+    <p>
+        Cliente: <b>{% if parecer.processo.clientepf %} {{ parecer.processo.clientepf.nome }} | Idade:
+        {{ idadecliente }} ano(s)  {% else %} {{ parecer.processo.clientepj.razaosocial}} | Tempo: {{ idadecliente }} ano(s) {% endif %}</b>
+    </p>
+    <b>
+        1. Parecer do Agente de Crédito
+    </b>
+    <br>
+        <p align="justify"> {{ parecer.pareceragente }} </p>
+    <b>
+        2. Condições do Financiamento Sugerido
+    </b>
+    <br>
+    Valor Investimento Fixo: R$ {{ parecer.valorfixo_aprovado }}
+    <br>
+    Valor Capital de Giro: R$ {{ parecer.valorgiro_aprovado }}
+    <br>
+    Taxa de juros mensal: {{ parecer.taxasugerida|floatformat:"4" }}%
+    <br>
+    Número de parcelas: {{ parecer.prazosugerido }} | Qtde máxima: {{ parecer.processo.linhacredito.nmaxparcelas }}
+    <br>
+    Valor das parcelas: R$ {{ parecer.valorparc_sugerido }}
+    <br>
+    <hr size="0.5">
+
+    <p align="center">AUTORIZAÇÃO DE FINANCIAMENTO - CRÉDITO APROVADO</p>
+    <p>3. Condições do Financiamento Aprovado</p>
+    <br>
+    Valor Investimento Fixo: R$ {{ parecer.valorfixo_aprovado }}
+    <br>
+    Valor Capital de Giro: R$ {{ parecer.valorgiro_aprovado }}
+    <br>
+    Taxa de juros mensal: {{ parecer.taxaaprovada|floatformat:"4" }}%
+        <br>
+    Número de parcelas: {{ parecer.prazoaprovado }} | Qtde máxima: {{ parecer.processo.linhacredito.nmaxparcelas }}
+    <br>
+    Valor das parcelas: R$ {{ parecer.valorparcela }}
+
+    <hr size="0.5">
+    <p align="center">OUTRAS INFORMAÇÕES SOBRE O NEGÓCIO</p>
+    <b>4. Por que e pra que precisa do crédito?</b>
+    <br>
+        <p align="justify"> {{ parecer.processo.porquedonegocio|default_if_none:"" }} </p>
+    <b>5. Apresentação do negócio</b>
+    <br>
+        <p align="justify"> {{ parecer.processo.sobreonegocio|default_if_none:"" }} </p>
+    <b>6. Evolução do negócio/Experiência</b>
+    <br>
+        <p align="justify"> {{ parecer.processo.evolucaonegocio|default_if_none:"" }} </p>
+    <br><b>7. Depósito</b><br>
+    Nome/Empresa: {% if parecer.processo.clientepf %} {{ parecer.processo.clientepf.nome }} - CPF: {{ parecer.processo.clientepf.numcpf}}
+                  {% else %} {{ parecer.processo.clientepj }} - CNPJ: {{ parecer.processo.clientepj.numcnpj }}
+                  {% endif %}<br>
+    Conta: {{ parecer.processo.banco }} | Agência: {{ parecer.processo.agencia }} | N° da Conta: {{ parecer.processo.conta }}<br><br>
+    Crédito Negado (Motivo): <h1>{% if parecer.is_negado %} {{ parecer.motivonegativa }}</h1>
+                                 {% else %} ***************************************************************
+                                 {% endif %}<br>
+
+    <hr size="0.5">
+    <p align="center">INFORMAÇÕES COMPLEMENTARES PARA CONTRATAÇÃO</p>
+    <b>8. Outros Dados do Negócio</b>
+    <br>
+    Setor de Negócio: {{ parecer.processo.empresa.setornegocio }} | Porte: {{ parecer.processo.empresa.nome_porte }}
+    <br>
+    Nº de Beneficiados: {{ parecer.processo.numbeneficiados }} | N° de Funcionários: {{ parecer.processo.numfuncionarios }} |
+    Expectativa de Novas Ocupações: {{ parecer.processo.expecocupacoes }}
+    <br>
+    Ramo de Atividade: {{ parecer.processo.empresa.ramoatividade|default_if_none:"---" }} | Bairro: {{ parecer.processo.empresa.bairro|default_if_none:"---" }}<br><br>
+    <b>9. Rendimentos do Tomador e sua Família</b>
+    <br>
+    Renda Líquida Mensal do Negócio: R$ {{ parecer.processo.valorrendanegoc }}<br>
+    Renda Familiar Mensal: R$ {{ parecer.processo.clientepf.rendaliqempresa }} | Renda Líquida Mensal de Outras Fontes:
+    R$ {{ parecer.processo.clientepf.rendaalugueis }} | Renda Líquida Total Mensal: R$ {{ parecer.processo.clientepf.rendaliqtotal }} <br>
+    Data do L.S.E.: {{ parecer.data_criacao|date:"SHORT_DATE_FORMAT" }}<br>
+    <br>
+    <br>
+    <br>
+    Campos dos Goytacazes (RJ), {{ parecer.dtcomite|date }}. <br><br><br>
+
+    __________________________________________________________________________________<br>
+    Gerente de Crédito: {{ gerentecredito }}
+    <br>
+    <br>
+    __________________________________________________________________________________<br>
+    Agente de Crédito: {{ parecer.processo.criado_por.first_name }} {{ parecer.processo.criado_por.last_name }}<br>
+    <br>
+    <br>
+    Assinatura dos Membros do Comitê
+    <br>
+    <br>
+    <br>
+    __________________________________________________________________________________<br>
+    <br>
+    <br>
+    __________________________________________________________________________________<br>
+    <br>
+    <br>
+    __________________________________________________________________________________<br>
+    <br>
+    <br>
+    </h2>
+</body>
+</html>
+
+{% endblock %}

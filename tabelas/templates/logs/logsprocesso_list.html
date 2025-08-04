@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} Processos
+{% endblock title %}
+
+
+{% block content %}
+    
+    <div class="row" style="color: #4682B4; font-style: bold; font-size: 1.5rem;">
+        <div class="col-md-8">Logs Tabela de Processo</div>
+    </div>
+    <hr>
+
+    <table class="table table-striped table-bordered" style="width:100%" id="tabela-listar">
+
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="10%"><small><b>Data</b></small></th>
+                <th width="3%"><small><b>Tipo</b></small></th>
+                <th width="5%"><small><b>User</b></small></th>
+                <th width="30%"><small><b>Processo</b></small></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for i in logs %}
+            <tr>
+                <td class="align-middle"><small>{{ i.history_date }} </small></td>
+                <td class="align-middle"><small>{{ i.history_type }} </small></td>
+                <td class="align-middle"><small>{{ i.history_user.first_name }} </small></td>
+                <td class="align-left"><small>{{ i.numprocesso }}</small></td>
+            </tr>
+            {% empty %}
+<!--                <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>-->
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $("#tabela-listar").DataTable({
+            responsive: true,
+            "pageLength": 25,
+            "language": {
+                "search": "Procurar:",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": " (filtrado de _MAX_ registros no total)",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "<<",
+                    "last": ">>",
+                    "next": ">",
+                    "previous": "<"
+                },
+                "zeroRecords": "Não foram encontrados registros!!!",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            }
+        });
+    });
+</script>
+
+{% endblock %}
+
+{% endblock content %}

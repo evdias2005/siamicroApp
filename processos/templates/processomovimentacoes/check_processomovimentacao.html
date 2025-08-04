@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block title %} Checa/Recebe Movimentação do Processo {% endblock title %}
+
+
+{% block content %}
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <fieldset class="form-group">
+            <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">Checa/Recebe Movimentação</div> <hr> <br>
+            <h5 style="color:black;">Tem certeza que deseja checar a movimentação {{ object.origem }} -> {{ object.destino }} do processo {{ object.processo }} ?</h5>
+        </fieldset>
+
+        <div class="form-group">
+            <button type="submit" class="btn ghost-red">Sim, Checa</button>
+            <a href="{% url 'processosmov-list' %}" class="btn ghost-button">Cancela</a>
+        </div>
+        
+    </form>
+
+{% endblock content %}

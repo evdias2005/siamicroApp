@@ -1,0 +1,723 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} Home {% endblock title %}
+
+{% block content %}
+
+    <meta http-equiv="refresh" content="180">
+
+    <div style="color:#4682B4; font-style: bold; font-size: 2rem; border-bottom: 1px solid #fff">Bem-vindo, {{ request.user.username }}</div>
+    <hr>
+
+    <div style="position: relative;">
+        <div id="slide-container">
+            <h6 align="left">Informações relativas ao exercício de <b>{{exercicio}}</b> para o dia <b>{{data_atual}}</b>, atualização a cada 60 seg.</h6>
+
+        <!-- Botões de navegação -->
+        <div style="text-align:right; margin-top: 10px;">
+            <button onclick="prevSlide()" class="btn btn-secondary"><small>← Anterior</small></button>
+            <button onclick="nextSlide()" class="btn btn-primary"><small>Próximo →</small></button>
+        </div>
+
+            <div class="slide active" id="slide1">
+                <br>
+                <div id="container1" class="chart-container">
+                    <canvas id="bar-graph1"></canvas>
+                </div>
+            </div>
+
+            <div class="slide" id="slide2">
+                <br>
+                <div id="container2" class="chart-container">
+                    <canvas id="bar-graph2"></canvas>
+                </div>
+            </div>
+
+            <div class="slide" id="slide3">
+                <br>
+                <div id="container3" class="chart-container">
+                    <canvas id="bar-graph3"></canvas>
+                </div>
+            </div>
+
+            <div class="slide" id="slide4">
+                <br>
+                <div id="container4" class="chart-container">
+                    <canvas id="bar-graph4"></canvas>
+                </div>
+            </div>
+
+            <div class="slide" id="slide5">
+                <br>
+                <div id="container5" class="chart-container">
+                    <canvas id="bar-graph5"></canvas>
+                </div>
+            </div>
+
+            <div class="slide" id="slide6">
+                <br>
+                <div id="container6" class="chart-container">
+                    <canvas id="bar-graph6"></canvas>
+                </div>
+            </div>
+
+            <div class="slide" id="slide7">
+                <br>
+                <div id="container7" class="chart-container">
+                    <canvas id="bar-graph7"></canvas>
+                </div>
+            </div>
+
+            <div class="slide" id="slide8">
+                <br>
+                <div id="container8" class="chart-container">
+                    <canvas id="bar-graph8"></canvas>
+                </div>
+            </div>
+
+            <div class="slide" id="slide9">
+                <br>
+                <div id="container9" class="chart-container">
+                    <canvas id="bar-graph9"></canvas>
+                </div>
+            </div>
+
+            <div class="slide" id="slide10">
+                <br>
+                <div id="container10" class="chart-container">
+                    <canvas id="bar-graph10"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <hr>
+    <br>
+    <div class="row">
+        <div class="col-md-2">
+            <a href="{% url 'pessoasfisicas-list' %}" class="btn ghost-steelblue btn-lg btn-block btn-huge">
+                <h2>{{quantidade_cadastro.pessoasfisicas}}</h2>Clientes/Avalistas<br>cadastrados</a>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'pessoasjuridicas-list' %}" class="btn ghost-steelblue btn-lg btn-block btn-huge">
+                <h2>{{quantidade_cadastro.pessoasjuridicas}}</h2>Pessoas Jurídicas<br>cadastradas</a>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'processos-list' %}" class="btn ghost-steelblue btn-lg btn-block btn-huge">
+                <h2>{{quantidade_cadastro.processos}}</h2>Processos cadastrados<br>
+                sendo {{quantidade_cadastro.processos_em_andamento}} em andamento</a>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'processofaturado-list' %}" class="btn ghost-steelblue btn-lg btn-block btn-huge">
+                <h2>{{quantidade_cadastro.titulos}}</h2>Títulos<br>gerados</a>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'processosmov-list' %}" class="btn ghost-steelblue btn-lg btn-block btn-huge">
+                <h2>...</h2>Movimentação de<br>Processos</a>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'relatorios' %}" class="btn ghost-steelblue btn-lg btn-block btn-huge">
+                <h2>...</h2>Relatórios do<br>Sistema</a>
+        </div>
+    </div>
+    <br>
+    {% if processos_pendentes %}
+        <hr>
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{% url 'processospendentes-list' %}" class="btn ghost-steelblue btn-lg btn-block btn-huge">
+                <h5> Processos Pendentes</h5>
+                <h6>{{processos_pendentes}}</h6></a>
+            </div>
+        </div>
+        <br>
+        <hr>
+    {% endif %}
+
+    <!-- Loading Chart JS -->
+<!--    <script src="{% static 'js/Chart.min.js' %}"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>-->
+    <!-- Chart.js versão 4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+    <!-- Plugin compatível com Chart.js 4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <script>
+        //configuration for the bar graph
+        var barConfig1 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(70, 130, 180, 0.4)'
+                    ],
+                data: {{ data1|safe }},
+                }],
+                labels: {{ labels1|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Distribuição dos Processos (Qtde) no Exercício Atual', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+        var barConfig2 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(255, 205, 86, 0.4)',
+                      'rgba(75, 192, 192, 0.4)',
+                      'rgba(54, 162, 235, 0.4)',
+                      'rgba(255, 99, 132, 0.4)',
+                      'rgba(255, 159, 64, 0.4)',
+                      'rgba(153, 102, 255, 0.4)',
+                      'rgba(201, 203, 207, 0.4)'
+                    ],
+<!--                borderColor: [-->
+<!--                  'rgb(255, 205, 86)',-->
+<!--                  'rgb(75, 192, 192)',-->
+<!--                  'rgb(54, 162, 235)',-->
+<!--                  'rgb(255, 99, 132)',-->
+<!--                  'rgb(255, 159, 64)',-->
+<!--                  'rgb(153, 102, 255)',-->
+<!--                  'rgb(201, 203, 207)'-->
+<!--                ],-->
+<!--                borderWidth: 2,-->
+                data: {{ data2|safe }},
+                }],
+                labels: {{ labels2|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Distribuição dos Processos (Qtde) por Agente', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+        var barConfig3 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(255, 99, 132, 0.4)',
+                      'rgba(255, 159, 64, 0.4)',
+                      'rgba(255, 205, 86, 0.4)',
+                      'rgba(75, 192, 192, 0.4)',
+                      'rgba(54, 162, 235, 0.4)',
+                      'rgba(153, 102, 255, 0.4)',
+                      'rgba(201, 203, 207, 0.4)'
+                    ],
+                data: {{ data4|safe }},
+                }],
+                labels: {{ labels4|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Processos por Linha de Crédito (Qtde)', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+        var barConfig4 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(153, 102, 255, 0.4)',
+                      'rgba(201, 203, 207, 0.4)',
+                      'rgba(255, 99, 132, 0.4)',
+                      'rgba(255, 159, 64, 0.4)',
+                      'rgba(255, 205, 86, 0.4)',
+                      'rgba(75, 192, 192, 0.4)',
+                      'rgba(54, 162, 235, 0.4)'
+                    ],
+                data: {{ data5|safe }},
+                }],
+                labels: {{ labels5|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Processos por Finalidade (Qtde)', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+        var barConfig5 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(153, 102, 255, 0.4)',
+                      'rgba(201, 203, 207, 0.4)',
+                      'rgba(255, 99, 132, 0.4)',
+                      'rgba(255, 159, 64, 0.4)',
+                      'rgba(255, 205, 86, 0.4)',
+                      'rgba(75, 192, 192, 0.4)',
+                      'rgba(54, 162, 235, 0.4)'
+                    ],
+                data: {{ data6|safe }},
+                }],
+                labels: {{ labels6|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Processos por Linha de Crédito (R$)', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+        var barConfig6 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(153, 102, 255, 0.4)',
+                      'rgba(201, 203, 207, 0.4)',
+                      'rgba(255, 99, 132, 0.26',
+                      'rgba(255, 159, 64, 0.4)',
+                      'rgba(255, 205, 86, 0.4)',
+                      'rgba(75, 192, 192, 0.4)',
+                      'rgba(54, 162, 235, 0.4)'
+                    ],
+                data: {{ data7|safe }},
+                }],
+                labels: {{ labels7|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Processos por Finalidade (R$)', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+<!-- Gráfico de Barras da distribuição dos processos (R$) por Agente-->
+        var barConfig7 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(153, 102, 255, 0.4)',
+                      'rgba(201, 203, 207, 0.4)',
+                      'rgba(255, 99, 132, 0.4)',
+                      'rgba(255, 159, 64, 0.4)',
+                      'rgba(255, 205, 86, 0.4)',
+                      'rgba(75, 192, 192, 0.4)',
+                      'rgba(54, 162, 235, 0.4)'
+                    ],
+                data: {{ data8|safe }},
+                }],
+                labels: {{ labels8|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Processos por Agente (R$)', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+<!-- Gráfico de Barras da distribuição dos processos (Qtde) nos anos-->
+        var barConfig8 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(70, 130, 180, 0.4)'
+                    ],
+                data: {{ data9|safe }},
+                }],
+                labels: {{ labels9|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Distribuição dos Processos (Qtde) nos Anos', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+<!-- Gráfico de Barras da distribuição dos processos (Qtde) por Segmento de Negócio-->
+        var barConfig9 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(255, 99, 132, 0.4)',
+                      'rgba(255, 159, 64, 0.4)',
+                      'rgba(255, 205, 86, 0.4)',
+                      'rgba(75, 192, 192, 0.4)',
+                      'rgba(54, 162, 235, 0.4)',
+                      'rgba(153, 102, 255, 0.4)',
+                      'rgba(201, 203, 207, 0.4)'
+                    ],
+                data: {{ data10|safe }},
+                }],
+                labels: {{ labels10|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Processos por Segmento de Negócio (Qtde)', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+
+<!-- Gráfico de Barras da distribuição dos processos (R$) por Segmento de Negócio-->
+        var barConfig10 = {
+            type: 'bar',
+            data: {
+                datasets: [{
+                backgroundColor: [
+                      'rgba(255, 99, 132, 0.4)',
+                      'rgba(255, 159, 64, 0.4)',
+                      'rgba(255, 205, 86, 0.4)',
+                      'rgba(75, 192, 192, 0.4)',
+                      'rgba(54, 162, 235, 0.4)',
+                      'rgba(153, 102, 255, 0.4)',
+                      'rgba(201, 203, 207, 0.4)'
+                    ],
+                data: {{ data11|safe }},
+                }],
+                labels: {{ labels11|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ['Processos por Segmento de Negócio (R$)', ''], // Quebra de linha
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 20, // Espaçamento acima do título
+                            bottom: 20 // Espaçamento abaixo do título
+                        }
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                        anchor: 'center',       <!-- "end" mostra no topo -->
+                        align: 'center',
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: function(value) {
+                            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+
+
+        //runs all charts on loading the webpage
+        window.onload = function() {
+            var ctx1 = document.getElementById('bar-graph1').getContext('2d');
+            window.BarProcesso = new Chart(ctx1, barConfig1);
+
+            var ctx2 = document.getElementById('bar-graph2').getContext('2d');
+            window.BarProcesso = new Chart(ctx2, barConfig2);
+
+            var ctx3 = document.getElementById('bar-graph3').getContext('2d');
+            window.BarProcesso = new Chart(ctx3, barConfig3);
+
+            var ctx4 = document.getElementById('bar-graph4').getContext('2d');
+            window.BarProcesso = new Chart(ctx4, barConfig4);
+
+            var ctx5 = document.getElementById('bar-graph5').getContext('2d');
+            window.BarProcesso = new Chart(ctx5, barConfig5);
+
+            var ctx6 = document.getElementById('bar-graph6').getContext('2d');
+            window.BarProcesso = new Chart(ctx6, barConfig6);
+
+            var ctx7 = document.getElementById('bar-graph7').getContext('2d');
+            window.BarProcesso = new Chart(ctx7, barConfig7);
+
+            var ctx8 = document.getElementById('bar-graph8').getContext('2d');
+            window.BarProcesso = new Chart(ctx8, barConfig8);
+
+            var ctx9 = document.getElementById('bar-graph9').getContext('2d');
+            window.BarProcesso = new Chart(ctx9, barConfig9);
+
+            var ctx10 = document.getElementById('bar-graph10').getContext('2d');
+            window.BarProcesso = new Chart(ctx10, barConfig10);
+        };
+
+    </script>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 10;
+
+        function showSlide(index) {
+            for (let i = 1; i <= totalSlides; i++) {
+                document.getElementById('slide' + i).classList.remove('active');
+            }
+            document.getElementById('slide' + index).classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide % totalSlides) + 1;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 2 + totalSlides) % totalSlides + 1;
+            showSlide(currentSlide);
+        }
+    </script>
+
+{% endblock content %}

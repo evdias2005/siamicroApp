@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block title %} Gera Parcelas do Financiamento {% endblock title %}
+
+
+{% block content %}
+                
+    <form method="post">
+        
+        {% csrf_token %}
+
+        <fieldset class="form-group">
+            <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">Gera Parcelas do Financiamento</div> <hr><br>
+            <h5 style="color:black;">Tem certeza que deseja gerar as parcelas de financiamento do Processo "{{ object.numprocesso }}"?</h5>
+            <br>
+            <h6>Cliente: {% if object.clientepf %}
+                             {{ object.clientepf }}
+                         {% else %}
+                             {{ object.clientepj }}
+                         {% endif %}
+            </h6>
+            <h6>Negócio: {{ object.empresa }}</h6>
+            <br>
+        </fieldset>
+
+        <div class="form-group">  
+            <button type="submit" class="btn ghost-green" onclick="msgconfirmacao()"><small>Sim, Gera</small></button>
+            <a href="{% url 'processofaturar-list' %}" class="btn ghost-button"><small>Cancela</small></a>
+        </div>
+        
+    </form>
+
+<script>
+    function msgconfirmacao() {
+        alert ("O processo de geração das parecelas negociadas será iniciado... Aguarde o término!");
+    }
+</script>
+
+{% endblock content %}

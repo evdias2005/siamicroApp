@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+
+{% block title %} {{title}} {% endblock title %}
+
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">{{title}}</div> <hr>
+    
+    <form method="post">
+    
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        {{ form.referencia.errors }}
+        {{ form.dtfechamento.errors }}
+        {{ form.fechado_por.errors }}
+        {{ form.observacao.errors }}
+
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.referencia.id_for_label }}">Referência:</label>
+                {{ form.referencia }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.dtfechamento.id_for_label }}">Data Fechamento:</label>
+                {{ form.dtfechamento }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.fechado_por.id_for_label }}">Fechado por:</label>
+                {{ form.fechado_por }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-10">
+                <label for="{{ form.observacao.id_for_label }}">Observação:</label>
+                {{ form.observacao }}
+            </div>
+        </div>
+
+        <br>
+        <br>
+
+        <div class="align-middle">
+            {% if not fechamento.is_deleted %}
+                {% if perms.tabelas.change_fechamento %}
+            <button type="submit" class="btn ghost-green"><small><b>{{ savebtn }}</b></small></button>
+                {% endif %}
+                {% if title == "Novo Fechamento" %}
+                    <button type="reset" class="btn ghost-blue"><small><b>Limpa</b></small></button>
+                {% endif %}
+                {% if delbtn %}
+                    {% if perms.tabelas.delete_fechamento %}
+                        <a href="{% url 'delete-fechamento' fechamento.pk %}" class="btn ghost-red"><small><b>Apaga</b></small></a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'fechamentos-list' %}" class="btn ghost-button"><small><b>Retorna</b></small></a>
+        </div>
+
+        
+    </form>
+
+
+{% endblock content %}

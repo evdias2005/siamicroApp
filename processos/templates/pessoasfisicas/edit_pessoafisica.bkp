@@ -1,0 +1,501 @@
+<!doctype html>
+
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+{% include "../cabecalho.html" %}
+
+    <form method="post" id="edit_PFForm" data-bairros-url="{% url 'ajax_load_bairros' %}" novalidate>
+    
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.nome.errors }}
+        {{ form.tipo.errors }}
+        {{ form.situacao.errors }}
+        {{ form.dtnascimento.errors }}
+        {{ form.sexo.errors }}
+        {{ form.profissao.errors }}
+        {{ form.estadocivil.errors }}
+        {{ form.escolaridade.errors }}
+        {{ form.regimebens.errors }}
+        {{ form.numfilhos.errors }}
+        {{ form.numdependentes.errors }}
+        {{ form.nomepai.errors }}
+        {{ form.nomemae.errors }}
+        {{ form.numcpf.errors }}
+        {{ form.numrg.errors }}
+        {{ form.ufexpedrg.errors }}
+        {{ form.orgexpedrg.errors }}
+        {{ form.tipoutrodoc.errors }}
+        {{ form.numoutrodoc.errors }}
+        {{ form.ufoutrodoc.errors }}
+        {{ form.orgexpoutrodoc.errors }}
+        {{ form.dtemisoutrodoc.errors }}
+        {{ form.conjuge.errors }}
+        {{ form.cpfconjuge.errors }}
+        {{ form.naturalidade.errors }}
+        {{ form.nacionalidade.errors }}
+        {{ form.telfixo.errors }}
+        {{ form.telcelular1.errors }}
+        {{ form.telcelular2.errors }}
+        {{ form.logradouro.errors }}
+        {{ form.nrimovel.errors }}
+        {{ form.complemento.erros }}
+        {{ form.bairro.errors }}
+        {{ form.cidade.errors }}
+        {{ form.cep.errors }}
+        {{ form.email.errors }}
+        {{ form.is_residpropria.errors }}
+        {{ form.temporesidencia.errors }}
+        {{ form.rendaempresa.errors }}
+        {{ form.dtadmissempresa.errors }}
+        {{ form.rendaliqempresa.errors }}
+        {{ form.cargoempresa.errors }}
+        {{ form.numbeneficio.errors }}
+        {{ form.rendaalugueis.errors }}
+        {{ form.rendaliqtotal.errors }}
+        {{ form.observacao.errors }}
+        {{ form.pontoreferencia.errors }}
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="{{ form.nome.id_for_label }}">Nome:<span style="color: red;">*</span></label>
+                    {{ form.nome }}
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="{{ form.tipo.id_for_label }}">Tipo:<span style="color: red;">*</span></label>
+                    {{ form.tipo }}
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="{{ form.situacao.id_for_label }}">Situação:<span style="color: red;">*</span></label>
+                    {{ form.situacao }}
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#dados_pessoais">Dados Pessoais</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#historico_processos">Histórico Processos</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#ficha_financeira">Ficha Financeira</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="dados_pessoais"><br>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.numcpf.id_for_label }}">No.CPF:<span style="color: red;">*</span></label>
+                            {{ form.numcpf }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.dtnascimento.id_for_label }}">Dt.Nascimento:<span style="color: red;">*</span></label>
+                            {{ form.dtnascimento }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.numrg.id_for_label }}">No.RG:<span style="color: red;">*</span></label>
+                            {{ form.numrg }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.orgexpedrg.id_for_label }}">Expedido por:</label>
+                            {{ form.orgexpedrg }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.ufexpedrg.id_for_label }}">UF:</label>
+                            {{ form.ufexpedrg }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.naturalidade.id_for_label }}">Naturalidade:</label>
+                            {{ form.naturalidade }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.nacionalidade.id_for_label }}">Nacionalidade:</label>
+                            {{ form.nacionalidade }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.profissao.id_for_label }}">Profissão:</label>
+                            {{ form.profissao }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.escolaridade.id_for_label }}">Escolaridade:<span style="color: red;">*</span></label>
+                            {{ form.escolaridade }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.estadocivil.id_for_label }}">Estado Civil:<span style="color: red;">*</span></label>
+                            {{ form.estadocivil }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.regimebens.id_for_label }}">Regime Bens:<span style="color: red;">*</span></label>
+                            {{ form.regimebens }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.conjuge.id_for_label }}">Nome do Cônjuge:</label>
+                            {{ form.conjuge }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.cpfconjuge.id_for_label }}">CPF do Cônjuge:</label>
+                            {{ form.cpfconjuge }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.numfilhos.id_for_label }}">N° Filhos:</label>
+                            {{ form.numfilhos }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.numdependentes.id_for_label }}">Nº Dep:</label>
+                            {{ form.numdependentes }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.sexo.id_for_label }}">Sexo:</label>
+                            <small>{{ form.sexo }}</small>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.nomepai.id_for_label }}">Nome Pai:</label>
+                            {{ form.nomepai }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.nomemae.id_for_label }}">Nome Mãe:<span style="color: red;">*</span></label>
+                            {{ form.nomemae }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.tipoutrodoc.id_for_label }}">Outro Doc. - Tipo:</label>
+                            {{ form.tipoutrodoc }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.numoutrodoc.id_for_label }}">Número:</label>
+                            {{ form.numoutrodoc }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.dtemisoutrodoc.id_for_label }}">Data Exped.:</label>
+                            {{ form.dtemisoutrodoc }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.orgexpoutrodoc.id_for_label }}">Expedido por:</label>
+                            {{ form.orgexpoutrodoc }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.ufoutrodoc.id_for_label }}">UF:</label>
+                            {{ form.ufoutrodoc }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="{{ form.observacao.id_for_label }}">Observação:</label>
+                            {{ form.observacao }}
+                        </div>
+                    </div>
+                    <br>
+                    <p><b>ENDEREÇO / CONTATO</b></p>
+                    <div class="form-row">
+                        <div class="form-group col-md-1 align-middle">
+                            <label for="{{ form.is_residpropria.id_for_label }}">Imóvel Próprio:</label><br>
+                            {{ form.is_residpropria }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.temporesidencia.id_for_label }}"><small>Tempo Resid.(anos):</small></label>
+                            {{ form.temporesidencia }}
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="{{ form.logradouro.id_for_label }}">Logradouro:<span style="color: red;">*</span></label>
+                            {{ form.logradouro }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.numimovel.id_for_label }}">Nº:</label>
+                            {{ form.numimovel }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.complemento.id_for_label }}">Complemento:</label>
+                            {{ form.complemento }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.bairro.id_for_label }}">Bairro:</label>
+                            {{ form.bairro }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.cidade.id_for_label }}">Cidade:<span style="color: red;">*</span></label>
+                            {{ form.cidade }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.cep.id_for_label }}">CEP:<span style="color: red;">*</span></label>
+                            <input type="text" id="id_cep" onblur="find_cep()" {{ form.cep }}/>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.telfixo.id_for_label }}">Tel Fixo:</label>
+                            {{ form.telfixo }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.telcelular1.id_for_label }}">Tel Celular1:<span style="color: red;">*</span></label>
+                            {{ form.telcelular1 }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.telcelular2.id_for_label }}">Tel Celular2:</label>
+                            {{ form.telcelular2 }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.email.id_for_label }}">Email:</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="{{ form.pontoreferencia.id_for_label }}">Ponto de Referência (informações que facilitem
+                                o acesso ao local do negócio/residência):</label>
+                            {{ form.pontoreferencia }}
+                        </div>
+                    </div>
+                    <br>
+                    <p><b>FONTE DE RENDA FORMAL DA PESSOA</b></p>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.rendaempresa.id_for_label }}">Nome da Empresa:</label><br>
+                            {{ form.rendaempresa }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.cargoempresa.id_for_label }}">Cargo:</label>
+                            {{ form.cargoempresa }}
+                        </div>
+                        <div class="form-group col-md-1.5">
+                            <label for="{{ form.dtadmissempresa.id_for_label }}">Dt.Admissão:</label>
+                            {{ form.dtadmissempresa }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.rendaliqempresa.id_for_label }}">Renda Líquida:</label><br>
+                            {{ form.rendaliqempresa }}
+                        </div>
+                        <div class="form-group col-md-1.5">
+                            <label for="{{ form.numbeneficio.id_for_label }}">N° Benefício:</label>
+                            {{ form.numbeneficio }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.rendaalugueis.id_for_label }}">Renda Aluguéis:</label>
+                            {{ form.rendaalugueis }}
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="{{ form.rendaliqtotal.id_for_label }}">Renda Liq.Total:</label>
+                            {{ form.rendaliqtotal }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                    </div>
+                    <hr>
+                    <div class="align-middle">
+                        {% if not pessoafisica.is_deleted %}
+                            {% if perms.processos.change_pessoafisica %}
+                        <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+                            {% endif %}
+                            {% if title == "Nova P.Física" %}
+                                <button type="reset" class="btn ghost-blue">Limpa</button>
+                            {% endif %}
+                            {% if delbtn %}
+                                {% if perms.processos.delete_pessoafisica %}
+                                    <a href="{% url 'delete-pessoafisica' pessoafisica.pk %}" class="btn ghost-red">Apaga</a>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                        <a href="{% url 'pessoasfisicas-list' %}" class="btn ghost-button">Retorna</a>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="historico_processos"><br>
+                    <table class="table table-striped">
+                        <thead class="align-middle">
+                            <tr>
+                                <th width="5%"><small><b>Id</b></small></th>
+                                <th width="5%"><small><b>Processo</b></small></th>
+                                <th width="30%"><small><b>Empresa/Negócio</b></small></th>
+                                <th width="5%"><small><b>Data</b></small></th>
+                                <th width="10%"><small><b>Linha Crédito</b></small></th>
+                                <th width="15%"><small><b>Agente</b></small></th>
+                                <th width="15%"><small><b>Status</b></small></th>
+                                <th width="10%"><small><b>Ações</b></small></th>
+                            </tr>
+                        </thead>
+                        {% if qsprocessos %}
+                            <tbody>
+                                {% for processo in qsprocessos %}
+                                    <tr>
+                                        <td class="align-middle"><small>{{ processo.id }}</small></td>
+                                        <td class="align-middle"><small><b>{{ processo.numprocesso }}</b></small></td>
+                                        <td class="align-middle"><small>{{ processo.empresa.razaosocial }}</small></td>
+                                        <td class="align-middle"><small>{{ processo.dtprocesso|date:"SHORT_DATE_FORMAT" }}</small></td>
+                                        <td class="align-middle"><small>{{ processo.linhacredito }}</small></td>
+                                        <td class="align-middle"><small>{{ processo.criado_por.first_name }}</small></td>
+                                        <td class="align-middle"><small>{{ processo.texto_status }}</small></td>
+                                        <td class="align-middle">
+                                            <div class="align-middle">
+                                                {% if perms.processos.view_processo %}
+                                                    <a href="{% url 'edit-processopf' processo.pk %}" class="btn ghost-blue"><i class="fa fa-search fa-fw fa-1x"></i></a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        {% endif %}
+                        {% if qsprocessosava %}
+                            <tbody>
+                                {% for r in qsprocessosava %}
+                                    <tr>
+                                        <td class="align-middle"><small>{{ r.processo.id }}</small></td>
+                                        <td class="align-middle"><small><b>{{ r.processo.numprocesso }}</b></small></td>
+                                        <td class="align-middle"><small>{{ r.processo.empresa.razaosocial }}</small></td>
+                                        <td class="align-middle"><small>{{ r.processo.dtprocesso|date:"SHORT_DATE_FORMAT" }}</small></td>
+                                        <td class="align-middle"><small>{{ r.processo.linhacredito }}</small></td>
+                                        <td class="align-middle"><small>{{ r.processo.criado_por.first_name }}</small></td>
+                                        <td class="align-middle"><small>{{ r.processo.texto_status }}</small></td>
+                                        <td class="align-middle">
+                                            <div class="align-middle">
+                                                {% if perms.processos.view_processo %}
+                                                    <a href="{% url 'edit-processopf' r.processo.id %}" class="btn ghost-blue"><i class="fa fa-search fa-fw fa-1x"></i></a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        {% endif %}
+                    </table>
+                    <br>
+                    <div class="align-middle">
+                        {% if perms.processos.add_processo %}
+                            <a class="btn ghost-blue" href="{% url 'new-processopf' %}"><i class="fa fa-plus-square fa-fw fa-1x"></i>
+                            <small>Processo</small>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="ficha_financeira"><br>
+                    <table class="table table-striped">
+                        <thead class="align-middle">
+                            <tr>
+                                <th width="5%"><small><b>Id</b></small></th>
+                                <th width="8%"><small><b>Processo</b></small></th>
+                                <th width="5%"><small><b>Parcela</b></small></th>
+                                <th width="8%"><small><b>Valor</b></small></th>
+                                <th width="8%"><small><b>Dt.Venc.</b></small></th>
+                                <th width="8%"><small><b>Vlr.Pago</b></small></th>
+                                <th width="8%"><small><b>Juros</b></small></th>
+                                <th width="8%"><small><b>Multa</b></small></th>
+                                <th width="42%"><small><b>Situação</b></small></th>
+                            </tr>
+                        </thead>
+                        {% if qstitulos %}
+                            <tbody>
+                                {% for titulo in qstitulos %}
+                                    <tr>
+                                        <td class="align-middle"><small>{{ titulo.id }}</small></td>
+                                        <td class="align-middle"> <small><b>{{ titulo.processo.numprocesso }}</b></small></td>
+                                        <td class="align-middle"> <small>{{ titulo.numparcela }}</small></td>
+                                        <td class="align-middle"><small>{{ titulo.valorparcela }}</small></td>
+                                        <td class="align-middle"><small>{{ titulo.dtvencimento|date:"SHORT_DATE_FORMAT" }}</small></td>
+                                        <td class="align-middle"><small>{{ titulo.valorpago }}</small></td>
+                                        <td class="align-middle"><small>{{ titulo.valorjuros }}</small></td>
+                                        <td class="align-middle"><small>{{ titulo.valormulta }}</small></td>
+                                        <td class="align-middle">
+                                            {% if titulo.status == 'A' %}
+                                                {% if titulo.dtvencimento|date:"Y-m-d" < titulo.data_dia|date:"Y-m-d"  %}
+                                                    <i class="fa fa-exclamation-triangle fa-1x" style="color:red"></i><small> Em aberto há {{ titulo.dias_atraso }} dias.</small>
+                                                {% else %}
+                                                    <small>Em aberto (a vencer)</small>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if titulo.status == 'C' %}
+                                                <small>Cancelado em {{ titulo.data_edicao|date:"SHORT_DATE_FORMAT"}} </small>
+                                            {% endif %}
+                                            {% if titulo.status == 'P' %}
+                                                <small>Pago em {{ titulo.dtpagamento|date:"SHORT_DATE_FORMAT"}} c/ acrescimo de {{ titulo.valoracres }} e desconto de {{ titulo.valordesc }}. </small>
+                                            {% endif %}
+                                            {% if titulo.status == 'N' %}
+                                                <small>{{ titulo.observacao }} </small>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        <tfoot class="tfoot-inverse align-middle">
+                            <tr>
+                                <th width="5%"></th>
+                                <th width="8%"></th>
+                                <th width="5%"><small><b></b></small></th>
+                                <th width="8%"><small><b>{{ valor_total|floatformat:"2" }}</b></small></th>
+                                <th width="8%"><small><b></b></small></th>
+                                <th width="8%"><small><b>{{ valor_pago|floatformat:"2" }}</b></small></th>
+                                <th width="8%"><small><b></b></small></th>
+                                <th width="8%"><small><b></b></small></th>
+                                <th width="42%"><small><b>Em aberto: {{ valor_aberto|floatformat:"2" }}</b></small></th>
+                            </tr>
+                        </tfoot>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+    </form>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script>
+    var $j = jQuery.noConflict();  // Usa uma variável diferente para o jQuery
+    $j("#id_cidade").change(function () {
+        var url = $("#edit_PFForm").attr("data-bairros-url");
+        var cidadeId = $(this).val();
+        $j.ajax({
+            url: url,
+            data: {
+                'cidade': cidadeId
+            },
+            success: function (data) {
+                $("#id_bairro").html(data);
+            }
+        });
+    });
+</script>
+
+<script>
+    var $j = jQuery.noConflict();  // Usa uma variável diferente para o jQuery
+
+    function find_cep() {
+        var numcep = document.getElementById("id_cep").value;
+        numcep = numcep.replace("-", "");  // Remove o hífen do CEP
+
+        $j.ajax({
+            url: "/processos/consultar-cep/",
+            data: {
+                'cep': numcep
+            },
+            success: function(data){
+                if (!data.error) {
+                    alert ("\nDados para o CEP: " + data.cep + "\n\nLogradouro: "
+                    + data.logradouro.toUpperCase() + "\n\Complemento: " +  data.complemento.toUpperCase()
+                    + "\nBairro: " + data.bairro.toUpperCase() +  "\nCidade/UF: " + data.localidade.toUpperCase() + "/" + data.uf);
+                } else {
+                    alert("CEP não encontrado!");
+                }
+            },
+            error: function(){
+                alert("Erro ao consultar o CEP. Tente novamente.");
+            }
+        });
+    }
+</script>
+
+{% include "../rodape.html" %}
+
+{% endblock content %}
+
+

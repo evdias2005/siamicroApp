@@ -1,0 +1,80 @@
+{% load static %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 landscape;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 750pt; top: 30pt; height: 120pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 750pt; top: 150pt; height: 370pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 750pt; top: 530pt; height: 60pt; font-size: 8pt;
+        }
+    }
+</style>
+<div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+    <p align="center"><b><<< RELATÓRIO DE LIBERAÇÃO DE VALORES >>></b></p>
+    <hr size="0.5">
+    <table>
+         <tr>
+            <td width="3%"><b>#</b></td>
+            <td width="40%"><b>Cliente</b></td>
+            <td width="7%"><b>Processo</b></td>
+            <td width="7%"><b>Agente</b></td>
+            <td width="7%" align="center"><b>Valor (R$) Liberado</b></td>
+            <td width="8%" align="right"><b>Parcela (R$)</b></td>
+            <td width="4%" align="right"><b>Prazo</b></td>
+            <td width="8%" align="center"><b>Dt.Comitê</b></td>
+            <td width="8%" align="center"><b>1ºVencto.</b></td>
+            <td width="8%" align="center"><b>Data Liberação</b></td>
+         </tr>
+    </table>
+    <hr size="0.5">
+</div>
+</head>
+
+<body>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <table>
+        {% for r in qs %}
+            <tr>
+                <td width="3%">{{ forloop.counter  }} </td>
+                {% if r.processo.clientepf %}
+                    <td width="40%"><b>{{ r.processo.clientepf.nome }} - CPF: {{ r.processo.clientepf.numcpf }}</b></td>
+                {% else %}
+                    <td width="40%"><b>{{ r.processo.clientepj.razaosocial }} - CNPJ: {{ r.processo.clientepj.numcnpj }}</b></td>
+                {% endif %}
+                <td width="7%">{{ r.processo.numprocesso }} </td>
+                <td width="7%">{{ r.processo.criado_por.first_name }} </td>
+                <td width="7%" align="right">{{ r.vlrtotalaprovado }} </td>
+                <td width="8%" align="right">{{ r.valorparcela }} </td>
+                <td width="4%" align="right">{{ r.prazoaprovado }} </td>
+                <td width="8%" align="center">{{ r.dtcomite|date:"SHORT_DATE_FORMAT" }} </td>
+                <td width="8%" align="center">{{ r.dtprivencto|date:"SHORT_DATE_FORMAT" }} </td>
+                <td width="8%" align="center">{{ r.dtliberacao|date:"SHORT_DATE_FORMAT" }} </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <hr size="0.5">
+    <table>
+        <tr>
+            <td width="3%"><small> </small></td>
+            <td width="30%"><b>Total Liberado: R$ {{ totalliberado }}</b></td>
+        </tr>
+    </table>
+    <hr size="0.5">
+</body>
+</html>

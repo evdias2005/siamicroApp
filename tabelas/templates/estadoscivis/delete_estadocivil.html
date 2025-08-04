@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+
+{% block title %} Apagar Estado Civil {% endblock title %}
+
+
+{% block content %}
+                
+    <form method="post">
+        
+        {% csrf_token %}
+        
+        <fieldset class="form-group">
+            <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">Apaga Estado Civil</div> <hr><br>
+            <h4 style="color:black;">Tem certeza que deseja apagar o Estado Civil "{{ object.nome }}"?</h4>
+        </fieldset>
+
+        <br>
+
+        <div class="form-group">  
+            <button type="submit" class="btn ghost-red">Sim, Apaga</button>
+            <a href="{% url 'estadoscivis-list' %}" class="btn ghost-button">Cancela</a>
+        </div>
+        
+    </form>
+
+{% endblock content %}

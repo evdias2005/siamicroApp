@@ -1,0 +1,91 @@
+{% load static %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 landscape;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 750pt; top: 30pt; height: 120pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 750pt; top: 140pt; height: 400pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 750pt; top: 530pt; height: 60pt; font-size: 8pt;
+        }
+    }
+</style>
+<div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+    <p align="center"><b><<< RELATÓRIO DOS DADOS CADASTRAIS DOS CLIENTES >>></b></p>
+    <hr size="0.5">
+    <table>
+         <tr><b>
+            <td width="20%">Cliente</td>
+            <td width="10%">CPF/CNPJ</td>
+            <td width="40%">Endereço</td>
+            <td width="15%">Banco</td>
+            <td width="5%">Agência</td>
+            <td width="5%">Conta</td>
+            <td width="5%">Tipo</td>
+         </b></tr>
+    </table>
+    <hr size="0.5">
+    <br>
+</div>
+</head>
+
+<body>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <table>
+        {% for r in qs %}
+            <tr>
+                {% if r.processo.clientepf %}
+                    {% if r.processo.tipconta == '1' or r.processo.tipconta == '2' %}
+                        <td width="20%"><small><b>{{ r.processo.clientepf.nome }}</b></small></td>
+                        <td width="10%"><small>{{ r.processo.clientepf.numcpf }}</small></td>
+                        <td width="40%"><small>{{ r.processo.clientepf.logradouro }} , {{ r.processo.clientepf.numimovel }}
+                            | {{ r.processo.clientepf.bairro|default_if_none:"" }} | CEP: {{ r.processo.clientepf.cep }}
+                            | {{ r.processo.clientepf.cidade }}</small></td>
+                    {% else %}
+                        <td width="20%"><small><b>{{ r.processo.empresa.razaosocial }}</b></small></td>
+                        <td width="10%"><small>{{ r.processo.empresa.numcnpj }}</small></td>
+                        <td width="40%"><small>{{ r.processo.empresa.logradouro }} , {{ r.processo.empresa.numimovel }}
+                            | {{ r.processo.empresa.bairro|default_if_none:"" }} | CEP: {{ r.processo.empresa.cep }}
+                            | {{ r.processo.empresa.cidade }}</small></td>
+                    {% endif %}
+                {% else %}
+                    <td width="20%"><small><b>{{ r.processo.clientepj.razaosocial }}</b></small></td>
+                    <td width="10%"><small>{{ r.processo.clientepj.numcnpj }}</small></td>
+                    <td width="40%"><small>{{ r.processo.clientepj.logradouro }} , {{ r.processo.clientepj.numimovel }}
+                        | {{ r.processo.clientepj.bairro|default_if_none:"" }} | CEP: {{ r.processo.clientepj.cep }}
+                        | {{ r.processo.clientepj.cidade }}</small></td>
+                {% endif %}
+                <td width="15%"><small>{{ r.processo.banco }} </small></b></td>
+                <td width="5%"><small>{{ r.processo.agencia }} </small></b></td>
+                <td width="5%"><small>{{ r.processo.conta }} </small></b></td>
+                {% if r.processo.tipconta == '1' %}
+                    <td width="5%"><small>C/C.PF</small></b></td>
+                {% elif r.processo.tipconta == '2' %}
+                    <td width="5%"><small>POUP.PF</small></b></td>
+                {% elif r.processo.tipconta == '3' %}
+                    <td width="5%"><small>C/C.PJ</small></b></td>
+                {% elif r.processo.tipconta == '4' %}
+                    <td width="5%"><small>POUP.PJ</small></b></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+<hr size="0.5">
+
+</html>

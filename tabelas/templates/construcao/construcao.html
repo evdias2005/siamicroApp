@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+
+{% block title %} About {% endblock title %}
+
+
+{% block content %}
+    
+    {% if not user.is_authenticated  %}
+        <br>
+        <a href="{% url 'home' %}" class="btn ghost-button">Volta</a>
+    {% endif %}    
+    
+    <div class="align-middle" style="color: #4682B4; font-style: bold; font-size: 3rem;">SIAMICRO</div>
+    <br><br><br>
+
+    <div class="align-middle">
+        <h2 style="color:#4682B4" >| Sistema Integrado de Administração do Microcrédito |<br>
+            <p>
+                <br>
+                <h3>
+                Módulo encontra-se em construção/desenvolvimento.
+                <br>
+                <br>
+
+                Para maiores detalhes contacte o Setor de Desenvolvimento do CIDAC.
+                </h3>
+            </p>
+        </h2>
+    </div>
+
+{% endblock content %}

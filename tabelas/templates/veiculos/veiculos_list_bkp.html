@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+
+{% block title %} Veículos - Bem Garantidor {% endblock title %}
+
+
+{% block content %}
+    
+    <div class="row" style="color: #4682B4; font-style: bold; font-size: 1.5rem;">
+        <div class="col-md-8">Veículos - Bem Garantidor</div>
+        <div class="col-md-4">
+            {% if perms.tabelas.add_veiculo %}
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-veiculo' %}"><i class="fa fa-plus-square fa-fw fa-1x"></i>
+                <small> Veículo</small></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="border-bottom: 1px solid white;"></div>
+
+    <table class="table table-striped">
+
+    <form method="get">
+        <nav class="navbar navbar-light bg-light">
+            <form class="form-inline">
+            {% render_field filter.form.q class="form-control mr-sm-2" type="search" placeholder="Busca pela placa, marca, modelo" aria-label="Search" %}
+            </form>
+        </nav>
+    </form>
+
+        <br>
+
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="3%"><small>Id</small></th>
+                <th width="1%"><small>X</small></th>
+                <th width="1%"><small>V</small></th>
+                <th width="10%"><small>Marca</small></th>
+                <th width="17%"><small>Modelo</small></th>
+                <th width="22%"><small>Cliente</small></th>
+                <th width="5%"><small>Ano Fab</small></th>
+                <th width="5%"><small>Ano Mod</small></th>
+                <th width="24%"><small>Fornecedor</small></th>
+                <th width="7%"><small>Combustível</small></th>
+                <th width="5%"><small>Ações</small></th>
+            </tr>
+        </thead>
+
+    {% if object_list %}
+
+        <tbody>
+            {% for veiculo in object_list %}
+            <tr>
+                <td class="align-middle"> <small>{{ veiculo.id|stringformat:"03d" }} </small></td>
+                <td class="align-middle" title="Indicador que o veículo foi excluído">
+                    <small>{% if veiculo.is_deleted %} <i class="fa fa-ban fa-fw fa-1x" style="color:red"></i>
+                            {% else %}
+                            {% endif %}
+                    </small>
+                </td>
+                <td class="align-middle" title="Indicador que o veículo foi vendido">
+                    <small>{% if veiculo.is_vendido %} <i class="fa fa-check fa-fw fa-1x" style="color:green"></i>
+                            {% else %}
+                            {% endif %}
+                    </small>
+                </td>
+                <td class="align-middle"> <small>{{ veiculo.marca }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.modelo }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.clientepf.nome }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.anofabr }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.anomodelo }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.fornecedor }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.combustivel }} </small></td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if perms.tabelas.view_veiculo %}
+                            <a href="{% url 'edit-veiculo' veiculo.pk %}" class="btn ghost-button"><i class="fa fa-search fa-fw fa-1x"></i></a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+    <div class="align-middle">
+        {% if is_paginated %}
+
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1"><i class="fa fa-fast-backward fa-1x"></i></a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}"><i class="fa fa-backward fa-1x"></i></a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}"><i class="fa fa-forward fa-1x"></i></a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}"><i class="fa fa-fast-forward fa-1x"></i></a>
+            {% endif %}
+
+        {% endif %}
+    </div>
+
+    {% else %}
+
+        <tbody></tbody>   
+
+    <br><br><br><br><br><br><br><br>
+    <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>
+
+    {% endif %}
+
+
+{% endblock content %}

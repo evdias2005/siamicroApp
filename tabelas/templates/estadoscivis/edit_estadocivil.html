@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+
+{% block title %} {{title}} {% endblock title %}
+
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">{{title}}</div>
+    <hr>
+
+    <form method="post">
+    
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        <div class="form-group">
+            {{ form.nome.errors }}
+            <label for="{{ form.nome.id_for_label }}">Nome:</label>
+            {{ form.nome }}
+        </div>
+        <br>
+        <br>
+        <div class="align-middle">
+            {% if not object.is_deleted %}
+                {% if perms.tabelas.change_estadocivil %}
+                    <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+                {% endif %}
+                {% if title == "Novo Estado Civil" %}
+                    <button type="reset" class="btn ghost-blue" >Limpa</button>
+                {% endif %}
+                {% if delbtn %}
+                    {% if perms.tabelas.delete_estadocivil %}
+                        <a href="{% url 'delete-estadocivil' object.pk %}" class="btn ghost-red"> Apaga</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'estadoscivis-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+        
+    </form>
+
+
+{% endblock content %}

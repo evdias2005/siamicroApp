@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} Arquivo de Cobrança - Envio dos Títulos{% endblock title %}
+
+{% block content %}
+<div style="color:#4682B4; font-style: bold; font-size: 2rem; border-bottom: 1px solid white;"
+     xmlns="http://www.w3.org/1999/html">
+        Arquivo de Cobrança - Envio dos Títulos
+    </div>
+    <br>
+    <p><b>Seleção e filtros</b></p>
+    <small>OBS: Este processo destina-se ao envio dos título cujo código do movimento 01 - "Entrada de Títulos". Demais
+        movimentações tais como "Pedido de Baixa", Alteração de Vencimento", Alteração de Nome", dentre outros, deverão
+        ser executados pela plataforma do BB Cobrança.</small>
+    <br>
+    <br>
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.data_ini.id_for_label }}"><small>Data Emissão (Inicial):</small></label>
+                {{ form.data_ini }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.data_fin.id_for_label }}"><small>Data Emissão (Final):</small></label>
+                {{ form.data_fin }}
+            </div>
+            <div class="form-group col-md-1">
+            </div>
+            <div class="form-group col-md-1.5">
+                <button type="submit" name="processar" value="Lista" class="btn ghost-blue"><small><b>Lista</b></small></button>
+            </div>
+            <div class="form-group col-md-1.5">
+                <button type="submit" name="processar" value="Gera" class="btn ghost-yellow"><small><b>Gera Arquivo</b></small></button>
+            </div>
+            <div class="form-group col-md-1.5">
+                <a href="{% url 'home' %}" class="btn ghost-button"><small><b>Retorna</b></small></a>
+            </div>
+        </div>
+    </form>
+    <table class="table table-css">
+        <thead class="thead-inverse align-middle">
+            <tr>
+                <th width="5%">#</th>
+                <th width="30%"><small><b>Cliente</b></small></th>
+                <th width="5%"><small><b>Pc</b></small></th>
+                <th width="5%"><small><b>Emissão</b></small></th>
+                <th width="5%"><small><b>Valor</b></small></th>
+                <th width="5%"><small><b>Vencimento</b></small></th>
+                <th width="5%"><small><b>Status</b></small></th>
+                <th width="5%"><small><b>Envio</b></small></th>
+                <th width="10%"><small><b>Nossonumero</b></small></th>
+                <th width="10%"><small><b>Gravação</b></small></th>
+            </tr>
+        </thead>
+
+    {% if request.POST and qs.exists %}
+
+        <tbody>
+            {% for parcela in qs %}
+            <tr>
+                <td class="align-middle"><small> {{ forloop.counter }} </small></td>
+                {% if parcela.processo.clientepf %}
+                    <td class="align-middle"><small><b> {{ parcela.processo.clientepf.nome }} </b></small></td>
+                {% else %}
+                    <td class="align-middle"><small><b> {{ parcela.processo.clientepj.razaosocial }} </b></small></td>
+                {% endif %}
+                <td class="align-middle"><small> {{ parcela.numparcela }} </small></td>
+                <td class="align-middle"><small> {{ parcela.dtemissao|date:"SHORT_DATE_FORMAT" }} </small></td>
+                <td class="align-middle"><small> {{ parcela.valorparcela }} </small></td>
+                <td class="align-middle"><small> {{ parcela.dtvencimento|date:"SHORT_DATE_FORMAT" }} </small></td>
+                <td class="align-middle"><small> {{ parcela.status }} </small></td>
+                <td class="align-middle"><small> {{ parcela.numenvio }} </small></td>
+                <td class="align-middle"><small> {{ parcela.nossonumero }} </small></td>
+                <td class="align-middle"><small> {{ parcela.dtgravacao|date:"SHORT_DATE_FORMAT" }} </small></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot class="tfoot-inverse align-middle">
+            <tr>
+                <th width="5%">Totais</th>
+                <th width="10%"> >>> </th>
+                <th width="10%">{{ valor_total|floatformat:"2" }}</th>
+                <th width="10%"></th>
+                <th width="10%">{{ valor_pago|floatformat:"2" }}</th>
+                <th width="10%"></th>
+                <th width="20%">Em aberto: {{ valor_aberto|floatformat:"2" }}</th>
+                <th width="25%"></th>
+            </tr>
+        </tfoot>
+
+    </table>
+
+{% else %}
+
+        <tbody></tbody>
+    </table>
+
+    <br><br><br><br><br><br><br><br>
+    <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros com a seleção acima !!!</div>
+
+{% endif %}
+
+{% endblock %}

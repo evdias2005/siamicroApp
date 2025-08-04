@@ -1,0 +1,8 @@
+-- Ajustes de atualização de uma tabela com base no campo de outra tabela, via python
+p1 = Parecer.objects.filter(is_deleted=False, dtcomite__gte='2000-01-01', dtcomite__lte='2023-12-31')
+p2 = Processo.objects.filter(is_deleted=False)
+for i in p2:
+	data_comite = p1.filter(processo_id=i.id).values_list('dtcomite')
+	if data_comite:
+		i.dtprocesso = data_comite
+		i.save()

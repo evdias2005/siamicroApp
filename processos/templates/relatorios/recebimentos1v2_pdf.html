@@ -1,0 +1,89 @@
+{% load static %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 landscape;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 750pt; top: 30pt; height: 100pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 750pt; top: 120pt; height: 400pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 750pt; top: 530pt; height: 60pt; font-size: 8pt;
+        }
+    }
+</style>
+<div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+    <p align="center"><b><<< RELATÓRIO DOS RECEBIMENTOS - CONTABILIDADE (vr.2) >>></b></p>
+</div>
+</head>
+
+<body>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    {% for itemsubtot in qssubtot %}
+        <hr size="0.5">
+        <b>Recebimentos em: {{ itemsubtot.dtpagamento }}</b>
+        <br>
+        <table>
+            <tr>
+            <td width="25%"><b>Cliente</b></td>
+            <td align="right" width="10%"><b>Valor Crédito</b></td>
+            <td align="right" width="10%"><b>Parcela</b></td>
+            <td align="right" width="10%"><b>Juros/Acresc</b></td>
+            <td align="right" width="10%"><b>Total Parcela</b></td>
+            <td align="right" width="10%"><b>Valor Pago</b></td>
+            <td align="center" width="5%"><b>Refer</b></td>
+            <td width="10%"><b>CPF</b></td>
+            <td width="10%"><b>CNPJ</b></td>
+            </tr>
+        </table>
+        <br>
+        {% for item in qs %}
+            {% ifequal itemsubtot.dtpagamento item.dtpagamento %}
+            <table>
+            <tr>
+                <td width="25%">{% if item.processo.clientepf %} {{ item.processo.clientepf.nome }}
+                    {% else %} {{ item.processo.clientepj.razaosocial }} {% endif %}</td>
+                <td align="right" width="10%">
+                    {% if item.parecer_id %}
+                        {{ item.parecer.vlrtotalaprovado|floatformat:2  }}
+                    {% else %}
+                        {{ item.negociacao.vlrtotaloriginal|floatformat:2  }}
+                    {% endif %}
+                </td>
+                <td align="right" width="10%">{{ item.valororiginal|floatformat:2 }}</td>
+                <td align="right" width="10%">{{ item.juros_recebto|floatformat:2 }}</td>
+                <td align="right" width="10%">{{ item.valorparcela|floatformat:2 }}</td>
+                <td align="right" width="10%">{{ item.valorpago }}</td>
+                <td align="center" width="5%">{{ item.numparcela }} / {{ item.parecer.prazoaprovado }}</td>
+                <td width="10%">{{ item.processo.clientepf.numcpf|default_if_none:"" }}</td>
+                <td width="10%">{{ item.processo.empresa.numcnpj|default_if_none:"" }}</td>
+            </tr>
+            </table>
+            {% endifequal %}
+        {% endfor %}
+        <br>
+        <table>
+        <tr><b>
+            <td width="35%"><b>Subtotais >>></b></td>
+            <td align="right" width="10%"><b>{{ itemsubtot.subtotoriginal|floatformat:"2" }}</b></td>
+            <td align="right" width="10%"><b>{{ itemsubtot.subtotjuros_recebto|floatformat:"2" }}</b></td>
+            <td align="right" width="10%"><b>{{ itemsubtot.subtotparcela|floatformat:"2" }}</b></td>
+            <td align="right" width="10%"><b>{{ itemsubtot.subtotpago|floatformat:"2" }}</b></td>
+        </b></tr>
+        </table>
+    {% endfor %}
+</body>
+</html>

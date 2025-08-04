@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        {{title}}
+    </div>
+    <div style="color:black; font-style: bold; font-size: 1rem; border-bottom: 1px solid white;">
+        Processo N° {{ numprocesso }} |
+        Cliente {{ clienteprocesso }} |
+        Status: {% if statusprocesso == 'P' %} Em andamento
+        {% elif statusprocesso == 'A' %} Em andamento - A
+        {% elif statusprocesso  == 'R' %} Em andamento - R
+        {% elif statusprocesso == 'C' %} Cancelado
+        {% elif statusprocesso == '1' %} 1° Parecer
+        {% elif statusprocesso == '2' %} 2° Parecer
+        {% elif statusprocesso == 'F' %} Finalizado
+        {% elif statusprocesso == 'N' %} Negociado
+        {% elif statusprocesso == 'X' %} Negado
+        {% endif %}
+    </div>
+
+    <form method="post">
+
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.numparcela.errors }}
+        {{ form.valorparcela.errors }}
+        {{ form.dtemissao.errors }}
+        {{ form.dtvencimento.errors }}
+        {{ form.dtpagamento.errors }}
+        {{ form.valoracres.errors }}
+        {{ form.valordesc.errors }}
+        {{ form.valorpago.errors }}
+        {{ form.observacao.errors }}
+
+        <hr>
+        <p>
+        <b>Dados da Parcela</b>
+        </p>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.numparcela.id_for_label }}" >N° Parcela:</label>
+                <input type="text" style="background-color:gray;color:white;" {{ form.numparcela }} />
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.dtemissao.id_for_label }}">Data Emissão:</label>
+                <input type="text" style="background-color:gray;color:white;" {{ form.dtemissao }} />
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.dtvencimento.id_for_label }}">Data Vencimento:</label>
+                <input type="text" id="id_dtvencimento" style="background-color:gray;color:white;"{{ form.dtvencimento }} />
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.valorparcela.id_for_label }}">Valor Parcela (R$):</label>
+                <input type="text" id="id_valorparcela" style="background-color:gray;color:white;"{{ form.valorparcela }} />
+            </div>
+        </div>
+        <hr>
+        <p>
+        <b>Dados do Pagamento</b>
+        </p>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.dtpagamento.id_for_label }}">Data do Pagamento:</label>
+                <input type="date" id="id_dtpagamento" onblur="exibealerta()" {{ form.dtpagamento }}/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.valormulta.id_for_label }}">Multa (R$):</label>
+<!--                <input type="text" id="id_valormulta" style="background-color:gray;color:white;"{{ form.valormulta }}/>-->
+                <input type="text" id="id_valormulta" style="background-color:gray;color:white;" {{ form.valormulta }}/>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.valorjuros.id_for_label }}">Juros (R$):</label>
+<!--                <input type="text" id="id_valorjuros" style="background-color:gray;color:white;"{{ form.valorjuros }}/>-->
+                <input type="text" id="id_valorjuros"  style="background-color:gray;color:white;" {{ form.valorjuros }}/>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.valorfinal.id_for_label }}">Valor Final Parcela (R$):</label>
+                <input type="text" id="id_valorfinal" style="background-color:gray;color:white;" {{ form.valorfinal }}/>
+            </div>
+            <div class="form-group col-md-1">
+                <input type="hidden" id="id_percmulta" {{ form.percmulta }}/>
+            </div>
+            <div class="form-group col-md-1">
+                <input type="hidden" id="id_percjuros" {{ form.percjuros }}/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.valoracres.id_for_label }}">Valor Acréscimo (R$):</label>
+                <input type="text" id="id_valoracres" onblur="atualizavalpago()" {{ form.valoracres }}/>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.valordesc.id_for_label }}">Valor Desconto (R$):</label>
+                <input type="text" id="id_valordesc" onblur="atualizavalpago()" {{ form.valordesc }}/>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.valorpago.id_for_label }}">Valor Pago (R$):</label>
+                <input type="text" id="id_valorpago" {{ form.valorpago }}/>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-10">
+                <label for="{{ form.observacao.id_for_label }}">Observações:</label>
+                {{ form.observacao }}
+            </div>
+        </div>
+
+        <br>
+        <br>
+
+        <div class="align-middle">
+            <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+            <a href="{% url 'processofaturado-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+        
+    </form>
+    <br>
+<div class="obj-info">
+        <hr>
+	    <span><small><b>Criado por:</b> {{object.criado_por}} | </small></span>
+	    <span><small><b>Data criação:</b> {{object.data_criacao|date:"SHORT_DATE_FORMAT"}} {{object.data_criacao|time:"h:i a"}}| </small></span>
+	    <span><small><b>Última edição:</b> {{object.data_edicao|date:"SHORT_DATE_FORMAT"}} {{object.data_edicao|time:"h:i a"}} </small></span>
+	    <span><small><b>Status parcela:</b>
+            {% if object.status == 'A' %} EM ABERTO
+            {% elif object.status == 'C' %} CANCELADO
+            {% elif object.status == 'P' % PAGO
+            {% endif %}
+        </small></span>
+</div>
+
+<script>
+
+    function atualizavalpago() {
+        const valoracres = document.getElementById("id_valoracres").value;
+        const valordesc = document.getElementById("id_valordesc").value;
+        const valorfinal = document.getElementById("id_valorfinal").value;
+
+        var valorpago = 0.00;
+        valorpago = parseFloat(valorfinal) + parseFloat(valoracres) - parseFloat(valordesc);
+        valorpago = valorpago.toFixed(2);
+        document.getElementById('id_valorpago').value=valorpago;
+    }
+
+    function exibealerta() {
+<!--        const mesfechamento = "{{ mesfechamento }}"-->
+<!--        alert (mesfechamento)-->
+
+        const feriadosdia = {{ feriadosdia|safe }};       // safe para sumprimir os caracteres '&#x27;'
+
+        const valorparcela = document.getElementById("id_valorparcela").value;
+        const dtvencimento = document.getElementById("id_dtvencimento").value;
+        const dtpagamento = document.getElementById("id_dtpagamento").value;
+
+        const dtvenc = new Date(dtvencimento.substr(6,4) + "-" + dtvencimento.substr(3,2) + "-" + dtvencimento.substr(0,2));
+        const dtpagt = new Date(dtpagamento.substr(0,4) + "-" + dtpagamento.substr(5,2) + "-" + dtpagamento.substr(8,2));
+
+        const dtvenc_AMD = dtvencimento.substr(6,4) + '-' + dtvencimento.substr(3,2) + '-' + dtvencimento.substr(0,2)
+
+        let diasabono = 0;
+        for (i = 0; i < feriadosdia.length; i++) {
+            dtferiado = feriadosdia[i];
+<!--            alert (dtvenc_AMD + " ... " + dtferiado);-->
+            if (dtvenc_AMD == dtferiado) {
+                diasabono = 1;
+                alert ('Encontrado o vencimento ' + dtvenc_AMD + ' na tabela de sábados/domingos/feriados. Será concedido '
+                + diasabono + ' dia(s) de abono para multa/juros caso a data de pagamento seja no próximo dia útil após o vencimento.');
+            }
+        }
+
+        if (dtvenc.getDay() == 6) {
+            diasabono = 2
+        }
+        if (dtvenc.getDay() == 7) {
+            diasabono = 1
+        }
+
+        const percmulta = document.getElementById("id_percmulta").value;
+        const percjuros = document.getElementById("id_percjuros").value;
+
+        var valormulta = 0.00;
+        var valormultaarend = 0.00;
+        var valorjuros = 0.00;
+        var valorjurosarrend = 0.00;
+        var valorfinal = 0.00;
+        var valorfinalarrend = 0.00;
+
+        const diffMilisegundos = dtpagt.getTime() - dtvenc.getTime()
+        const diffDias = diffMilisegundos / (1000 * 60 * 60 * 24);
+
+<!--        if ((dtpagamento.substr(5,2)) <= (mesfechamento)) {-->
+<!--            alert("Data do pagamento antecede o mês de fechamento que é " + mesfechamento + ".");-->
+<!--        }-->
+
+        if (dtpagt.getTime() > dtvenc.getTime()) {
+            if (diffDias > diasabono) {
+                alert("Parcela paga com atraso de " + diffDias + " dia(s).\n\nSerá acrescida de multa/juros conforme valores definidos na Parametrização.\n\nMulta = " + percmulta + "% e Juros = " + percjuros + "%");
+                valorjuros = (valorparcela * percjuros * diffDias) / 100;
+                valorjurosarrend = valorjuros.toFixed(2);
+                valormulta = (valorparcela * percmulta) / 100;
+                valormultaarrend = valormulta.toFixed(2);
+                valorfinal = parseFloat(valorparcela) + parseFloat(valorjuros) + parseFloat(valormulta);
+                valorfinalarrend = valorfinal.toFixed(2);
+                document.getElementById('id_percmulta').value=percmulta;
+                document.getElementById('id_percjuros').value=percjuros;
+                document.getElementById('id_valorjuros').value=valorjurosarrend;
+                document.getElementById('id_valormulta').value=valormultaarrend;
+                document.getElementById('id_valorfinal').value=valorfinalarrend;
+            }
+        } else {
+            document.getElementById('id_valorfinal').value=valorparcela;
+        }
+
+        atualizavalpago();
+    }
+</script>
+
+{% endblock content %}

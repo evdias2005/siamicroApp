@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+
+{% block title %} {{title}} {% endblock title %}
+
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">{{title}}</div>
+    
+    <hr>
+    
+    <form method="post">
+    
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.nome.errors }}
+        {{ form.grupo.errors }}
+        {{ form.limite.errors }}
+        {{ form.orcamentoanual.errors }}
+        {{ form.nminparcelas.errors }}
+        {{ form.nmaxparcelas.errors }}
+        {{ form.juros_aa.errors }}
+        {{ form.juros_am.errors }}
+        {{ form.carencia.errors }}
+        {{ form.nminavalistas.errors }}
+        {{ form.tpcliente.errors }}
+        {{ form.textotxcontrato.errors }}
+
+        <div class="form-row">
+            <div class="form-group col-md-10">
+                <label for="{{ form.nome.id_for_label }}"><small>Nome:</small></label>
+                {{ form.nome }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-1">
+                <label for="{{ form.is_garantia.id_for_label }}"><small>Exige Garantia(Bem):</small></label>
+                {{ form.is_garantia }}
+            </div>
+            <div class="form-group col-md-5">
+                <label for="{{ form.grupo.id_for_label }}"><small>Grupo:</small></label>
+                {{ form.grupo }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.tpcliente.id_for_label }}"><small>Tipo Cliente:</small></label>
+                {{ form.tpcliente }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.modelo.id_for_label }}"><small>Modelo Contrato:</small></label>
+                {{ form.modelo }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.orcamentoanual.id_for_label }}"><small>Orçamento Anual (R$):</small></label>
+                {{ form.orcamentoanual }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.limite.id_for_label }}"><small>Limite de Crédito (R$):</small></label>
+                {{ form.limite }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.nminparcelas.id_for_label }}"><small>Nº Mínimo de Parcelas:</small></label>
+                {{ form.nminparcelas }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.nmaxparcelas.id_for_label }}"><small>Nº Máximo de Parcelas:</small></label>
+                {{ form.nmaxparcelas }}
+            </div>
+            <div class="form-group col-md-1">
+                <label for="{{ form.carencia.id_for_label }}"><small>Carência(Meses):</small></label>
+                {{ form.carencia }}
+            </div>
+            <div class="form-group col-md-1">
+                <label for="{{ form.nminavalistas.id_for_label }}"><small>Mín.Avalistas:</small></label>
+                {{ form.nminavalistas }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.juros_aa.id_for_label }}"><small>% Juros ao Ano:</small></label>
+                {{ form.juros_aa }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.juros_am.id_for_label }}"><small>% Juros ao Mês:</small></label>
+                {{ form.juros_am }}
+            </div>
+            <div class="form-group col-md-6">
+                <label for="{{ form.textotxcontrato.id_for_label }}"><small>Texto Encargos Financeiros - Emissão do Contrato:</small></label>
+                {{ form.textotxcontrato }}
+            </div>
+        </div>
+        <br>
+        <br>
+
+        <div class="align-middle">
+            {% if not object.is_deleted %}
+                {% if perms.tabelas.change_linhacredito %}
+                    <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+                {% endif %}
+                {% if title == "Nova Linha de Crédito" %}
+                    <button type="reset" class="btn ghost-blue">Limpa</button>
+                {% endif %}
+                {% if delbtn %}
+                    {% if perms.tabelas.delete_linhacredito %}
+                        <a href="{% url 'delete-linhacredito' object.pk %}" class="btn ghost-red">Apaga</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'linhascredito-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+        
+    </form>
+
+
+{% endblock content %}

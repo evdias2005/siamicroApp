@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+
+{% block title %} Extrato Financeiro p/ Negociação {% endblock title %}
+
+
+{% block content %}
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        Extrato Financeiro p/ Negociação
+    </div>
+    <div class="row" style="color: #4682B4; font-style: bold; font-size: 1rem;">
+        <div class="col-md-11">Processo Nº {{ processo_numprocesso }} | Cliente: {{ processo_cliente }} |
+            {% if processo_status == 'A' %} Em andamento
+            {% elif processo_status == 'C' %} Cancelado
+            {% elif processo_status == 'F' %} Finalizado
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    <table class="table table-css">
+
+        <thead class="thead-inverse align-middle">
+            <tr>
+<!--                <th width="5%">Id</th>-->
+<!--                <th width="5%"><small><b>Parcela</b></small></th>-->
+                <th width="10%"><small><b>Emissão</b></small></th>
+                <th width="5%"><small><b>Vlr.Parcela</b></small></th>
+                <th width="10%"><small><b>Vencimento</b></small></th>
+                <th width="10%"><small><b>Juros+Multa</b></small></th>
+                <th width="10%"><small><b>Vlr.Pago</b></small></th>
+                <th width="10%"><small><b>Vlr.Acres</b></small></th>
+                <th width="10%"><small><b>Vlr.Desc</b></small></th>
+                <th width="10%"><small><b>Status</b></small></th>
+                <th width="25%"><small><b>Ações</b></small></th>
+            </tr>
+        </thead>
+
+{% if object_list %}
+
+        <tbody>
+            {% for parcela in object_list %}
+            <tr>
+<!--                <td class="align-middle"><small> {{ parcela.numparcela }} </small></td>-->
+                <td class="align-middle"><small> {{ parcela.dtemissao|date:"SHORT_DATE_FORMAT" }} </small></td>
+                <td class="align-middle"><small> {{ parcela.valorparcela }} </small></td>
+                <td class="align-middle"><small> {{ parcela.dtvencimento|date:"SHORT_DATE_FORMAT" }} </small></td>
+                <td class="align-middle"><small>{{ parcela.valorjuros }}+{{ parcela.valormulta }} </small></td>
+                <td class="align-middle"><small>{{ parcela.valorpago }} </small></td>
+                <td class="align-middle"><small>{{ parcela.valoracres }} </small></td>
+                <td class="align-middle"><small>{{ parcela.valordesc }} </small></td>
+                <td class="align-middle">
+                    {% if parcela.status == 'A' %}
+                        <small>Em aberto</small>
+                    {% endif %}
+                    {% if parcela.status == 'C' %}
+                        <small>Cancelado em {{ parcela.data_edicao|date:"SHORT_DATE_FORMAT"}} </small>
+                    {% endif %}
+                    {% if parcela.status == 'P' %}
+                        <small>Pago em {{ parcela.dtpagamento|date:"SHORT_DATE_FORMAT"}}</small>
+                    {% endif %}
+                </td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if parcela.status == 'A' %}
+                            {% if perms.processos.change_financeiro %}
+                                <a href="{% url 'edit-processofaturado' parcela.id %}" class="btn ghost-gray"><small>Paga</small></a>
+                            {% endif %}
+                            {% if perms.processos.delete_financeiro %}
+                                <a href="{% url 'cancel-processofaturado' parcela.id %}" class="btn ghost-red"><small>Cancela</small></a>
+                            {% endif %}
+                        {% endif %}
+                        {% if parcela.status == 'P' %}
+                           {% if perms.processos.change_financeiro %}
+                               <a href="{% url 'estorn-processofaturado' parcela.id %}" class="btn ghost-green"><small>Estorna</small></a>
+                           {% endif %}
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot class="tfoot-inverse align-middle">
+            <tr>
+                <th width="10%"><small><b>Totais:</b></small>
+                <th width="5%"><small><b>{{ valor_total|floatformat:"2" }}</b></small>
+                <th width="10%"></th>
+                <th width="10%"></th>
+                <th width="10%"></th>
+                <th width="10%"><small><b>{{ valor_pago|floatformat:"2" }}</b></small>
+                <th width="20%"><small><b>Em aberto: {{ valor_aberto|floatformat:"2" }}</b></small>
+            </tr>
+        </tfoot>
+    </table>
+    <hr>
+
+    <div class="align-middle">
+        {% if is_paginated %}
+
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1"><i class="fa fa-fast-backward fa-1x"></i></a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}"><i class="fa fa-backward fa-1x"></i></a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}"><i class="fa fa-forward fa-1x"></i></a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}"><i class="fa fa-fast-forward fa-1x"></i></a>
+            {% endif %}
+
+        {% endif %}
+    </div>
+
+{% else %}
+
+    <br><br><br><br><br><br><br><br>
+    <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>
+
+{% endif %}
+
+        <br>
+        <div class="align-middle">
+            <a href="{% url 'print-extratofatura' processo_id %}" class="btn ghost-yellow">Imprime</a>
+            <a href="{% url 'processofaturado-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+
+
+{% endblock content %}

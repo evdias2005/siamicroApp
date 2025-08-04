@@ -1,0 +1,92 @@
+{% load static %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 30pt; height: 100pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 130pt; height: 632pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 800pt; height: 60pt; font-size: 7pt;
+        }
+    }
+</style>
+<div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+    <p align="center"><b><<< RELATÓRIO DOS INADIMPLENTES (PF) -
+        {% if modelo == '1' %} ANALÍTICO {% else %} SINTÉTICO {% endif %} >>></b></p>
+</div>
+</head>
+
+<body>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    {% for itemsubtot in qssubtot %}
+        <hr size="0.5">
+        <b>Cliente: {{ itemsubtot.processo__clientepf__nome }}</b>
+        <br>
+        <br>
+        {% if modelo == '1' %}
+            <table>
+            <tr><b>
+                <td width="12%">Processo n°</td>
+                <td width="10%">Liberação</td>
+                <td width="10%" align="center">Parcela</td>
+                <td width="10%">Dt.Vencto</td>
+                <td width="8%">Vlr.Título</td>
+                <td width="20%">Linha Crédito</td>
+                <td width="20%">Localização</td>
+                <td width="10%">Agente</td>
+            </b></tr>
+            </table>
+        {% endif %}
+        {% for item in qs %}
+            {% ifequal itemsubtot.processo__clientepf__nome item.processo.clientepf.nome %}
+                {% if modelo == '1' %}
+                    <table>
+                        <tr>
+                            <td width="12%"><small> {{ item.processo.numprocesso }} </small></td>
+                            <td width="10%"><small> {{ item.parecer.dtliberacao|date:"SHORT_DATE_FORMAT" }} </small></b></td>
+                            <td width="10%" align="center"><small> {{ item.numparcela }} </small></td>
+                            <td width="10%"><small> {{ item.dtvencimento|date:"SHORT_DATE_FORMAT" }} </small></b></td>
+                            <td width="8%"><small> {{ item.valorparcela }} </small></b></td>
+                            <td width="20%"><small>{{ item.processo.linhacredito }} </small></b></td>
+                            <td width="20%"><small>{{ item.processo.localizacao }}</small></b></td>
+                            <td width="10%"><small>{{ item.processo.criado_por }} </small></b></td>
+                        </tr>
+                    </table>
+                {% endif %}
+            {% endifequal %}
+        {% endfor %}
+        <br>
+        <table>
+        <tr><b>
+            <td width="10%"><b>Subtotal >>></b></td>
+            <td align="right" width="10%"><b>{{ itemsubtot.subtotparcela|floatformat:"2" }}</b></td>
+        </b></tr>
+        </table>
+    {% endfor %}
+        <hr>
+        <table>
+        <tr><b>
+            <td width="10%"><b>Total >>></b></td>
+            {% for t in qstot %}
+                <td align="right" width="10%"><b>{{ t }}</b></td>
+            {% endfor %}
+        </b></tr>
+        </table>
+        <hr>
+</body>
+</html>

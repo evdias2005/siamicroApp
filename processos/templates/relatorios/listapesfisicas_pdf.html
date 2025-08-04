@@ -1,0 +1,77 @@
+{% load static %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 landscape;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 750pt; top: 30pt; height: 100pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 750pt; top: 130pt; height: 400pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 750pt; top: 530pt; height: 60pt; font-size: 8pt;
+        }
+    }
+</style>
+
+<div id="header_content">{{ linhalogo1 }} <br> {{ linhalogo2 }} <br> {{ linhalogo3 }} <br><br>
+     <p align="center"><b><<< RELAÇÃO DAS PESSOAS FÍSICAS >>></b></p>
+     <hr size="0.5">
+     <table>
+<!--             <tr bgcolor="#696969">-->
+         <tr><b>
+            <td width="3%">#</td>
+            <td width="3%">ID</td>
+            <td width="30%">Nome</td>
+            <td width="15%">CPF</td>
+            <td width="10%">Tipo</td>
+            <td width="10%">Dt.Nasc.</td>
+            <td width="20%">Naturalidade</td>
+            <td width="8%">Agente</td>
+            <td width="8%">Dt.Cadastro</td>
+            <td width="3%">Excl</td>
+         </b></tr>
+     </table>
+     <hr size="0.5">
+</div>
+
+</head>
+
+<body>
+
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <table>
+        {% for r in qs %}
+            <tr>
+                <td width="3%"><small> {{ forloop.counter }} </small></b></td>
+                <td width="3%"><small> {{ r.id }} </small></td>
+                <td width="30%"><small><b> {{ r.nome }} </b></small></b></td>
+                <td width="15%"><small> {{ r.numcpf }} </small></b></td>
+                <td width="10%"><small> {% if r.tipo == 'C' %} CLIENTE
+                                        {% elif r.tipo == 'A' %} AVALISTA
+                                        {% elif r.tipo == 'X' %} CLIENTE/AVALISTA
+                                        {% endif %}</small></b></td>
+                <td width="10%"><small> {{ r.dtnascimento|date:"SHORT_DATE_FORMAT" }} </small></b></td>
+                <td width="20%"><small> {{ r.naturalidade }} </small></b></td>
+                <td width="8%"><small>{{ r.criado_por }} </small></b></td>
+                <td width="8%"><small>{{ r.data_criacao|date:"SHORT_DATE_FORMAT" }} </small></b></td>
+                <td width="3%"><small>
+                    {% if r.is_deleted %} SIM {% else %} NÃO {% endif %}
+                </small></b></td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</body>
+<hr size="0.5">
+</html>

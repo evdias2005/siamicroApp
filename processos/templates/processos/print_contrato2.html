@@ -1,0 +1,306 @@
+{% load static %}
+
+{% block content %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 20pt; height: 90t; font-weight: bold; font-size: 14pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 110pt; height: 660pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 760pt; height: 70pt; font-size: 10pt;
+        }
+</style>
+</head>
+<body>
+    <div id="header_content">
+<!--        <img src="/home/evdias/Projects/microcredito2/static/media/logoPMCG.png" width="210" height="70">-->
+        <br>
+        {{ linhalogo1 }}<br>
+        {{ linhalogo2 }}<br>
+        {{ linhalogo3 }}<br>
+        <p align="right"><b>Protocolo Nº {{ processo.numprotocolo }}</b></p>
+        <hr size="0.5">
+        <br>
+    </div>
+    <div id="footer_content">
+        <hr size="0.5">
+        <p align="center">
+            Rua Coronel Ponciano de Azeredo Furtado,47 | Pq. Santo Amaro | Campos dos Goytacazes/RJ<br><br>
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <br>
+    <table>
+        <tr>
+            <td></td><td><h2 align="justify">CONTRATO DE ABERTURA DE CRÉDITO QUE ENTRE SI CELEBRAM
+            <b>{{ processo.clientepf.nome }}</b> E O <b>MUNICÍPIO DE CAMPOS DOS GOYTACAZES (RJ)</b>, POR INTERMÉDIO DO
+            FUNDO DE DESENVOLVIMENTO DE CAMPOS - FUNDECAM, TENDO COMO AGENTE FINANCEIRO O BANCO DO BRASIL S/A, COM
+            RECURSOS DO PROGRAMA MUNICIPAL DE MICROCRÉDITO, CRIADO PELA LEI Nº 9.577 DE 09 DE DEZEMBRO DE 2024,
+            DENOMINADA <b>FUNDECAM {{ processo.linhacredito.nome }}.</b></h2></td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <h2 align="justify">
+        <b>FINANCIADOR: MUNICÍPIO DE CAMPOS DOS GOYTACAZES</b>, inscrito no CNPJ/MF sob o nº 29.116.894/0001-61,
+        com sede à Rua Coronel Ponciano Azevedo Furtado, 47, nesta cidade, neste ato representado pelo
+        <b>FUNDO DE DESENVOLVIMENTO DE CAMPOS DOS GOYTACAZES - FUNDECAM, inscrito no CNPJ sob o nº 21.545.238/0001-72,
+        com sede na Avenida José Alves Azevedo, nº 259, Bairro Centro, CEP: 28025-496, criado pela Lei de nº 7.084/2001
+        alterada pelas Leis nº 8144/2009 e nº 8250/2012, com o objetivo da implantação, ampliação e reforma dos
+        empreendimentos empresariais localizados no município, por meio do seu CONSELHO GESTOR do FUNDECAM, instituído
+        por meio do Decreto n.º 262 de 20 de Novembro de 2001, que tem por seu atual representante o presidente
+        {{ parametro.representanteconselho }} criada pelo Prefeito Municipal, {{ parametro.representantegoverno}}</b>
+
+        <br><br>
+        <u><b>AGENTE FINANCEIRO:</b></u> {{ parametro.agentefinanceiro }}
+
+        <br><br>
+        FINANCIADO: Sr(a) <b>{{ processo.clientepf.nome }}</b>, {{ processo.clientepf.nacionalidade }},
+        {{ processo.clientepf.estadocivil|default_if_none:"" }}, {{ processo.clientepf.profissao|default_if_none:"" }},
+        residente à {{ processo.clientepf.logradouro }} - {{ processo.clientepf.numimovel }}, {{ processo.clientepf.bairro }},
+        {{ processo.clientepf.cidade }} - CEP: {{ processo.clientepf.cep }}, RG: {{ processo.clientepf.numrg }} -
+        {{ processo.clientepf.orgexpedicao|default_if_none:"" }} e CPF: {{ processo.clientepf.numcpf }}.
+
+    <br><br>
+    1. PREÂMBULO
+
+    <br><br>
+    I. FINANCIADOR: Município de Campos dos Goytacazes, CNPJ sob o nº 29.116.894/0001/61, por meio do Fundo de
+        Desenvolvimento de Campos dos Goytacazes/RJ - FUNDECAM, CNPJ/MF nº 21.545.238/0001-72;
+
+    <br><br>
+    II. FINANCIADO: qualificado acima;
+
+    <br><br>
+    III. VALOR DO CRÉDITO E FORMA DE UTILIZAÇÃO: R$ {{ valortotal_aprovado }} ({{ valortotal_extenso }})
+        para {{ processo.finalidadecredito }}, para utilização em parcela única;
+
+    <br><br>
+    IV. ENCARGOS FINANCEIROS: {{ processo.linhacredito.textotxcontrato }}
+
+    <br><br>
+    V. PRAZOS E FORMA DE PAGAMENTO: prazo de {{ prazoaprovado }} ({{ prazoextenso }}) meses e
+        pagamento em {{ prazoaprovado }} ({{ prazoextenso }}) prestações mensais iguais e consecutivas no valor de R$
+        {{ valorparcela }} ({{ parcelaextenso }}), acrescidas dos encargos dispostos neste instrumento, por boleto bancário;
+
+    <br><br>
+    VI. GARANTIAS: Alienação fiduciária, em favor do financiador, mediante a transferência da propriedade resolúvel,
+        do veículo objeto do financiamento, {{ processo.veiculo.marca }} - {{ processo.veiculo.modelo }},
+        ano de fabricação de {{ processo.veiculo.anofabr }}, modelo {{ processo.veiculo.anomodelo }}, de propriedade e
+        posse do financiado, livre de ônus, gravame e responsabilidade de qualquer espécie e fiança do financiado.
+
+    <br><br>
+    VII. AGENTE FINANCEIRO: Banco do Brasil S/A, Agência Campos dos Goytacazes (RJ);
+
+    <br><br>
+    VIII. CONTA E AGÊNCIA DA FINANCIADA: O valor do crédito será transferido diretamente para o fornecedor do objeto
+        do financiamento - CNPJ: {{ processo.veiculo.fornecedor.numcnpj }}, através de boleto bancário.
+
+    <br><br>
+    2. FINALIDADE E FORMA DE UTILIZAÇÃO DO CRÉDITO<br>
+    O crédito aberto destina-se a aquisição do veículo {{ processo.veiculo.marca }} - {{ processo.veiculo.modelo}}, ano
+    de fabricação {{ processo.veiculo.anofabr }}, modelo {{ processo.veiculo.anomodelo }}, para fins de renovação
+        da frota dos veículos utilizados para os serviços de táxi no Município de Campos dos Goytacazes. O CRÉDITO SERÁ
+        UTILIZADO COMO INVESTIMENTO FIXO, SENDO R$ {{ valortotal_aprovado }}, para a compra do veículo acima descrito
+        junto a concessionária/vendedor {{ processo.veiculo.fornecedor.razaosocial }}, localizada na
+        {{ processo.veiculo.fornecedor.logradouro }}, n° {{ processo.veiculo.fornecedor.numimovel }}, bairro
+        {{ processo.veiculo.fornecedor.bairro }} - {{ processo.veiculo.fornecedor.cidade}}.
+
+    <br><br>
+    O valor do crédito ora aberto e aceito pelo(a) FINANCIADO(A) será transferido via pagamento de boleto bancário para
+        o fornecedor indicado pelo FINANCIADO, por solicitação e autorização do FUNDECAM, destinado única e
+        exclusivamente, ao empréstimo/financiamento de:
+
+    <br><br>
+    a) Investimento Fixo no valor de R$ {{ valortotal_aprovado }} ({{ valortotal_extenso }}) - diretamente ao fornecedor,
+    mediante a apresentação da conta corrente/pessoa jurídica ou física do(a) fornecedor(a)devendo comprovar a aplicação
+    e a documentação pertinente.
+
+    <br><br>
+    3. ENCARGOS FINANCEIROS E DEMAIS ACESSÓRIOS<br>
+    Sobre o empréstimo/financiamento ora concedido, serão devidos juros à taxa efetiva mensal indicada neste instrumento,
+    debitados, capitalizados e exigidos mensalmente inclusive durante o período de carência, ao fim do qual o saldo
+    devedor apurado servirá de base para cálculo das parcelas de amortização, de acordo com o Sistema Price.
+    <br>
+    O financiado deverá comprovar a contratação de seguro, de sua escolha, com a cobertura para colisão, furto, roubo
+    e incêndio do veículo financiado, devendo possuir limite máximo de indenização de no mínimo 100% do valor do veículo
+    , a ser apurado pela tabela FIPE, nos termos do art.11 da Lei nº 9.577/2024.
+    <br>
+    Todo e qualquer custo acerca do registro do contrato de alienação fiduciária, para obrigatória anotação no
+    certificado de registro de veículos - CRV, bem como da contratação do seguro acima mencionado, será de
+    responsabilidade do financiado(a), nos termos do § 2º do art. 10 da Lei nº 9.577/2024
+
+    <br><br>
+    4. DECLARAÇÃO PARA CRÉDITO E DÉBITO EM CONTA CORRENTE BANCÁRIA<br>
+
+    O FINANCIADO autoriza a transferência do valor destinado à aquisição do bem financiado diretamente aos fabricantes
+    ou fornecedores, mediate a instrução do FUNDECAM ao agente financeiro, após preenchidas as exigências da lei
+    nº 9.577/2024.
+
+    <br><br>
+    5. ENCARGOS POR INADIMPLEMENTO<br>
+    Ocorrendo o inadimplemento de qualquer obrigação contratual ou legal que determine o vencimento antecipado da dívida,
+    assim como no caso de atraso no pagamento da obrigação em seu vencimento, a dívida ficará sujeita, desde o inadimplemento
+    e até o seu efetivo pagamento, aos encargos financeiros adicionais a seguir, em substituição aos encargos básicos
+    pactuados: juros de mora de 1% (hum por cento) ao mês, incidentes sobre o saldo devedor diário
+    atualizado, mais multa convencional de 2% (dois por cento) sobre o valor do saldo devedor atualizado.<br>
+    a) Serão de responsabilidade do financiado e serão incluídos no saldo devedor, todas as tarifas/valores necessários
+    à manutenção de título vencido, à baixa e emissão de novo documento de pagamento, independente das sanções
+    previstas na presente cláusula.
+
+    <br><br>
+    6. DAS GARANTIAS<br>
+    Comparece e assina o presente instrumento, o(a) FIADOR(A), qualificado(s) no preâmbulo, anuindo expressamente ao
+    pactuado no tocante ao cumprimento de todas as obrigações assumidas, principal, encargos pactuados, multas, impostos,
+    custas, honorários advocatícios.<br>
+    O veículo financiado, acima descrito, estará alienado fiduciariamente ao Municípuo financiador, mediante registro,
+    de modo que comprovado o inadimplemento, o fiduciário (financiador) poderá ingressar com ação a fim de requerer a
+    busca e apreensão do bem, tendo o fiduciante (financiado) cinco dias para pagar seu débito. Caso o fiduciário
+    (financiador) opte pelo ajuizamento da execução da dívida, após notificação, o fiduciante (financiado) terá o prazo
+    de quinze dias para resolver a dívida por completo, incluindo juros, as penalidades, os encargos, os tributos e as
+    despesas de cobrança. Caso a quitação não ocorra, o credor terá a propriedade do veículo financiado para fins de
+    designação de leilão, nos termos dos artigos 1.361 a 1.368-B do Código Civil, bem como no Decreto-lei nº 911/69.<br>
+    O financiado estará na posse direto do veículo, figurando como fiel depositário, obrigando-se à sua guarda, no endereço
+    {{ processo.clientepf.logradouro }}, {{ processo.clientepf.numimovel }}, bairro {{ processo.clientepf.bairro.nome }} -
+    {{ processo.clientepf.cidade }}, e conservado.
+
+    <br><br>
+    7. REFORÇO DE GARANTIA<br>
+    O CONSELHO GESTOR poderá, a qualquer tempo, exigir reforço de garantia em qualquer caso em que se torne necessária a
+    medida, devendo a CONTRATANTE conceder esse reforço, no prazo em que for solicitado, sob pena de vencimento
+    antecipado de todo o contrato, independentemente de interpelação ou notificação judicial ou extrajudicial.
+
+    <br><br>
+    8. DO DESEMBOLSO<br>
+    O(A) financiado(a) fica ciente de que o desembolso dos recursos por parte do AGENTE FINANCEIRO, nomeado no item VII
+    do preâmbulo, está na dependência da sua efetiva liberação pelo COMITÊ DE MICROCRÉDITO e CONSELHO GESTOR, estando,
+    pois, o AGENTE FINANCEIRO, isento de qualquer responsabilidade pelo descumprimento dos respectivos cronogramas.
+
+    <br><br>
+    9. DO VENCIMENTO EXTRAORDINÁRIO<br>
+    O(A) financiado(a) declara-se ciente que na falta de cumprimento de qualquer das obrigações por ele assumidas não só
+    neste título, como em outros instrumentos que porventura tenha firmado ou venha firmar com a Prefeitura do Município
+    de Campos dos Goytacazes, ou no caso de recuperação judicial ou falência, ou, ainda, pela ocorrência de quaisquer
+    dos casos de antecipação legal do vencimento, poderá a Prefeitura do Município de Campos dos Goytacazes considerar
+    vencidas, de pleno direito, as operações de crédito existentes se exigir o total da dívida delas resultante,
+    independentemente de aviso ou interpelação judicial ou extrajudicial.<br><br>
+    Parágrafo Único: Caso o(a) FINANCIADO(A), durante a vigência do financiamento, venha a transferir seu domicílio
+    comercial ou instalações para outro município, o FINANCIADOR considerará a dívida vencida extraordinariamente,
+    exigindo sua imediata liquidação.
+
+    <br><br>
+    10. CLÁUSULA ESPECIAL<br>
+    A falta de cumprimento de quaisquer das obrigações do(a) CONTRATANTE, assumidas não só neste instrumento, como em
+    outro que porventura tenha firmado ou venha firmar com o COMITÊ DE MICROCRÉDITO e CONSELHO GESTOR, por intermédio
+    do AGENTE FINANCEIRO, ou ainda, pela ocorrência de qualquer fato que justifique a antecipação legal do vencimento,
+    poderá o CONSELHO GESTOR considerar vencidos de pleno direito, os contratos de crédito existentes e exigir o total
+    da dívida deles resultantes, independentemente de aviso extrajudicial ou interpelação judicial. Será passível também,
+    de vencimento extraordinário do contrato, com a imediata sustação de qualquer desembolso e a consequente exigibilidade
+    do crédito, se for comprovada a aplicação dos recursos do financiamento em finalidade diversa da prevista no preâmbulo.
+
+    <br><br>
+    11. OUTRAS CONDIÇÕES E OBRIGAÇÕES<br>
+    a) Os pagamentos serão efetuados, preferencialmente, por meio de Boleto Bancário, podendo, em casos especiais, ser
+    realizado na Agência do BANCO DO BRASIL S.A. acima indicada, através de crédito na conta corrente a ser fornecida
+    pelo FUNDECAM;<br><br>
+    b) O saldo apurado na operação será considerado como líquido e certo, para efeito de cobrança judicial ou extrajudicial,
+    após a discriminação de todos os valores, entre eles os créditos, débitos, taxas, índices, juros, atualização monetária
+    e outros encargos financeiros previstos neste instrumento;<br><br>
+    c) As pessoas que assinam o presente instrumento representando o(a) CONTRATANTE e/ou o(a) FIADOR(A), declaram sob as
+    penas da lei, assumindo todas as responsabilidades de caráter civil e criminal decorrentes, que se encontram
+    investidas dos competentes poderes de ordem legal e societária para tanto, motivo pelo qual assegurarão, em qualquer
+    hipótese, a veracidade da presente declaração;<br><br>
+    d) Em caso de cobrança em processo contencioso ou não, judicial ou administrativo, incidirá o percentual de 10%
+    (dez por cento) sobre o principal e acessórios do débito, a título de honorários advocatícios;<br><br>
+    e) Sem prejuízo do vencimento deste instrumento, poderá o mesmo ser declarado rescindido pelo CONSELHO GESTOR do
+    FUNDECAM, sendo exigível de imediato o saldo devedor, juros, comissão, demais encargos financeiros e tudo o mais que
+    for devido, independentemente de qualquer aviso, interpelação judicial ou extrajudicial, em caso de falta de pagamento
+    do principal e encargos financeiros ajustados, ou qualquer outro inadimplemento que a critério do Conselho Gestor ou
+    do Comitê de Crédito coloque em risco a segurança do seu crédito;<br><br>
+    f) Na hipótese de inadimplemento, o (a) FINANCIADO e o(a) FIADOR(A) autorizam neste ato o FUNDECAM, após prévia e
+    expressa notificação, a divulgar e encaminhar documentos relativos a presente operação e informações inclusive
+    cadastrais, aos cadastros restritivos do Serviço de Proteção ao Crédito, após e inscrevê-los na Dívida Ativa em até
+    180 (cento e oitenta) dias após os vencimentos, para efeito de cobrança judicial ou extrajudicial;<br><br>
+    g) A movimentação dos recursos originários de operações de crédito disponibilizados pelo BANCO DO BRASIL S.A. ao(à)
+    CONTRATANTE em sua conta de depósito, segue as regras estabelecidas no instrumento que regulamenta a abertura e a
+    manutenção de contas de depósito, inclusive no que se refere a agendamento de transferência de recursos através dos
+    mecanismos que o BANCO DO BRASIL S.A. disponibilizar ao(à) CONTRATANTE, assim como através de cheques, cujas regras
+    e limites também estarão contidas no citado instrumento;<br><br>
+    h) O(A) CONTRATANTE e o(a) FIADOR(A) declaram ter lido previamente o presente instrumento e tendo conhecimento sobre
+    todas as cláusulas e condições, declaram que receberam uma via deste instrumento;<br><br>
+    i) Obrigam-se o (a) CONTRATANTE e o (a) FIADOR(A) a manterem atualizados os seus endereços, ficando cientes que o
+    não cumprimento desta cláusula eximirá o FUNDECAM quanto a responsabilidade pelo envio de eventuais correspondências
+    a eles dirigidas;<br><br>
+    j) O FINANCIADO está ciente de que não poderá gravar qualquer ônus em favor de terceiros ou firmar qualquer
+    alienação sobre o bem financiado durante a vigência deste contraato, até que ocorra a baixa da alienação fiduciária
+     em favor do Município financiador;<br><br>
+    k) O FINANCIADO assume o compromisso de manter em seu poder os documentos comprobatórios acerca da aplicação dos
+    recursos deste financiamento para apresentação sempre que forem solicitados pelo serviço de fiscalização, incluindo
+    contratação do seguro do bem financiado, de escolha do financiado, a portaria de concessão da autorização para
+    Taxistas, o alvará de autorização municipal, as certidões pertinentes e o certificado de vistoria do IMTT;<br><br>
+    l) O FINANCIADO fica obrigado a comunicar o Fundo de Desenvolvimento de Campos dos Goytacazes - FUNDECAM qualquer
+    ocorrência que possa comprometer a finalidade específica do crédito, bem como comprometer a garantia de alienação
+     fiduciária gravada sobre o bem financiado.<br>
+
+    <br><br>
+    12. DA PRESTAÇÃO DE CONTAS<br>
+    Deverá o financiado apresentar, no prazp de 30 dias após a liberação do crédito, as notas fiscais dos produtos
+    adquiridos, sob pena de, não o fazendo, ser considerado irregular o contrato e, de consequência, ser declarado o seu
+    vencimento antecipado.
+    <br><br>
+    13. FORO<br>
+    O foro competente para dirimir quaisquer dúvidas ou questões que se originem do presente instrumento será o de Campos
+    dos Goytacazes-RJ. E por estarem assim justos e contratados, firmam o presente instrumento em 03(três) vias de igual
+    teor e para um só efeito, na presença de 02(duas) testemunhas.
+    <br>
+    <br><br><br>
+    Campos dos Goytacazes (RJ), {{ emissao|date }}. <br><br><br>
+
+    ___________________________________________________________________<br>
+    FINANCIADOR:Prefeitura Municipal de Campos dos Goytacazes
+    <br>
+    <br>
+    <br>
+    ___________________________________________________________________<br>
+    FINANCIADO: {% if processo.clientepf %}
+                       {{ processo.clientepf.nome }}<br>
+                       CPF: {{ processo.clientepf.numcpf }}<br>
+                {% else %}
+                       {{ processo.clientepj.razaosocial }}<br>
+                       CNPJ: {{ processo.clientepj.numcnpj }}<br>
+                {% endif %}
+    <br>
+    <br>
+    <br>
+    ___________________________________________________________________<br>
+    AGENTE FINANCEIRO<br>
+    Banco do Brasil S.A. - Agência Campos dos Goytacazes<br>
+    <br>
+    <br>
+    <br>
+    TESTEMUNHAS
+    <br>
+    <br>
+        _______________________________________________________________________<br>
+        {{ parametro.testemunha1 }}
+    <br>
+    <br>
+    <br>
+        _______________________________________________________________________<br>
+        {{ processo.criado_por.first_name }} {{ processo.criado_por.last_name }}
+    <br>
+    <br>
+    </h2>
+
+</body>
+</html>
+
+{% endblock %}

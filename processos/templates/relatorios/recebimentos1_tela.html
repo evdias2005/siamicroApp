@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% load static %}
+
+{% block title %} Recebimentos (Rel. Contábil){% endblock title %}
+
+{% block content %}
+
+{% include "../stylemsg.html" %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        Recebimentos (Rel. Contábil)
+    </div>
+    <hr>
+    <p><b>Seleção e filtros</b></p>
+    <form enctype="multipart/form-data" method="post" id="relatorioForm">
+        {% csrf_token %}
+        {{ form.pgto_ini.errors }}
+        {{ form.pgto_fin.errors }}
+
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.pgto_ini.id_for_label }}">Data Pagto (Inicial):</label>
+                {{ form.pgto_ini }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.pgto_fin.id_for_label }}">Data Pagto (Final):</label>
+                {{ form.pgto_fin }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.versao.id_for_label }}">Versão do Relatório:</label>
+                {{ form.versao }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ form.linhacredito.id_for_label }}">Linha de Crédito:</label>
+                {{ form.linhacredito }}
+            </div>
+        </div>
+        {% include "../botoesrodape1.html" %}
+    </form>
+
+    <div id="loading-message">
+        <img src="{% static 'media/loading-gif-transparent-10.gif' %}"  style="width: 60px; height: 60px;">
+        <p>Aguarde!!! Relatório sendo gerado...</p>
+    </div>
+
+    <script>
+        var clickedButton = null;
+
+        // Identifica qual botão foi clicado
+        document.getElementById("btn-pdf").addEventListener('click', function() {
+            clickedButton = 'pdf';
+        });
+
+        document.getElementById("btn-xlsx").addEventListener('click', function() {
+            clickedButton = 'xlsx';
+        });
+
+        document.getElementById("relatorioForm").onsubmit = function(e) {
+            e.preventDefault();  // Evita o comportamento padrão de envio de formulário
+
+            // Mostra a mensagem de "Aguarde"
+            document.getElementById("loading-message").style.display = "block";
+
+            // Faz o envio do formulário via AJAX
+            var formData = new FormData(this);
+
+            // Adiciona o tipo de relatório (PDF ou Excel) no FormData
+            if (clickedButton == 'pdf') {
+                formData.append('tipo_relatorio', 'pdf');
+            } else if (clickedButton == 'xlsx') {
+                formData.append('tipo_relatorio', 'xlsx');
+            }
+
+            fetch("{% url 'recebimentos1-tela' %}", {  // Altere para a URL correta
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            }).then(response => response.blob())
+              .then(blob => {
+                  // Cria um link temporário para baixar o PDF gerado
+                  var link = document.createElement('a');
+                  link.href = window.URL.createObjectURL(blob);
+                  if (clickedButton === 'pdf') {
+                      link.download = "relatorio.pdf";
+                  } else if (clickedButton === 'xlsx') {
+                      link.download = "relatorio.xlsx";
+                  }
+                  // link.download = "relatorio.pdf";
+                  link.click();
+
+                  // Oculta a mensagem de "Aguarde" após o download
+                  document.getElementById("loading-message").style.display = "none";
+              })
+              .catch(error => {
+                  console.error('Erro ao gerar relatório:', error);
+                  document.getElementById("loading-message").style.display = "none";
+              });
+        };
+    </script>
+
+{% endblock %}

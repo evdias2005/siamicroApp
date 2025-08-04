@@ -1,0 +1,21 @@
+# ignorar o ambiente virtual que deverá ser criado manualmente em cada instalação
+.venv
+.env
+.Documentos
+.documentos
+.Arquivos
+ppmicro.py
+generate_secret_key.py
+.processos/__pycache__/
+.tabelas/__pycache__/
+tokenGit
+init.sql
+entreypoint.sh
+
+
+## ignonar arquivos texto e xlsx de carga de tabelas básicas
+#*.csv
+#*.xlsx
+
+## ignorar scripts sql
+#*.sql

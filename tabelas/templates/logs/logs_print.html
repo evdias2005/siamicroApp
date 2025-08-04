@@ -1,0 +1,71 @@
+<html>
+    <head>
+    <style>
+        @page {
+            size: a4 portrait;
+            @frame header_frame {           /* Static Frame */
+                -pdf-frame-content: header_content;
+                left: 50pt; width: 512pt; top: 20pt; height: 110pt;
+            }
+            @frame content_frame {          /* Content Frame */
+                left: 50pt; width: 512pt; top: 110pt; height: 632pt;
+            }
+            @frame footer_frame {           /* Another static Frame */
+                -pdf-frame-content: footer_content;
+                left: 50pt; width: 512pt; top: 790pt; height: 60pt; font-size: 8pt;
+            }
+        }
+    </style>
+    </head>
+
+    <table class="table table-striped">
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="5%">User</th>
+                <th width="5%">Ativo?</th>
+                <th width="20%">Tabela</th>
+                <th width="50%">Evento</th>
+                <th width="20%">Data/Hora</th>
+            </tr>
+        </thead>
+        <tbody>
+            <div id="header_content">ESTADO DO RIO DE JANEIRO<br>
+                                     {{ linhalogo1 }}<br>
+                                     {{ linhalogo2 }}<br>
+                                     {{ linhalogo3 }}<br><br>
+                <p align="center"><b><<< LOGS DO SISTEMA >>></b></p>
+                <br>
+            </div>
+
+            <div id="footer_content">
+                <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+                <hr size="0.5">
+                <p align="center">
+                    Página <pdf:pagenumber/>
+                </p>
+            </div>
+            {% for log in record %}
+            <tr>
+                <td class="align-middle"> {{ log.username }} </td>
+                {% if log.is_active %}
+                    <td class="align-middle">Sim</td>
+                {% else %}
+                    <td class="align-middle"></td>
+                {% endif %}
+                <td class="align-left"> {{ log.tabela }} </td>
+                {% if log.history_type == '+' %}
+                    <td class="align-left"> Inclusão do registro {{ log.nome }} </td>
+                {% else %}
+                    {% if log.is_deleted %}
+                        <td class="align-left"> Excusão do registro {{ log.nome }} </td>
+                    {% else %}
+                        <td class="align-left"> Alteração do registro {{ log.nome }} </td>
+                    {% endif %}
+                {% endif %}
+                <td class="align-left"><small> {{ log.history_date }} </small></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</html>
+

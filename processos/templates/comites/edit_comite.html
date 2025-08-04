@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+{% include "../cabecalho.html" %}
+    
+    <form method="post">
+    
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.dtcomite.errors }}
+        {{ form.numreuniao.errors }}
+        {{ form.observacao.erros }}
+        {{ form.is_realizado.errors }}
+
+        <div class="form-row">
+            <div class="form-group col-md-1.5">
+                <label for="{{ form.dtcomite.id_for_label }}">Data Comitê:<span style="color: red;">*</span></label>
+                {{ form.dtcomite }}
+            </div>
+            <div class="form-group col-md-1">
+                <label for="{{ form.numreuniao.id_for_label }}">N° Reunião:<span style="color: red;">*</span></label>
+                {{ form.numreuniao }}
+            </div>
+            <div class="form-group col-md-7">
+                <label for="{{ form.observacao.id_for_label }}">Observação:<span style="color: red;">*</span></label>
+                {{ form.observacao }}
+            </div>
+            <div class="form-group col-md-1">
+                <label for="{{ form.is_realizado.id_for_label }}">Realizado:</label>
+                {{ form.is_realizado }}
+            </div>
+        </div>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+<!--                <p><b>PROCESSOS</b></p>-->
+                <table class="table table-striped table-bordered" style="width:90%">
+                    <thead class="thead-light align-middle">
+                        <tr>
+                            <th width="13%">N° Processo</th>
+                            <th width="50%">Observação</th>
+                            <th width="5%">Aprovado</th>
+                            <th width="5%">Excluir?</th>
+                        </tr>
+                    </thead>
+                </table>
+                {{ formset_comiteprocessos.management_form }}
+                {% for form in formset_comiteprocessos %}
+                    {{ form.id }}
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            {{ form.processo }}
+                        </div>
+                        <div class="form-group col-md-7">
+                            {{ form.observacao }}
+                        </div>
+                        <div class="form-group col-md-1 align-middle">
+                            {{ form.is_aprovado }}
+                        </div>
+                        <div class="form-group col-md-1 align-middle">
+                            {{ form.DELETE }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+<!--                <p><b>MEMBROS DO COMITÊ</b></p>-->
+                <table class="table table-striped table-bordered" style="width:85%">
+                    <thead class="thead-light align-middle">
+                        <tr>
+                            <th width="55%">Membros do Comitê</th>
+                            <th width="5%">Excluir?</th>
+                        </tr>
+                    </thead>
+                </table>
+                {{ formset_comitemembros.management_form }}
+                {% for form in formset_comitemembros %}
+                    {{ form.id }}
+                    <div class="form-row">
+                        <div class="form-group col-md-9">
+                            {{ form.operador }}
+                        </div>
+                        <div class="form-group col-md-1 align-middle">
+<!--                            <label for="{{ form.delete.id_for_label }}">Excluir:</label>-->
+                            {{ form.DELETE }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <hr>
+        <div class="align-middle">
+            {% if not comite.is_deleted %}
+                {% if perms.processos.change_comite %}
+                    <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+                {% endif %}
+                {% if title == "Novo Comitê" %}
+                    <button type="reset" class="btn ghost-blue">Limpa</button>
+                {% endif %}
+                {% if perms.processos.view_comite %}
+                    {% if comite.pk %}
+                        <a href="{% url 'print-atacomite' comite.pk %}" class="btn ghost-yellow">
+                            <i class="fa fa-print fa-fw" style="font-size:17px;color:black;"></i> Ata</a>
+                    {% endif %}
+                {% endif %}
+                {% if delbtn %}
+                    {% if perms.processos.delete_comite %}
+                        <a href="{% url 'delete-comite' comite.pk %}" class="btn ghost-red">Apaga</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'comites-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+    </form>
+
+{% include "../rodape.html" %}
+
+{% endblock content %}

@@ -1,0 +1,5 @@
+-- insert de usuário genérico '*' na base de dados
+select * from auth_user au 
+
+insert into auth_user (is_superuser, username, is_staff, is_active, first_name, last_name, password, email, date_joined) 
+values (0, '*', 1, 1, '*', '*', '*', '*', '2023-02-24')

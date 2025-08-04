@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        {{title}}
+    </div>
+    <div style="color:black; font-style: bold; font-size: 1rem; border-bottom: 1px solid white;">
+        Processo N° {{ numprocesso }} |
+        Cliente {{ clienteprocesso }} |
+        Status: {% if statusprocesso == 'P' %} Em andamento
+        {% elif statusprocesso == 'A' %} Em andamento - A
+        {% elif statusprocesso  == 'R' %} Em andamento - R
+        {% elif statusprocesso == 'C' %} Cancelado
+        {% elif statusprocesso == '1' %} 1° Parecer
+        {% elif statusprocesso == '2' %} 2° Parecer
+        {% elif statusprocesso == 'F' %} Finalizado
+        {% elif statusprocesso == 'N' %} Negociado
+        {% elif statusprocesso == 'X' %} Negado
+        {% endif %}
+    </div>
+
+    <form method="post">
+
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.dtliberacao.errors }}
+        {{ form.dtprivencto.errors }}
+
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-03">
+                <label for="{{ form.dtliberacao.id_for_label }}">Data da Liberação:</label>
+                {{ form.dtliberacao }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-03">
+                <label for="{{ form.dtprivencto.id_for_label }}">Primeiro Vencto.:</label>
+                {{ form.dtprivencto }}
+            </div>
+        </div>
+        <hr>
+        <div class="align-middle">
+            <button type="submit" id="botao_save" class="btn ghost-green" onclick="msgconfirmacao()">{{ savebtn }}</button>
+            {% if title == "Novo Parecer" %}
+                <button type="reset" class="btn ghost-blue">Limpa</button>
+            {% endif %}
+            <a href="{% url 'processofaturar-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+    </form>
+
+{% include "rodape.html" %}
+
+<script>
+    function msgconfirmacao() {
+        const dtliberacao = document.getElementById("id_dtliberacao").value;
+        const dtprivencto = document.getElementById("id_dtprivencto").value;
+        alert ("A liberação da verba será no dia " + dtliberacao.substr(8,2) + "/" + dtliberacao.substr(5,2) + "/" + dtliberacao.substr(0,4) + "." +
+               "\nSerão geradas as parcelas a partir do vencimento " +  dtprivencto.substr(8,2) + "/" +
+               dtprivencto.substr(5,2) + "/" + dtprivencto.substr(0,4) + ".\nAguarde o término do processo!");
+    }
+</script>
+
+{% endblock content %}

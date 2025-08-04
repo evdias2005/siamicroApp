@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+
+{% block title %} Lista de Linhas de Crédito {% endblock title %}
+
+
+{% block content %}
+    
+    <div class="row" style="color: #4682B4; font-style: bold; font-size: 1.5rem;">
+        <div class="col-md-8">Linhas de Créditos</div>
+        <div class="col-md-4">
+            {% if perms.tabelas.add_linhacredito %}
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-linhacredito' %}"><i class="fa fa-plus-square fa-fw fa-1x"></i>
+                <small> Linha Crédito</small></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="border-bottom: 1px solid white;"></div>
+
+    <table class="table table-striped">
+
+    <form method="get">
+        <nav class="navbar navbar-light bg-light">
+            <form class="form-inline">
+            {% render_field filter.form.q class="form-control mr-sm-2" type="search" placeholder="Busca pelo nome" aria-label="Search" %}
+            </form>
+        </nav>
+    </form>
+
+        <br>
+
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="3%"><small>Id</small></th>
+                <th width="1%"><small></small></th>
+                <th width="24%"><small>Nome</small></th>
+                <th width="10%"><small>Limite Crédito</small></th>
+                <th width="10%"><small>Min Parcelas</small></th>
+                <th width="10%"><small>Max Parcelas</small></th>
+                <th width="15%"><small>% Juros a.m.</small></th>
+                <th width="10%"><small>% Juros a.a.</small></th>
+                <th width="5%"><small>Carência</small></th>
+                <th width="5%"><small>Tipo</small></th>
+                <th width="7%"><small>Ações</small></th>
+            </tr>
+        </thead>
+
+    {% if object_list %}
+
+        <tbody>
+            {% for linhacredito in object_list %}
+            <tr>
+                <td class="align-middle"> <small>{{ linhacredito.id }} </small></td>
+                <td class="align-middle"><small>{% if linhacredito.is_deleted %} <i class="fa fa-ban fa-fw fa-1x" style="color:red"></i> {% else %}  {% endif %}</small></td>
+                <td class="align-left"> <small>{{ linhacredito.nome }} </small></td>
+                <td class="align-middle"> <small>{{ linhacredito.limite }} </small></td>
+                <td class="align-middle"> <small>{{ linhacredito.nminparcelas }} </small></td>
+                <td class="align-middle"> <small>{{ linhacredito.nmaxparcelas }} </small></td>
+                <td class="align-middle"> <small>{{ linhacredito.juros_am }} </small></td>
+                <td class="align-middle"> <small>{{ linhacredito.juros_aa }} </small></td>
+                <td class="align-middle"> <small>{{ linhacredito.carencia }} </small></td>
+                <td class="align-middle"> <small>{{ linhacredito.tpcliente }} </small></td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if perms.tabelas.view_linhacredito %}
+                            <a href="{% url 'edit-linhacredito' linhacredito.pk %}" class="btn ghost-button"><i class="fa fa-search fa-fw fa-1x"></i></a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+    <div class="align-middle">
+        {% if is_paginated %}
+
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1"><i class="fa fa-fast-backward fa-1x"></i></a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}"><i class="fa fa-backward fa-1x"></i></a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}"><i class="fa fa-forward fa-1x"></i></a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}"><i class="fa fa-fast-forward fa-1x"></i></a>
+            {% endif %}
+
+        {% endif %}
+    </div>
+
+    {% else %}
+
+        <tbody></tbody>   
+    </table>
+
+    <br><br><br><br><br><br><br><br>
+    <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>
+
+    {% endif %}
+
+
+{% endblock content %}

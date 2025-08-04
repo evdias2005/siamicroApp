@@ -1,0 +1,79 @@
+{% load static %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 landscape;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 750pt; top: 30pt; height: 120pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 750pt; top: 140pt; height: 400pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 750pt; top: 530pt; height: 60pt; font-size: 8pt;
+        }
+    }
+</style>
+<div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+    <p align="center"><b><<< RELAÇÃO DAS RENEGOCIAÇÕES NO PERÍODO >>></b></p>
+    <hr size="0.5">
+    <table>
+         <tr>
+            <td width="3%">#</td>
+            <td width="6%">Dt.Criação</td>
+            <td width="30%">Cliente</td>
+            <td width="8%" align="right">Valor Débito</td>
+            <td width="8%" align="right">Novo Valor</td>
+            <td width="8%" align="right">Novo Prazo</td>
+            <td width="15%" align="center">Linha de Crédito</td>
+            <td width="12%" align="center">Finalidade</td>
+            <td width="10%" align="center">Agente</td>
+         </tr>
+    </table>
+    <hr size="0.5">
+    <br>
+</div>
+</head>
+
+<body>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <table>
+        {% for r in qs %}
+            <tr>
+                <td width="3%"><small>{{ forloop.counter }}</small></td>
+                <td width="6%">{{ r.data_criacao|date:"SHORT_DATE_FORMAT" }}</td>
+                {% if r.processo.clientepf %}
+                    <td width="30%"><b>{{ r.processo.clientepf.nome }}</b></td>
+                {% else %}
+                    <td width="30%"><b>{{ r.processo.empresa.razaosocial }}</b></td>
+                {% endif %}
+                <td width="8%" align="right">{{ r.valordebito }}</td>
+                <td width="8%" align="right">{{ r.novovalor }}</td>
+                <td width="8%" align="right">{{ r.novoprazo }} meses</td>
+                <td width="15%" align="center">{{ r.processo.linhacredito }}</td>
+                <td width="12%" align="center">{{ r.processo.finalidadecredito }}</td>
+                <td width="10%" align="center">{{ r.criado_por }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <hr size="0.5">
+    <table>
+        <tr>
+            <td width="3%"><small> </small></td>
+            <td width="30%"><b>Total Renegociado: R$ {{ totaldebitonegociado }} (novo valor)</b></td>
+        </tr>
+    </table>
+    <hr size="0.5">
+</body>
+</html>

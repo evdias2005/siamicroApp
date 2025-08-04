@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+
+{% block title %} {{title}} {% endblock title %}
+
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">{{title}}</div>
+    
+    <hr>
+    
+    <form method="post">
+    
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.placa.errors }}
+        {{ form.uf.errors }}
+        {{ form.marca.errors }}
+        {{ form.modelo.errors }}
+        {{ form.renavam.errors }}
+        {{ form.anofabr.errors }}
+        {{ form.anomodelo.errors }}
+        {{ form.combustivel.errors }}
+        {{ form.cor.errors }}
+        {{ form.chassi.errors }}
+        {{ form.notafiscal.errors }}
+        {{ form.clientepf.errors }}
+        {{ form.clientepj.errors }}
+
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <label for="{{ form.clientepf.id_for_label }}">Cliente:</label>
+                {{ form.clientepf }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.marca.id_for_label }}">Marca:</label>
+                {{ form.marca }}
+            </div>
+            <div class="form-group col-md-6">
+                <label for="{{ form.modelo.id_for_label }}">Modelo:</label>
+                {{ form.modelo }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.combustivel.id_for_label }}">Combustível:</label>
+                {{ form.combustivel }}
+            </div>
+            <div class="form-group col-md-6">
+                <label for="{{ form.cor.id_for_label }}">Cor:</label>
+                {{ form.cor }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.placa.id_for_label }}">Nº Placa:</label>
+                {{ form.placa }}
+            </div>
+            <div class="form-group col-md-1">
+                <label for="{{ form.uf.id_for_label }}">UF:</label>
+                {{ form.uf }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.renavam.id_for_label }}">RENAVAM:</label>
+                {{ form.renavam }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.anofabr.id_for_label }}">Ano de Fabricação:</label>
+                {{ form.anofabr }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.anomodelo.id_for_label }}">Ano do Modelo:</label>
+                {{ form.anomodelo }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="{{ form.fornecedor.id_for_label }}">Fornecedor:</label>
+                {{ form.fornecedor }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.notafiscal.id_for_label }}">Nota Fiscal:</label>
+                {{ form.notafiscal }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.chassi.id_for_label }}">CHASSI:</label>
+                {{ form.chassi }}
+            </div>
+        </div>
+        <br>
+        <br>
+
+        <div class="align-middle">
+            {% if not object.is_deleted %}
+                {% if not object.is_vendido %}
+                    {% if perms.tabelas.change_veiculo %}
+                        <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+                    {% endif %}
+                    {% if title == "Novo Veículo" %}
+                        <button type="reset" class="btn ghost-blue">Limpa</button>
+                    {% endif %}
+                    {% if delbtn %}
+                        {% if perms.tabelas.delete_veiculo %}
+                            <button type="button" class="btn ghost-red" data-toggle="modal" data-target="#myModal0">Apaga</button>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'veiculos-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+
+    </form>
+
+    {% if title != "Novo Veículo" %}
+        <div class="modal fade" id="myModal0" tabindex="-1" role="dialog" aria-labelledby="myModalLabel0">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel0">Apaga o Veículo</h5>
+                    </div>
+                    <form id="ApagaVeiculoForm" method="post" action="{% url 'delete-veiculo' object.pk %}">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <p><b>Tem certeza que deseja apagar o veículo abaixo?</b></p>
+                            Marca/Modelo: {{ object.marca }} - {{ object.modelo }} <br>
+                            Cor: {{ object.cor }}<br>
+                            Cliente: {{ object.clientepf.nome }} <br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary"><small>Sim</small></button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><small>Não</small></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock content %}

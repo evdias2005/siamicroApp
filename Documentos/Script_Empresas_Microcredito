@@ -1,0 +1,5 @@
+select c.id, c.nome_empresa, c.cnpj, c.data_inicio_atividade, c.inscricao_estadual, c.inscricao_municipal, c.telefone , c.situacao_do_negocio,
+       c.created_at , c.updated_at , e.logradouro, e.bairro, e.cep, e.numero, e.complemento, m.descricao municipio, e2.sigla estado
+from cliente_empresas c left join enderecos e on e.cliente_id = c.id
+                left join municipios m on m.id = e.municipio_id
+                left join estados e2 on e2.id = m.estado_id

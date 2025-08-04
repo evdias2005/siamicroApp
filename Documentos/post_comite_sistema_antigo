@@ -1,0 +1,28 @@
+select u.nome "Agente", dc.numero_processo "Processo", c.nome "Cliente", 'formalidade', 'setor', 'atividade', e.bairro, c.sexo, 
+  age(current_date, c.data_nascimento) "Idade", vl.valor "Credito", fc.descricao "Finalidade"
+from dados_cadastros dc, clientes c, usuarios u, finalidade_creditos fc, enderecos e, valores_lse vl  
+where substring(dc.numero_processo, 5, 4) = '2022'
+  and dc.cliente_id = c.id 
+  and dc.usuario_id = u.id 
+  and dc.finalidade_credito_id = fc.id 
+  and dc.cliente_id = e.cliente_id
+  and dc.id = vl.levantamento_socio_economico_id 
+order by dc.numero_processo 
+
+
+select * from usuarios u 
+
+
+select * from levantamento_socio_economicos lse where lse.dados_cadastro_id = 977
+
+select * from cliente_empresas ce 
+
+select * from valores_lse vl order by vl.levantamento_socio_economico_id 
+
+where levantamento_socio_economico_id = 977
+
+
+select * from parecer_agente_creditos pac where dados_cadastro_id  = 977
+
+
+

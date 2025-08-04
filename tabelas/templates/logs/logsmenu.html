@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} Home {% endblock title %}
+
+{% block content %}
+
+    <meta http-equiv="refresh" content="180">
+
+    <div style="color:#4682B4; font-style: bold; font-size: 2rem; border-bottom: 1px solid #fff">Bem-vindo, {{ request.user.username }}</div>
+    <br>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Logs das Principais Tabelas do Sistema.</h4>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-3">
+            <a href="{% url 'logspessoafisica-list' %}" class="btn ghost-green btn-lg btn-block btn-huge">
+                <h2>{{quantidade_logs.pessoasfisicas}}</h2>Logs de Clientes/Avalistas</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'logspessoajuridica-list' %}" class="btn ghost-blue btn-lg btn-block btn-huge">
+                <h2>{{quantidade_logs.pessoasjuridicas}}</h2>Logs de Empresas</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'logsprocesso-list' %}" class="btn ghost-red btn-lg btn-block btn-huge">
+                <h2>{{quantidade_logs.processos}}</h2>Logs de Processos</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'construcao' %}" class="btn ghost-yellow btn-lg btn-block btn-huge">
+                <h2>{{quantidade_logs.negociacoes}}</h2>Logs de Negociações</a>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-3">
+            <a href="{% url 'construcao' %}" class="btn ghost-gray btn-lg btn-block btn-huge">
+                <h2>1.111</h2>Logs do Financeiro</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'construcao' %}" class="btn ghost-button btn-lg btn-block btn-huge">
+                <h2>2.222</h2>Logs de Avalistas-Processo</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'construcao' %}" class="btn ghost-green btn-lg btn-block btn-huge">
+                <h2>3.333</h2>Logs de Referência-Processo</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'construcao' %}" class="btn ghost-blue btn-lg btn-block btn-huge">
+                <h2>4.444</h2>Logs de Pareceres-Processo</a>
+        </div>
+    </div>    <hr>
+
+{% endblock content %}

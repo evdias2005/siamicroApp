@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block title %} Cancelar Parcela {% endblock title %}
+
+
+{% block content %}
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <fieldset class="form-group">
+            <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">Cancela Parcela</div> <br>
+            <h5 style="color:black;">Tem certeza que deseja cancelar a parcela de n° "{{ object.numparcela }}" do Processo "{{ object.processo }}"?</h5>
+        </fieldset>
+
+        <div class="form-group">
+            <button type="submit" class="btn ghost-red">Sim, Cancela</button>
+            <a href="{% url 'processofaturado-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+        
+    </form>
+
+{% endblock content %}

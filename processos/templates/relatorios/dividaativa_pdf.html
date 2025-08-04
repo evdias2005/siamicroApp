@@ -1,0 +1,71 @@
+{% load static %}
+{% load custom_filters %}
+
+<html>
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 30pt; height: 100pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 130pt; height: 632pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 800pt; height: 60pt; font-size: 7pt;
+        }
+    }
+</style>
+<div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+    <p align="center"><b><<< RELATÓRIO DOS INADIMPLENTES - DÍVIDA ATIVA - Parcelas com mais de {{ dias_inadimp|to_int }} dias de atraso >>></b></p>
+    <hr size="0.5">
+</div>
+<div id="footer_content">
+    <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+    <hr size="0.5">
+    <p align="center">
+        Página <pdf:pagenumber/>
+    </p>
+</div>
+</head>
+<body>
+    <table>
+    <tr><b>
+        <td width="10%">Processo n°</td>
+        <td width="20%">Cliente</td>
+        <td width="10%">Liberação</td>
+        <td width="3%" align="center">Pc</td>
+        <td width="10%">Dt.Vencto</td>
+        <td width="8%">Vlr.Título</td>
+        <td width="7%">Atraso de</td>
+        <td width="22%">Linha Crédito</td>
+        <td width="10%">Agente</td>
+    </b></tr>
+    <br>
+    </table>
+    {% for item in qs %}
+        {% if item.dias_atraso|to_int > dias_inadimp|to_int %}
+            <table>
+                <tr>
+                    <td width="10%"><small> {{ item.processo.numprocesso }} </small></td>
+                    <td width="20%"><small> {% if item.processo.clientepf %} {{ item.processo.clientepf.nome }}
+                        {% else %} {{ item.processo.clientepj.razaosocial }} {% endif %}</small></td>
+                    <td width="10%"><small> {{ item.parecer.dtliberacao|date:"SHORT_DATE_FORMAT" }} </small></b></td>
+                    <td width="3%" align="center"><small> {{ item.numparcela }} </small></td>
+                    <td width="10%"><small> {{ item.dtvencimento|date:"SHORT_DATE_FORMAT" }} </small></b></td>
+                    <td width="8%"><small> {{ item.valorparcela }} </small></b></td>
+                    <td width="7%"><small> {{ item.dias_atraso }} dias </small></b></td>
+                    <td width="22%"><small>{{ item.processo.linhacredito }} </small></b></td>
+                    <td width="10%"><small>{{ item.processo.criado_por }} </small></b></td>
+                </tr>
+            </table>
+        {% endif %}
+    {% endfor %}
+    <br>
+</body>
+</html>

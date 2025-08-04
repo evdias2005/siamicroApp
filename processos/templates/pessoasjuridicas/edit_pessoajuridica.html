@@ -1,0 +1,672 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+{% include "../cabecalho.html" %}
+
+    <form method="post" id="edit_PJForm" data-bairros-url="{% url 'ajax_load_bairros' %}" novalidate>
+    
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.razaosocial.errors }}
+        {{ form.situacao.erros }}
+        {{ form.nomefantasia.errors }}
+        {{ form.dtiniatividade.errors }}
+        {{ form.porteempresa.errors }}
+        {{ form.setornegocio.errors }}
+        {{ form.ramoatividade.errors }}
+        {{ form.numcnpj.errors }}
+        {{ form.numinscest.errors }}
+        {{ form.numinscmun.errors }}
+        {{ form.telfixo.errors }}
+        {{ form.telcelular1.errors }}
+        {{ form.telcelular2.errors }}
+        {{ form.logradouro.errors }}
+        {{ form.nrimovel.errors }}
+        {{ form.complemento.erros }}
+        {{ form.bairro.errors }}
+        {{ form.cidade.errors }}
+        {{ form.cep.errors }}
+        {{ form.observacao.errors }}
+        {{ form.pontoreferencia.errors }}
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="{{ form.razaosocial.id_for_label }}">Razão Social:<span style="color: red;">*</span></label>
+                <input type="text" id="id_razaosocial" onkeyup="duplicanome()" {{ form.razaosocial }} />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="{{ form.situacao.id_for_label }}">Situação:</label>
+                {{ form.situacao }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.tipoempresa.id_for_label }}">Porte Empresa:<span style="color: red;">*</span></label>
+                {{ form.porteempresa }}
+            </div>
+        </div>
+        <!-- Tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#dados_empresa">Dados Empresa</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#localizacao_empresa" onclick="find_geolocalizacao()">
+                  Localização Geográfica</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#historico_processos">Histórico Processos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#ficha_financeira">Ficha Financeira</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+            <div class="tab-pane active" id="dados_empresa"><br>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.nomefantasia.id_for_label }}">NomeFantasia:<span style="color: red;">*</span></label>
+                        <input type="text" id="id_nomefantasia" {{ form.nomefantasia }}/>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="{{ form.dtiniatividade.id_for_label }}">Início Atividade:<span style="color: red;">*</span></label>
+                        {{ form.dtiniatividade }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="{{ form.setornegocio.id_for_label }}">Setor Negócio:<span style="color: red;">*</span></label>
+                        {{ form.setornegocio }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="{{ form.ramoatividade.id_for_label }}">Ramo Atividade:<span style="color: red;">*</span></label>
+                        {{ form.ramoatividade }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="{{ form.numcnpj.id_for_label }}">No.CNPJ:</label>
+                        <div style="display: flex; align-items: center;">
+                            {{ form.numcnpj }}
+                            <a class="btn ghost-green ml-3" href="javascript:void(0);" title="Pesquisa Dados do CNPJ" onclick="find_cnpj()" style="white-space: nowrap;">
+                                <i class="fa fa-eye fa-fw"></i>Dados
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-1">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="{{ form.numinscest.id_for_label }}">No.Inscrição Estadual:</label>
+                        {{ form.numinscest }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="{{ form.numinsmun.id_for_label }}">No.Inscrição Municipal:</label>
+                        {{ form.numinscmun }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="{{ form.observacao.id_for_label }}">Observação:</label>
+                        {{ form.observacao }}
+                    </div>
+                </div>
+                <hr>
+                <p><b>ENDEREÇO / CONTATO</b></p>
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label for="{{ form.cep.id_for_label }}">
+                            CEP:<span style="color: red;">*</span>
+                        </label>
+
+                        <!-- container flex para o campo + botão -->
+                        <div style="display: flex; align-items: center;">
+                            {{ form.cep }}
+                            <a class="btn ghost-green ml-2" href="javascript:void(0);" title="Pesquisa CEP dos Correios"
+                               onclick="find_cep()" style="white-space: nowrap;">
+                                <i class="fa fa-search fa-fw fa-1x"></i>CEP ...
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-5">
+                        <label for="{{ form.logradouro.id_for_label }}">Logradouro:<span style="color: red;">*</span></label>
+                        {{ form.logradouro }}
+                    </div>
+                    <div class="form-group col-md-1">
+                        <label for="{{ form.numimovel.id_for_label }}">No.:<span style="color: red;">*</span></label>
+                        {{ form.numimovel }}
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="{{ form.complemento.id_for_label }}">Complemento:</label>
+                        {{ form.complemento }}
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.cidade.id_for_label }}">Cidade:<span style="color: red;">*</span></label>
+                        {{ form.cidade }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="{{ form.bairro.id_for_label }}">Bairro:</label>
+                        {{ form.bairro }}
+                    </div>
+<!--                    <div class="form-group col-md-1">-->
+<!--                        <label for="{{ form.cep.id_for_label }}">CEP:</label>-->
+<!--                        <input type="text" id="id_cep" onblur="find_cep()" {{ form.cep }}/>-->
+<!--                    </div>-->
+                    <div class="form-group col-md-2">
+                        <label for="{{ form.telfixo.id_for_label }}">Tel Fixo:</label>
+                        {{ form.telfixo }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="{{ form.telcelular1.id_for_label }}">Tel Celular1:<span style="color: red;">*</span></label>
+                        {{ form.telcelular1 }}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="{{ form.telcelular2.id_for_label }}">Tel Celular2:</label>
+                        {{ form.telcelular2 }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="{{ form.pontoreferencia.id_for_label }}">Ponto de Referência (informações que facilitem
+                            o acesso ao local do negócio/residência)</label>
+                        {{ form.pontoreferencia }}
+                    </div>
+                </div>
+                <table class="table table-striped" style="width:100%">
+                    <thead class="align-middle">
+                        <tr>
+                            <th width="80%">Sócio</th>
+                            <th width="10%">Cota(%)</th>
+                            <th width="10%">Excluir?</th>
+                        </tr>
+                    </thead>
+                </table>
+                {{ formset_socios.management_form }}
+                {% for form in formset_socios %}
+                    {{ form.id }}
+                    <div class="form-row">
+                        <div class="form-group col-md-10 align-middle">
+<!--                            <label for="{{ form.socio.id_for_label }}">Sócio:</label>-->
+                            {{ form.socio }}
+                        </div>
+                        <div class="form-group col-md-1 align-middle">
+<!--                            <label for="{{ form.cota.id_for_label }}">Cota(%):</label>-->
+                            {{ form.cota }}
+                        </div>
+                        <div class="form-group col-md-1 align-middle">
+<!--                            <label for="{{ form.delete.id_for_label }}">Excluir:</label>-->
+                            {{ form.DELETE }}
+                        </div>
+                    </div>
+                {% endfor %}
+                <hr>
+                <div class="align-middle">
+                    {% if not pessoajuridica.is_deleted %}
+                        {% if perms.processos.change_pessoajuridica %}
+                            <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+                        {% endif %}
+                        {% if title == "Nova P.Jurídica" %}
+                            <button type="reset" class="btn ghost-blue">Limpa</button>
+                        {% endif %}
+                        {% if delbtn %}
+                            {% if perms.processos.delete_pessoajuridica %}
+                                <a href="{% url 'delete-pessoajuridica' pessoajuridica.pk %}" class="btn ghost-red">Apaga</a>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    <a href="{% url 'pessoasjuridicas-list' %}" class="btn ghost-button">Retorna</a>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="localizacao_empresa">
+                <br>
+                <div id="map"></div>
+            </div>
+
+            <div class="tab-pane fade" id="historico_processos"><br>
+                <table class="table table-striped">
+                    <thead class="align-middle">
+                        <tr>
+                            <th width="5%"><small><b>Id</b></small></th>
+                            <th width="5%"><small><b>Processo</b></small></th>
+                            <th width="30%"><small><b>Empresa/Negócio</b></small></th>
+                            <th width="5%"><small><b>Data</b></small></th>
+                            <th width="10%"><small><b>Linha Crédito</b></small></th>
+                            <th width="15%"><small><b>Agente</b></small></th>
+                            <th width="15%"><small><b>Status</b></small></th>
+                            <th width="10%"><small><b>Ações</b></small></th>
+                        </tr>
+                    </thead>
+                    {% if qsprocessos %}
+                        <tbody>
+                            {% for processo in qsprocessos %}
+                                <tr>
+                                    <td class="align-middle"><small>{{ processo.id }}</small></td>
+                                    <td class="align-middle"><small><b>{{ processo.numprocesso }}</b></small></td>
+                                    <td class="align-middle"><small>{{ processo.empresa.razaosocial }}</small></td>
+                                    <td class="align-middle"><small>{{ processo.dtprocesso|date:"SHORT_DATE_FORMAT" }}</small></td>
+                                    <td class="align-middle"><small>{{ processo.linhacredito }}</small></td>
+                                    <td class="align-middle"><small>{{ processo.criado_por.first_name }}</small></td>
+                                    <td class="align-middle"><small>{{ processo.texto_status }}</small></td>
+                                    <td class="align-middle">
+                                        <div class="align-middle">
+                                            {% if perms.processos.view_processo %}
+                                                <a href="{% url 'edit-processopj' processo.pk %}" class="btn ghost-button"><i class="fa fa-search fa-fw fa-1x"></i></a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    {% endif %}
+                </table>
+                <br>
+                <div class="align-middle">
+                    {% if perms.processos.add_processo %}
+                        <a class="btn ghost-blue" href="{% url 'new-processopj' %}"><i class="fa fa-plus-square fa-fw fa-1x"></i>
+                        Processo
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="ficha_financeira"><br>
+                <table class="table table-striped">
+                    <thead class="align-middle">
+                        <tr>
+                            <th width="5%"><small><b>Id</b></small></th>
+                            <th width="8%"><small><b>Processo</b></small></th>
+                            <th width="5%"><small><b>Parcela</b></small></th>
+                            <th width="8%"><small><b>Valor</b></small></th>
+                            <th width="8%"><small><b>Dt.Venc.</b></small></th>
+                            <th width="8%"><small><b>Vlr.Pago</b></small></th>
+                            <th width="8%"><small><b>Juros</b></small></th>
+                            <th width="8%"><small><b>Multa</b></small></th>
+                            <th width="42%"><small><b>Situação</b></small></th>
+                        </tr>
+                    </thead>
+                    {% if qstitulos %}
+                        <tbody>
+                            {% for titulo in qstitulos %}
+                                <tr>
+                                    <td class="align-middle"><small>{{ titulo.id }}</small></td>
+                                    <td class="align-middle"> <small><b>{{ titulo.processo.numprocesso }}</b></small></td>
+                                    <td class="align-middle"> <small>{{ titulo.numparcela }}</small></td>
+                                    <td class="align-middle"><small>{{ titulo.valorparcela }}</small></td>
+                                    <td class="align-middle"><small>{{ titulo.dtvencimento|date:"SHORT_DATE_FORMAT" }}</small></td>
+                                    <td class="align-middle"><small>{{ titulo.valorpago }}</small></td>
+                                    <td class="align-middle"><small>{{ titulo.valorjuros }}</small></td>
+                                    <td class="align-middle"><small>{{ titulo.valormulta }}</small></td>
+                                    <td class="align-middle">
+                                        {% if titulo.status == 'A' %}
+                                            {% if titulo.dtvencimento|date:"Y-m-d" < titulo.data_dia|date:"Y-m-d"  %}
+                                                <i class="fa fa-exclamation-triangle fa-1x" style="color:red"></i><small> Em aberto há {{ titulo.dias_atraso }} dias.</small>
+                                            {% else %}
+                                                <small>Em aberto (a vencer)</small>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if titulo.status == 'C' %}
+                                            <small>Cancelado em {{ titulo.data_edicao|date:"SHORT_DATE_FORMAT"}} </small>
+                                        {% endif %}
+                                        {% if titulo.status == 'P' %}
+                                            <small>Pago em {{ titulo.dtpagamento|date:"SHORT_DATE_FORMAT"}} c/ acrescimo de {{ titulo.valoracres }} e desconto de {{ titulo.valordesc }}. </small>
+                                        {% endif %}
+                                        {% if titulo.status == 'N' %}
+                                            <small>{{ titulo.observacao }} </small>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    <tfoot class="tfoot-inverse align-middle">
+                        <tr>
+                            <th width="5%"></th>
+                            <th width="8%"></th>
+                            <th width="5%"><small><b></b></small></th>
+                            <th width="8%"><small><b>{{ valor_total|floatformat:"2" }}</b></small></th>
+                            <th width="8%"><small><b></b></small></th>
+                            <th width="8%"><small><b>{{ valor_pago|floatformat:"2" }}</b></small></th>
+                            <th width="8%"><small><b></b></small></th>
+                            <th width="8%"><small><b></b></small></th>
+                            <th width="42%"><small><b>Em aberto: {{ valor_aberto|floatformat:"2" }}</b></small></th>
+                        </tr>
+                    </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </form>
+
+<script>
+    function duplicanome() {
+        const razaosocial = document.getElementById("id_razaosocial").value;
+        const nomefantasia = document.getElementById("id_nomefantasia").value;
+
+        document.getElementById('id_nomefantasia').value=razaosocial;
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script>
+    var $j = jQuery.noConflict();  // Usa uma variável diferente para o jQuery
+    $j("#id_cidade").change(function () {
+        var url = $("#edit_PJForm").attr("data-bairros-url");
+        var cidadeId = $(this).val();
+        $j.ajax({
+            url: url,
+            data: {
+                'cidade': cidadeId
+            },
+            success: function (data) {
+                $("#id_bairro").html(data);
+            }
+        });
+    });
+</script>
+
+<!-- Script para consulta do CEP -->
+<script>
+    var $j = jQuery.noConflict();  // Usa uma variável diferente para o jQuery
+
+    function find_cep() {
+        var cepInput = document.getElementById("id_cep");
+        if (!cepInput) {
+            alert("Erro: Campo CEP (id_cep) não encontrado.");
+            return;
+        }
+        var numcep = cepInput.value;
+        numcep = numcep.replace(/\D/g, ""); // Remove tudo que não for dígito
+
+        if (numcep.length !== 8) {
+            // Opcional: Adicionar validação básica do formato do CEP
+            // alert("Formato de CEP inválido. Digite 8 números.");
+            // return;
+        }
+
+        $j.ajax({
+            url: "/processos/consultar-cep/", // Endpoint da sua API backend
+            data: {
+                'cep': numcep
+            },
+            dataType: 'json', // Especifica que esperamos JSON como resposta
+            success: function(data){
+                // Verifica se a resposta 'data' existe e se não há um campo 'error' explícito
+                if (data && !data.error) {
+                    // --- Tratamento Seguro das Propriedades ---
+                    // Função auxiliar para obter valor ou string vazia e aplicar toUpperCase
+                    function getValueOrEmpty(value) {
+                        if (value && typeof value === 'string') {
+                            return value.toUpperCase();
+                        }
+                        return "";
+                    }
+
+                    // Obtém os valores de forma segura
+                    var logradouro = getValueOrEmpty(data.logradouro);
+                    var complemento = getValueOrEmpty(data.complemento);
+                    var bairro = getValueOrEmpty(data.bairro); // Bairro em maiúsculas
+                    var localidade = getValueOrEmpty(data.localidade); // Cidade em maiúsculas
+                    var uf = getValueOrEmpty(data.uf);
+                    var cepFormatado = data.cep || numcep;
+
+                    // Monta a mensagem do alert com os dados tratados
+                    alert (
+                        "Dados para o CEP: " + cepFormatado + "\n\n" +
+                        "Logradouro: " + logradouro + "\n" +
+                        "Complemento: " + complemento + "\n" +
+                        "Bairro: " + bairro + "\n" +
+                        "Cidade/UF: " + localidade + "/" + uf
+                    );
+
+                    // --- Preenchimento Seguro dos Campos de Texto ---
+                    function setFieldValue(elementId, value) {
+                        var element = document.getElementById(elementId);
+                        if (element) {
+                            element.value = value;
+                        } else {
+                            console.warn("Elemento com ID '" + elementId + "' não encontrado para preenchimento.");
+                        }
+                    }
+
+                    setFieldValue('id_logradouro', logradouro);
+                    setFieldValue('id_complemento', complemento);
+                    // A linha 'setFieldValue('id_bairro', bairro);' foi removida/substituída pela lógica abaixo.
+
+                    // --- Seleção do Bairro no Combo Box (Select) ---
+                    var bairroSelect = document.getElementById('id_bairro');
+                    if (bairroSelect && bairro) { // Verifica se o select e o bairro existem
+                        var bairroEncontrado = false;
+                        // Itera pelas opções do select
+                        for (var i = 0; i < bairroSelect.options.length; i++) {
+                            // Compara o TEXTO da opção (em maiúsculas) com o bairro retornado (já em maiúsculas)
+                            if (bairroSelect.options[i].text.toUpperCase() === bairro) {
+                                bairroSelect.selectedIndex = i; // Define o índice selecionado
+                                bairroEncontrado = true;
+                                console.log("Bairro '" + bairro + "' selecionado no índice " + i);
+                                break; // Sai do loop após encontrar
+                            }
+                        }
+                        if (!bairroEncontrado) {
+                            console.warn("Bairro '" + bairro + "' retornado pelo CEP não encontrado nas opções do campo 'id_bairro'.");
+                            // Opcional: Limpar seleção ou definir um valor padrão
+                            // bairroSelect.selectedIndex = -1; // ou 0 para selecionar a primeira opção
+                        }
+                    } else if (!bairroSelect) {
+                        console.warn("Elemento select com ID 'id_bairro' não encontrado.");
+                    }
+
+                    // --- Seleção da Cidade no Combo Box (Select) ---
+                    var cidadeSelect = document.getElementById('id_cidade');
+                    if (cidadeSelect && localidade) { // Verifica se o select e a localidade existem
+                        var cidadeEncontrada = false;
+                        // Itera pelas opções do select
+                        for (var i = 0; i < cidadeSelect.options.length; i++) {
+                            // Compara o TEXTO da opção (em maiúsculas) com a localidade retornada (já em maiúsculas)
+                            if (cidadeSelect.options[i].text.toUpperCase() === localidade) {
+                                cidadeSelect.selectedIndex = i; // Define o índice selecionado
+                                cidadeEncontrada = true;
+                                console.log("Cidade '" + localidade + "' selecionada no índice " + i);
+                                break; // Sai do loop após encontrar
+                            }
+                        }
+                        if (!cidadeEncontrada) {
+                            console.warn("Cidade '" + localidade + "' retornada pelo CEP não encontrada nas opções do campo 'id_cidade'.");
+                            // Opcional: Limpar seleção ou definir um valor padrão
+                            // cidadeSelect.selectedIndex = -1; // ou 0 para selecionar a primeira opção
+                        }
+                    } else if (!cidadeSelect) {
+                        console.warn("Elemento select com ID 'id_cidade' não encontrado.");
+                    }
+
+                } else {
+                    // Trata o caso de CEP não encontrado ou erro retornado pela API
+                    var errorMsg = "CEP não encontrado!";
+                    if (data && data.error) {
+                        errorMsg = "Erro ao consultar CEP: " + data.error;
+                    }
+                    alert(errorMsg);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                // Melhora a mensagem de erro AJAX
+                var errorDetail = "Erro na comunicação ao consultar o CEP. Status: " + textStatus + ", Erro: " + errorThrown;
+                console.error("Erro AJAX na consulta de CEP:", jqXHR, textStatus, errorThrown);
+                alert(errorDetail + " Tente novamente.");
+            }
+        });
+    }
+</script>
+
+<!-- Script para consultar dados do CNPJ da empresa -->
+<script>
+    var $j = jQuery.noConflict();  // Usa uma variável diferente para o jQuery
+
+    function find_cnpj() {
+        var numcnpj = document.getElementById("id_numcnpj").value;
+        cnpj = numcnpj.replace(".", "").replace(".", "").replace("-", "").replace("/", "");  // Remove o hifem, os pontos e a barra do CNPJ
+
+        $j.ajax({
+            url: "/processos/consultar-cnpj/",
+            data: {
+                'cnpj': cnpj
+            },
+            success: function(data){
+                if (!data.error) {
+                    alert ("\nDados para o CNPJ: " + numcnpj + "\n\nRazão Social: "
+                    + data.razao_social + "\n\Nome Fantasia: " + data.estabelecimento.nome_fantasia
+                    + "\nNatureza: " + data.natureza_juridica.descricao
+                    + "\nSituação Cadastral: " + data.estabelecimento.situacao_cadastral
+                    + "\nData Situação Cadastral: " + data.estabelecimento.data_situacao_cadastral
+                    + "\nInício da Atividade: " + data.estabelecimento.data_inicio_atividade
+                    + "\nAtividade Principal: " + data.estabelecimento.atividade_principal.descricao
+                    + "\nLogradouro: " + data.estabelecimento.tipo_logradouro + " " + data.estabelecimento.logradouro + ", " + data.estabelecimento.numero
+                    + "\nBairro: " + data.estabelecimento.bairro + " - CEP " + data.estabelecimento.cep
+                    + "\nCidade: " + data.estabelecimento.cidade.nome + " (" + data.estabelecimento.estado.nome + ")"
+                    + "\nTelefones: " + data.estabelecimento.ddd1 + " " + data.estabelecimento.telefone1
+                    + " | " + data.estabelecimento.ddd2 + " " + data.estabelecimento.telefone2
+                    + "\nEmail: " + data.estabelecimento.email
+                    );
+                } else {
+                    alert("CNPJ não encontrado!");
+                }
+            },
+            error: function(){
+                alert("Erro ao consultar o CNPJ. Tente novamente.");
+            }
+        });
+    }
+</script>
+
+<!-- Os dois próximos scripts são utilizados para apresentar mapa com base nas informações de latitude e longitude do bairro -->
+<!-- Leaflet JS -->
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var $j = jQuery.noConflict();  // Usa uma variável diferente para o jQuery
+
+    function find_geolocalizacao() {
+        var logradouroInput = document.getElementById("id_logradouro");
+        var numImovelInput = document.getElementById("id_numimovel");
+        var bairroSelectElement = document.getElementById("id_bairro");
+        var cidadeSelectElement = document.getElementById("id_cidade");
+
+        // --- Verificações Iniciais ---
+        if (!logradouroInput || !numImovelInput || !bairroSelectElement || !cidadeSelectElement) {
+            alert("Erro: Um ou mais campos do endereço não foram encontrados no formulário.");
+            return; // Interrompe a execução se algum campo essencial não existe
+        }
+
+        var logradouroTexto = logradouroInput.value + " " + numImovelInput.value;
+
+        // --- Obter Texto Selecionado Corretamente ---
+        var bairroTexto = "";
+        if (bairroSelectElement.selectedIndex >= 0) {
+            bairroTexto = bairroSelectElement.options[bairroSelectElement.selectedIndex].text;
+        } else {
+            alert("Por favor, selecione um bairro.");
+            return; // Interrompe se nenhum bairro foi selecionado
+        }
+
+        var cidadeTexto = "";
+        if (cidadeSelectElement.selectedIndex >= 0) {
+            cidadeTexto = cidadeSelectElement.options[cidadeSelectElement.selectedIndex].text;
+        } else {
+            alert("Por favor, selecione uma cidade.");
+            return; // Interrompe se nenhuma cidade foi selecionada
+        }
+
+        $j.ajax({
+            url: "/processos/consultar-geolocalizacao/",
+            data: {
+                'logradouro': logradouroTexto,
+                'bairro': bairroTexto,
+                'cidade': cidadeTexto
+            },
+            dataType: 'json', // É uma boa prática especificar o tipo de dado esperado
+            success: function(data){
+                // --- Verificar Resposta e Dados de Localização ---
+                if (data && !data.error && data.latitude !== undefined && data.longitude !== undefined) {
+                    var latitude = data.latitude; // Obter latitude da resposta AJAX
+                    var longitude = data.longitude; // Obter longitude da resposta AJAX
+
+                    // Inicializa o mapa (garanta que o elemento 'map' existe no HTML)
+                    var mapContainer = document.getElementById('map');
+                    if (!mapContainer) {
+                        alert("Erro: Elemento 'map' não encontrado para exibir o mapa.");
+                        return;
+                    }
+                    // Remove mapa anterior se existir para evitar erro do Leaflet
+                    if (mapContainer._leaflet_id) {
+                        mapContainer._leaflet_id = null;
+                    }
+
+                    var map = L.map('map').setView([latitude, longitude], 15);
+
+                    // Adiciona o mapa base (OpenStreetMap)
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                      attribution: '© OpenStreetMap contributors'
+                    }).addTo(map);
+
+                    // Adiciona um marcador
+                    L.marker([latitude, longitude])
+                      .addTo(map)
+                      .bindPopup(bairroTexto + " - " + cidadeTexto)
+                      .openPopup();
+
+                    // Corrigir renderização se estiver dentro de abas ou containers ocultos
+                    setTimeout(() => {
+                        if (map) {
+                           map.invalidateSize();
+                        }
+                    }, 200);
+
+                } else {
+                    // Informar erro específico se possível
+                    var errorMsg = "Localização não encontrada!";
+                    if (data && data.error) {
+                        errorMsg = "Erro ao buscar localização: " + data.error;
+                    } else if (!data || data.latitude === undefined || data.longitude === undefined) {
+                        errorMsg = "Localização não encontrada (dados de latitude/longitude ausentes na resposta do servidor).";
+                    }
+                    alert(errorMsg);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                // Fornecer mais detalhes sobre o erro AJAX
+                var errorDetail = "Erro ao consultar os dados geográficos do Endereço. Status: " + textStatus + ", Erro: " + errorThrown;
+                if (jqXHR.responseText) {
+                    // Tenta mostrar a resposta do servidor se houver (pode ajudar na depuração do backend)
+                    console.error("Resposta do servidor:", jqXHR.responseText);
+                    // errorDetail += "\nResposta do servidor: " + jqXHR.responseText.substring(0, 200); // Limita o tamanho da msg
+                }
+                alert(errorDetail + " Tente novamente.");
+            }
+        });
+    }
+</script>
+
+<!--<script>-->
+<!--    // Aguarda o carregamento completo do DOM-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        // Quando a aba do mapa for exibida (Bootstrap event)-->
+<!--        $('a[data-toggle="tab"][href="#localizacao_empresa"]').on('shown.bs.tab', function () {-->
+<!--            setTimeout(function () {-->
+<!--                if (typeof map !== 'undefined') {-->
+<!--                    map.invalidateSize();-->
+<!--                }-->
+<!--            }, 200);  // pequeno delay para garantir que a aba foi renderizada-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+
+{% include "../rodape.html" %}
+
+{% endblock content %}
+
+

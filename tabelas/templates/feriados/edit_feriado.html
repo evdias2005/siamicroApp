@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+
+{% block title %} {{title}} {% endblock title %}
+
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">{{title}}</div> <hr>
+    
+    <form method="post">
+    
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        {{ form.dtferiado.errors }}
+        {{ form.descricao.errors }}
+        {{ form.tipo.errors }}
+        {{ form.observacao.errors }}
+
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="{{ form.dtferiado.id_for_label }}">Data:</label>
+                {{ form.dtferiado }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <label for="{{ form.descricao.id_for_label }}">Descrição:</label>
+                {{ form.descricao }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.tipo.id_for_label }}">Tipo:</label>
+                {{ form.tipo }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-10">
+                <label for="{{ form.observacao.id_for_label }}">Observação:</label>
+                {{ form.observacao }}
+            </div>
+        </div>
+
+        <br>
+        <br>
+
+        <div class="align-middle">
+            {% if not feriado.is_deleted %}
+                {% if perms.tabelas.change_feriado %}
+                    <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+                {% endif %}
+                {% if title == "Novo Feriado" %}
+                    <button type="reset" class="btn ghost-blue" >Limpa</button>
+                {% endif %}
+                {% if delbtn %}
+                    {% if perms.tabelas.delete_feriado %}
+                        <a href="{% url 'delete-feriado' feriado.pk %}" class="btn ghost-red">Apaga</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'feriados-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+
+        
+    </form>
+
+
+{% endblock content %}

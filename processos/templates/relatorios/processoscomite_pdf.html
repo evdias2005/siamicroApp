@@ -1,0 +1,138 @@
+{% load static %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 landscape;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 750pt; top: 30pt; height: 120pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 750pt; top: 130pt; height: 400pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 750pt; top: 530pt; height: 60pt; font-size: 8pt;
+        }
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f0f0f0;  /* Cabeçalho com fundo cinza claro */
+    }
+
+    td {
+        background-color: #fff;  /* Colunas com fundo branco */
+    }
+
+    hr {
+        border: 0;
+        height: 1px;
+        background-color: #000;
+    }
+
+</style>
+
+<div id="header_content">
+    {{ linhalogo1 }}<br>
+    {{ linhalogo2 }}<br>
+    {{ linhalogo3 }}<br><br>
+<!--    <p align="center"><b><<< ELENCO DE PROPOSTAS PARA O COMITÊ DE CRÉDITO >>></b></p>-->
+    <table>
+        <tbody>
+            <tr>
+                <td width="100%"><h2><<< ELENCO DE PROPOSTAS PARA O COMITÊ DE CRÉDITO - {{ dtcomite|date:"SHORT_DATE_FORMAT" }} >>></h2></td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <br>
+</div>
+</head>
+
+<body>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr>
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+
+        {% for r in qs %}
+            <table>
+                <tbody>
+                    <tr>
+                        <td width="3%"><b>{{ forloop.counter }}</b></td>
+                        <td width="7%">{{ r.criado_por }}</td>
+                        {% if r.processo.clientepf %}
+                        <td width="34%"><b>{{ r.processo.clientepf.nome }}</b></td>
+                        {% else %}
+                        <td width="34%"><b>{{ r.processo.empresa.razaosocial }}</b></td>
+                        {% endif %}
+                        <td width="11%">{% if r.processo.clientepf.numcpf %} CPF {{ r.processo.clientepf.numcpf }} {% else %} --- {% endif %}</td>
+                        <td width="15%">{% if r.processo.empresa.numcnpj %} CNPJ {{ r.processo.empresa.numcnpj }} {% else %} --- {% endif %}</td>
+                        <td width="20%">{{ r.processo.finalidadecredito }}</td>
+                        <td width="10%">{{ r.processo.linhacredito }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table>
+                <tbody>
+                    <tr>
+                        <td width="10%">{{ r.vlrtotalaprovado }}</td>
+                        <td width="22%">( Fixo {{ r.valorfixo_aprovado }} + Giro {{ r.valorgiro_aprovado }})</td>
+                        <td width="12%">{{ r.prazoaprovado }} X {{ r.valorparcela }}</td>
+                        <td width="8%">{% if r.tipo == 'N' %} NOVO {% elif r.tipo == 'R' %} RENOVAÇÃO {% endif %}</td>
+                        <td width="28%">{{ r.processo.empresa.ramoatividade|default_if_none:"---" }}</td>
+                        <td width="20%">{{ r.processo.empresa.bairro|default_if_none:"---" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr size="0.5">
+        {% endfor %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td width="100%"><h2>T O T A I S</h2></td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% for t in qssubtot %}
+            <table>
+                <tbody>
+                    <tr>
+                        <td width="20%"><h2>{{ t.qtde }} processos</h2></td>
+                        <td width="40%"><h2>{{ t.processo__linhacredito__nome }}</h2><td>
+                        <td width="40%"><h2>R$ {{ t.subtot }} - Ticket Médio: R$ {{ t.mediasub|floatformat:2 }}</h2></td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endfor %}
+
+        <table>
+            <tbody>
+                <tr>
+                    <td width="20%"><h2>{{ qtde_total }} processos</h2></td>
+                    <td width="40%"><h2>TOTAL DAS LINHAS DE CRÉDITO</h2><td>
+                    <td width="40%"><h2>R$ {{ valor_total }} - Ticket Médio: R$ {{ media_final|floatformat:2 }}</h2></td>
+                </tr>
+            </tbody>
+        </table>
+
+</body>
+</html>

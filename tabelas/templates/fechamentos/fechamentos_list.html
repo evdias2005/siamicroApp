@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} Lista de Fechamentos {% endblock title %}
+
+
+{% block content %}
+    
+    <div class="row" style="color: #4682B4; font-style: bold; font-size: 1.5rem;">
+        <div class="col-md-8">Lista de Fechamentos</div>
+        <div class="col-md-4">
+            {% if perms.tabelas.add_fechamento %}
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-fechamento' %}"><i class="fa fa-plus-square fa-fw fa-1x"></i>
+                <small>Fechamento</small></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+
+    <div style="border-bottom: 1px solid white;"></div>
+
+    <table class="table table-striped">
+
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="4%"><small>Id</small></th>
+                <th width="1%"><small> </small></th>
+                <th width="10%"><small>Referência</small></th>
+                <th width="15%"><small>Data</small></th>
+                <th width="10%"><small>Fechado por</small></th>
+                <th width="50%"><small>Observação</small></th>
+                <th width="10%"><small>Ações</small></th>
+            </tr>
+        </thead>
+
+    {% if object_list %}
+
+        <tbody>
+            {% for fechamento in object_list %}
+            <tr>
+                <td class="align-middle"> <small>{{ fechamento.id }} </small></td>
+                <td class="align-middle"><small>{% if fechamento.is_deleted %} <i class="fa fa-ban fa-fw fa-1x" style="color:red"></i> {% else %}  {% endif %}</small></td>
+                <td class="align-left"> <small>{{ fechamento.referencia }} </small></td>
+                <td class="align-middle"> <small>{{ fechamento.dtfechamento }} </small></td>
+                <td class="align-middle"> <small>{{ fechamento.fechado_por }} </small></td>
+                <td class="align-middle"> <small>{{ fechamento.observacao }} </small></td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if perms.tabelas.change_fechamento %}
+                            <a href="{% url 'edit-fechamento' fechamento.pk %}" class="btn ghost-button"><i class="fa fa-edit fa-fw fa-1x"></i></a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <br><br><br><br><br><br><br><br>
+    <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>
+
+    {% endif %}
+
+
+{% endblock content %}

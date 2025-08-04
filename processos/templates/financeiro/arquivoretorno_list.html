@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} Movimentação Financeira - Arquivo Retorno {% endblock title %}
+
+{% block content %}
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        Movimentação Financeira - Arquivo Retorno B.Brasil
+    </div>
+    <br>
+    <p><b>Seleção</b></p>
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="{{ form.nome_lista.id_for_label }}">Nome Lista : </label>
+                {{ form.nome_lista }}
+            </div>
+            <div class="form-group col-md-2">
+            </div>
+            <div class="form-group col-md-1.5">
+                <button type="submit" class="btn ghost-green">Processa</button>
+            </div>
+            <div class="form-group col-md-1.5">
+                <a href="{% url 'home' %}" class="btn ghost-button">Retorna</a>
+            </div>
+        </div>
+    </form>
+
+    {% if qs1.exists %}
+        {% for r in qs1 %}
+            <table>
+                <tr>
+                    <td><b>Data Gravação</b></td><td>...</td><td><b>Nº Retorno</b></td>
+                </tr>
+                <tr>
+                    <td>{{ r.dtgravacao }}</td>
+                    <td> </td>
+                    <td>{{ r.numretorno }}</td>
+                </tr>
+            </table>
+        {% endfor %}
+    {% endif %}
+<!--    <br>-->
+
+    <table class="table table-css">
+        <thead class="thead-inverse align-middle">
+            <tr>
+                <th width="5%">#</th>
+                <th width="5%"><b>NumSeq</b></th>
+                <th width="10%"><b>Nossonumero</b></th>
+                <th width="10%"><b>Documento</b></th>
+                <th width="10%"><b>Valor Título</b></th>
+                <th width="10%"><b>Dt.Vencimento</b></th>
+                <th width="10%"><b>Valor Pago</b></th>
+                <th width="10%"><b>Dt.Ocorrência</b></th>
+                <th width="5%"><b>Cod.Movto</b></th>
+            </tr>
+        </thead>
+
+        {% if request.POST and qs2.exists %}
+            <tbody>
+            {% for r in qs2 %}
+                <tr>
+                    <td class="align-middle"><small> {{ forloop.counter }} </small></td>
+                    <td class="align-middle"><small> {{ r.numseq }} </small></td>
+                    <td class="align-middle"><small> {{ r.nossonumero }} </small></td>
+                    <td class="align-middle"><small> {{ r.numdocumento }} </small></td>
+                    <td class="align-middle"><small> {{ r.valortitulo }} </small></td>
+                    <td class="align-middle"><small> {{ r.dtvencimento|date:"SHORT_DATE_FORMAT" }} </small></td>
+                    <td class="align-middle"><small> {{ r.valorpago }} </small></td>
+                    <td class="align-middle"><small> {{ r.dtocorrencia|date:"SHORT_DATE_FORMAT" }} </small></td>
+                    <td class="align-middle"><small> {{ r.codmovimento }} </small></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        {% else %}
+<!--            <br><br><br><br><br><br><br><br>-->
+<!--            <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>-->
+        {% endif %}
+    </table>
+
+{% endblock content %}

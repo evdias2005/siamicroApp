@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+
+{% block title %} Processos {% endblock title %}
+
+
+{% block content %}
+    
+    <div class="row" style="color: #4682B4; font-style: bold; font-size: 1.5rem;">
+        <div class="col-md-8">Processos a Faturar - Negociação (Geração dos Boletos)</div>
+    </div>
+    <hr>
+
+    <table class="table table-striped table-bordered" style="width:100%" id="tabela-listar">
+
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="3%"><small><b>ID</b></small></th>
+                <th width="5%"><small><b>Processo</b></small></th>
+                <th width="12%"><small><b>Novo Valor</b></small></th>
+                <th width="5%"><small><b>Vlr.Parcela</b></small></th>
+                <th width="4%"><small><b>N.Parc</b></small></th>
+                <th width="38%"><small><b>Cliente</b></small></th>
+                <th width="8%"><small><b>Data</b></small></th>
+                <th width="10%"><small><b>Agente</b></small></th>
+                <th width="10%"><small><b>Ação</b></small></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for negociacao in object_list %}
+            <tr>
+                <td class="align-middle"><small>{{ negociacao.id }}</small></td>
+                <td class="align-middle"><small><b>{{ negociacao.processo.numprocesso }} </b></small></td>
+                <td class="align-middle"><small><b>{{ negociacao.novovalor }}</b></small></td>
+                <td class="align-middle"><small><b>{{ negociacao.valorparcela|floatformat:'2'}}</b></small></td>
+                <td class="align-middle"><small><b>{{ negociacao.novoprazo }}</b></small></td>
+                <td class="align-middle">{% if negociacao.processo.clientepf %}
+                    <small>{{ negociacao.processo.clientepf.nome }}</small>
+                    {% else %}
+                    <small>{{ negociacao.processo.clientepj.razaosocial }}</small>
+                    {% endif %}
+                </td>
+                <td class="align-middle"><small>{{ negociacao.processo.dtprocesso|date:"SHORT_DATE_FORMAT" }}</small></td>
+                <td class="align-middle"><small>{{ negociacao.processo.criado_por.first_name }}</small></td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if perms.processos.add_financeiro %}
+                            <a href="{% url 'new-processofaturanegoc' negociacao.id %}" class="btn ghost-yellow"><i class="fa fa-balance-scale fa-fw fa-1x"></i>
+                                <small>Gera</small></a>
+                        {% endif %}
+                    </div>
+                </td>              
+            </tr>
+            {% empty %}
+<!--                <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>-->
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $("#tabela-listar").DataTable({
+            responsive: true,
+            "pageLength": 10,
+            "language": {
+                "search": "Procurar:",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": " (filtrado de _MAX_ registros no total)",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "<<",
+                    "last": ">>",
+                    "next": ">",
+                    "previous": "<"
+                },
+                "zeroRecords": "Não foram encontrados registros!!!",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            }
+        });
+    });
+</script>
+
+{% endblock %}
+
+{% endblock content %}

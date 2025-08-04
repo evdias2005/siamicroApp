@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        {{title}}
+    </div>
+    <div style="color:black; font-style: bold; font-size: 1rem; border-bottom: 1px solid white;">
+        Processo N° {{ numprocesso }} |
+        Cliente {{ clienteprocesso }} |
+        Status: {% if statusprocesso == 'P' %} Em andamento
+        {% elif statusprocesso == 'A' %} Em andamento - A
+        {% elif statusprocesso == 'R' %} Em andamento - R
+        {% elif statusprocesso == 'C' %} Cancelado
+        {% elif statusprocesso == '1' %} 1° Parecer
+        {% elif statusprocesso == '2' %} 2° Parecer
+        {% elif statusprocesso == 'F' %} Finalizado
+        {% elif statusprocesso == 'N' %} Negociado
+        {% elif statusprocesso == 'X' %} Negado
+        {% endif %}
+    </div>
+
+    <form method="post">
+
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.processo.errors }}
+        {{ form.conceito.errors }}
+        {{ form.tipo.errors }}
+        {{ form.pareceragente.errors }}
+        {{ form.motivonegativa.errors }}
+        {{ form.valorfixo_sugerido.errors }}
+        {{ form.valorgiro_sugerido.errors }}
+        {{ form.valorparc_sugerido.errors }}
+        {{ form.taxasugerida.errors }}
+        {{ form.prazosugerido.errors }}
+        <hr>
+         <b><center>PARECER DO AGENTE DE CRÉDITO</center></b>
+        <div class="form-row">
+            <div class="form-group col-md-1">
+                <label for="{{ form.conceito.id_for_label }}">Conceito:</label>
+                {{ form.conceito }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.tipo.id_for_label }}">Tipo:</label>
+                {{ form.tipo }}
+            </div>
+            <div class="form-group col-md-9">
+                <label for="{{ form.pareceragente.id_for_label }}">Parecer do Agente:</label>
+                {{ form.pareceragente }}
+            </div>
+        </div>
+        <br>
+        <b>Condições do Financiamento a ser Aprovado</b>
+        <div class="form-row">
+            <div class="form-group col-md-02">
+                <label for="{{ form.valorfixo_sugerido.id_for_label }}">Valor Fixo - Sugerido:</label>
+                {{ form.valorfixo_sugerido }}
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.valorgiro_sugerido.id_for_label }}">Valor Giro - Sugerido:</label>
+                {{ form.valorgiro_sugerido }}
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.taxasugerida.id_for_label }}">Taxa Sugerida (a.m.):</label>
+                {{ form.taxasugerida }}
+            </div>
+            <div class="form-group col-md-02">
+                <label for="{{ form.prazosugerido.id_for_label }}">Prazo Sugerido:</label>
+                {{ form.prazosugerido }}
+            </div>
+        </div>
+        <br>
+        <b>Cálculo das Parcelas</b>
+        <div class="form-row">
+            <div class="form-group col-md-03">
+                <button type="button" align="center" class="btn ghost-red" onclick="calculaparcela_modelo2()">
+                    <i class="fa fa-calculator fa-fw" style="font-size:20px;color:black;"></i><small>Calcula</small></button>
+                    <input type="text" id="id_valorparc_sugerido" style="background-color:gray;color:white;" {{ form.valorparc_sugerido }}/>
+            </div>
+        </div>
+        <hr>
+        <div class="align-middle">
+            {% if perms.processos.change_parecer1 %}
+                <button type="submit" class="btn ghost-green" onclick="msgconfirmacao()">{{ savebtn }}</button>
+            {% endif %}
+            {% if title == "Novo Parecer" %}
+                <button type="reset" class="btn ghost-blue">Limpa</button>
+            {% endif %}
+            <a href="{% url 'processos-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+    </form>
+    {% include "../rodape.html" %}
+
+<script>
+    <!-- Cálculo da fórmula da prestação pelo método 2 - Tabela Price
+    fonte: https://educacionalplenus.com.br/formula-de-prestacoes-da-tabela-price/
+    -->
+    function calculaparcela_modelo2() {
+        var v1 = document.getElementById("id_valorfixo_sugerido").value;
+        var v2 = document.getElementById("id_valorgiro_sugerido").value;
+        var n = document.getElementById("id_prazosugerido").value;
+        var i = document.getElementById("id_taxasugerida").value;
+
+        var vtotal = 0.00;
+        <!-- Necessária a substituição dos caracteres de vírgula e ponto decimal para reconhecimento como float -->
+        v1 = v1.replaceAll(".", "").replace(",", ".");
+        v2 = v2.replaceAll(".", "").replace(",", ".");
+        i = i.replaceAll(".", "").replace(",", ".");
+        i = parseFloat(i) / 100;
+        vtotal = parseFloat(v1) + parseFloat(v2);
+
+        var p = 0.00;
+        var parrend = 0.00;
+
+        if ((vtotal > 0) && (n > 0)) {
+            p = vtotal * (i * ((1 + i) ** n)) / (((1 + i) ** n) - 1);
+            parrend = p.toFixed(2);
+        }
+
+        document.getElementById('id_valorparc_sugerido').value=parrend;
+    }
+</script>
+
+<script>
+    function msgconfirmacao() {
+        const numprocesso = "{{ numprocesso }}";
+        alert ("Será gravado o parecer referente ao Processo N° " + numprocesso);
+    }
+</script>
+
+{% endblock content %}

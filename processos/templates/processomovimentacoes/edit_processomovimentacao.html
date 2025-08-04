@@ -1,0 +1,70 @@
+{{% extends "base.html" %}
+
+
+{% block title %} {{title}} {% endblock title %}
+
+
+{% block content %}
+
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        {{title}}
+    </div>
+    <div style="color:black; font-style: bold; font-size: 1rem; border-bottom: 1px solid white;">
+        Processo {{ numprocesso }} | {{ clienteprocesso }} | Situação: {{ statusprocesso }} ( {{ localizacao }} )
+    </div>
+    <hr>
+
+    <form method="post">
+
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.dtmovimento.errors }}
+        {{ form.destino.errors }}
+        {{ form.processo.errors }}
+        {{ form.observacao.errors }}
+        {{ form.is_encaminhado.errors }}
+        {{ form.is_recebido.errors }}
+
+        <br>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ form.dtmovimento.id_for_label }}">Data da Movimentação:</label>
+                {{ form.dtmovimento }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="{{ form.destino.id_for_label }}">Local Destino:<span style="color: red;">*</span></label>
+                {{ form.destino }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="{{ form.observacao.id_for_label }}">Observação:</label>
+                {{ form.observacao }}
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="align-middle">
+            {% if perms.processos.change_movimentacao %}
+                <button type="submit" class="btn ghost-green" onclick="msgconfirmacao()">{{ savebtn }}</button>
+            {% endif %}
+            {% if title == "Nova Movimentação" %}
+                <button type="reset" class="btn ghost-blue">Limpa</button>
+            {% endif %}
+        </div>
+
+    </form>
+    <br>
+    <br>
+    {% include "../rodape.html" %}
+
+<script>
+    function msgconfirmacao() {
+        const numprocesso = "{{ numprocesso }}";
+        alert ("Será gravada a movimentação referente ao Processo N° " + numprocesso);
+    }
+</script>
+
+{% endblock content %}

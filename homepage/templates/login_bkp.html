@@ -1,0 +1,75 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+<html lang="pt">
+
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/bootstrap.min.css' %}">
+
+    <!-- Main CSS, then Sidebar CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">
+
+    <title>SIAMICRO - Login</title>
+
+    {% include "stylelogins.html" %}
+
+</head>
+
+<body>
+
+<div class="login-header">SIAMICRO</div>
+<div class="login-subheader">Sistema Integrado de Administração do Microcrédito</div>
+<div class="version"><small><b>Versão 2025-06-09.1</b></small></div>
+
+<br><br>
+
+<div class="row d-flex justify-content-center">
+    <div class="col-md-6">
+        {% if user.is_authenticated %}
+            <h3 class="text-center">Você está logado como, {{ request.user.username }}!</h3>
+            <div class="border-top pt-3 text-center">
+                <a class="btn ghost-button" href="{% url 'home' %}">Página Principal</a> <br><br>
+                <a class="btn ghost-red" href="{% url 'logout' %}">Sair</a>
+            </div>
+
+        {% else %}
+            <div class="content-section">
+                <form method="POST">
+                    {% csrf_token %}
+                    <fieldset class="form-group">
+                        <legend>Faça o login para acessar o Sistema</legend>
+                        {{ form|crispy }}
+                    </fieldset>
+                    <!-- Novo checkbox -->
+                    <div class="form-group form-check text-left">
+                        <input type="checkbox" class="form-check-input" id="atualizarSenha" name="atualizar_senha">
+                        <label class="form-check-label" for="atualizarSenha">Desejo atualizar minha senha</label>
+                    </div>
+                    <div class="form-group text-center">
+                        <button class="ghost-button" type="submit">Log In</button>
+                    </div>
+                    <p align="right"><a href="{% url 'password_reset' %}"><small><b>Esqueci minha senha</b></small></a></p>
+                </form>
+           </div>
+        {% endif %}
+    </div>
+</div>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
+    <script src="{% static 'bootstrap/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>
+
+</body>
+
+
+
+</html>
+

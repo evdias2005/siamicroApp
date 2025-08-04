@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+
+{% block title %} Estornar Parcela {% endblock title %}
+
+
+{% block content %}
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <fieldset class="form-group">
+            <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">Estorna Parcela</div> <br>
+            <h5 style="color:black;">Tem certeza que deseja estornar a parcela de nº {{ object.numparcela }} do
+                Processo {{ object.processo }}? Após este procedimento a parcela será colocada em aberto novamente.</h5>
+
+        </fieldset>
+
+        <div class="form-group">
+            <button type="submit" class="btn ghost-red">Sim, Estorna</button>
+            <a href="{% url 'processofaturado-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+        
+    </form>
+
+{% endblock content %}

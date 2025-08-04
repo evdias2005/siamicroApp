@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+{% include "../cabecalho.html" %}
+
+    {% if title != "Novo Processo PJ" %}
+        <div class="form-row">
+            <div class="form-group col-md-10"><Label><b> {{ object.processo_status }}</b></Label>
+            </div>
+            {% if object.status == 'A' %}
+                <div class="form-group col-md-1.0">
+                    <a href="{% url 'processopareceres-list' processo.id %}" class="btn ghost-blue ">1° Parecer</a>
+                </div>
+            {% endif %}
+            {% if object.status == '1' or object.status == '2' or object.status == 'X' or object.status == 'F' or object.status == 'N'%}
+                <div class="form-group col-md-1.0">
+                    <a href="{% url 'processopareceres-list' processo.id %} "class="btn ghost-blue ">2° Parecer</a>
+                    <button type="button" class="btn ghost-yellow" data-toggle="modal" data-target="#myModal3">Alterar C/C</button>
+                </div>
+            {% endif %}
+        </div>
+        <hr>
+    {% endif %}
+
+    <form method="post">
+
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.numprocesso.errors }}
+        {{ form.dtprocesso.errors }}
+        {{ form.status.errors }}
+        {{ form.clientepj.errors }}
+        {{ form.numprotocolo.errors }}
+        {{ form.conhecimentoprograma.errors }}
+        {{ form.linhacredito.errors }}
+        {{ form.finalidadecredito.errors }}
+        {{ form.empresa.errors }}
+        {{ form.situacaonegocio.erros }}
+        {{ form.funcao.errors }}
+        {{ form.numbeneficiados.errors }}
+        {{ form.numfuncionarios.errors }}
+        {{ form.expecocupacoes.errors }}
+        {{ form.sobreonegocio.errors }}
+        {{ form.porquedonegocio.errors }}
+        {{ form.evolucaonegocio.errors }}
+        {{ form.observacao.errors }}
+        {{ form.banco.errors }}
+        {{ form.agencia.errors }}
+        {{ form.conta.errors }}
+        {{ form.tipconta.errors }}
+        {{ form.valorcoberto.errors }}
+        {{ form.valorsolicitado.errors }}
+        {{ form.prazosolicitado.errors }}
+        {{ form.valorrendanegoc.erros }}
+        <div class="form-row">
+            <div class="form-group col-md-7">
+                <label for="{{ form.clientepj.id_for_label }}">Cliente:<span style="color: red;">*</span></label>
+                {% if title != "Novo Processo PJ" %}
+                    <button type="button" class="btn ghost-blue" data-toggle="modal" data-target="#myModal">
+                        <i class="fa fa-eye fa-fw" style="font-size:17px;color:black;"></i> Detalhes
+                    </button>
+                {% endif %}
+                {{ form.clientepj }}
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.dtprocesso.id_for_label }}">Data Processo:<span style="color: red;">*</span></label>
+                {{ form.dtprocesso }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.numprotocolo.id_for_label }}">N° Protocolo:<span style="color: red;">*</span></label>
+                {{ form.numprotocolo }}
+            </div>
+        </div>
+        <hr>
+        <p><b>INFORMAÇÕES DO CLIENTE PJ</b></p>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="{{ form.conhecimentoprograma.id_for_label }}">Conhecimento Programa:<span style="color: red;">*</span></label>
+                {{ form.conhecimentoprograma }}
+            </div>
+            <div class="form-group col-md-4">
+                <label for="{{ form.linhacredito.id_for_label }}">Linha Crédito:<span style="color: red;">*</span></label>
+                {{ form.linhacredito }}
+            </div>
+            <div class="form-group col-md-4">
+                <label for="{{ form.finalidadecredito.id_for_label }}">Finalidade Crédito:<span style="color: red;">*</span></label>
+                {{ form.finalidadecredito }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="{{ form.banco.id_for_label }}">Refer.Bancária - Banco:<span style="color: red;">*</span></label>
+                {{ form.banco }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.agencia.id_for_label }}">Agência:<span style="color: red;">*</span></label>
+                <input type="text" id="id_agencia" onkeyup="duplicaagencia()" {{ form.agencia }} />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.conta.id_for_label }}">Conta:<span style="color: red;">*</span></label>
+                <input type="text" id="id_conta" onkeyup="duplicaconta()" {{ form.conta }} />
+            </div>
+            <div class="form-group col-md-2">
+                <label for="{{ form.tipconta.id_for_label }}">Tipo:<span style="color: red;">*</span></label>
+                {{ form.tipconta }}
+            </div>
+        </div>
+        <hr>
+        <p><b>DADOS DO FINANCIAMENTO</b></p>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ form.valorcoberto.id_for_label }}">Valor Coberto Tomador (R$):</label>
+                {{ form.valorcoberto }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.valorsolicitado.id_for_label }}">Crédito Solicitado (R$):<span style="color: red;">*</span></label>
+                {{ form.valorsolicitado }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.prazosolicitado.id_for_label }}">Prazo Solicitado (meses):<span style="color: red;">*</span></label>
+                {{ form.prazosolicitado}}
+            </div>
+        </div>
+        <hr>
+        <p><b>INFORMAÇÕES DO NEGÓCIO</b></p>
+        <div class="form-row">
+            <div class="form-group col-md-9">
+                <label for="{{ form.empresa.id_for_label }}">Nome da Empresa:<span style="color: red;">*</span></label>
+                {% if title != "Novo Processo PJ" %}
+                    <button type="button" class="btn ghost-blue" data-toggle="modal" data-target="#myModal">
+                        <i class="fa fa-eye fa-fw" style="font-size:17px;color:black;"></i> Detalhes
+                    </button>
+                {% endif %}
+                {{ form.empresa }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.situacaonegocio.id_for_label }}">Situação do Negócio:</label>
+                {{ form.situacaonegocio }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="{{ form.valorrendanegoc.id_for_label }}">Valor Renda Mensal Negócio (R$):</label>
+                {{ form.valorrendanegoc }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.numbeneficiados.id_for_label }}">N° de Beneficiados:</label>
+                {{ form.numbeneficiados }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.numfuncionarios.id_for_label }}">N° de Funcionários:</label>
+                {{ form.numfuncionarios }}
+            </div>
+            <div class="form-group col-md-3">
+                <label for="{{ form.expecocupacoes.id_for_label }}">Expectativa Novas Ocupações:</label>
+                {{ form.expecocupacoes }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="{{ form.sobreonegocio.id_for_label }}">Apresentação do negócio (o que é, o que produz ou
+                    comercializa, local onde está, etc):<span style="color: red;">*</span></label>
+                {{ form.sobreonegocio }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="{{ form.porquedonegocio.id_for_label }}">Por que e para que precisa do crédito? A que se destina?<span style="color: red;">*</span></label>
+                {{ form.porquedonegocio }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="{{ form.evolucaonegocio.id_for_label }}">Evolução do negócio / Experiência (Por que e como
+                    começou, dificuldades, conquistas, metas, etc.):<span style="color: red;">*</span></label>
+                {{ form.evolucaonegocio }}
+            </div>
+        </div>
+        <br>
+<!--        <hr>-->
+<!--        <p><b>AVALISTAS</b></p>-->
+        <table class="table table-striped" style="width:100%">
+            <thead class="align-middle">
+                <tr>
+                    <th width="30%">Avalista<span style="color: red;">*</span></th>
+                    <th width="15%">Grau Relação<span style="color: red;">*</span></th>
+                    <th width="45%">Observações</th>
+                    <th width="10%">Excluir?</th>
+                </tr>
+            </thead>
+        </table>
+        {{ formset_avalistas.management_form }}
+        {% for form in formset_avalistas %}
+            {{ form.id }}
+            {% if not form.instance.negociacao_id %}
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+<!--                        <label for="{{ form.avalista.id_for_label }}">Nome:<span style="color: red;">*</span></label>-->
+                        {{ form.avalista }}
+                    </div>
+                    <div class="form-group col-md-1">
+<!--                        <label for="{{ form.graurelacao.id_for_label }}">Grau Relação:<span style="color: red;">*</span></label>-->
+                        {{ form.graurelacao }}
+                    </div>
+                    <div class="form-group col-md-6">
+<!--                        <label for="{{ form.observacao.id_for_label }}">Observações:</label>-->
+                        {{ form.observacao }}
+                    </div>
+                    <div class="form-group col-md-1 align-middle">
+<!--                        <label for="{{ form.delete.id_for_label }}">Excluir:</label>-->
+                        {{ form.DELETE }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <br>
+<!--        <hr>-->
+<!--        <p><b>DEMAIS REFERÊNCIAS</b></p>-->
+        <table class="table table-striped" style="width:100%">
+            <thead class="align-middle">
+                <tr>
+                    <th width="35%">Referência<span style="color: red;">*</span></th>
+                    <th width="25%">Tipo de Fonte<span style="color: red;">*</span></th>
+                    <th width="15%">Telefone (DDD + Número)<span style="color: red;">*</span></th>
+                    <th width="5%">Conceito<span style="color: red;">*</span></th>
+                    <th width="10%">Excluir?</th>
+                </tr>
+            </thead>
+        </table>
+        {{ formset_referencias.management_form }}
+        {% for form in formset_referencias %}
+            {{ form.id }}
+            <div class="form-row">
+                <div class="form-group col-md-5">
+<!--                    <label for="{{ form.nome.id_for_label }}">Nome:<span style="color: red;">*</span></label>-->
+                    {{ form.nome }}
+                </div>
+                <div class="form-group col-md-3">
+<!--                    <label for="{{ form.tipofonte.id_for_label }}">Tipo de Fonte:<span style="color: red;">*</span></label>-->
+                    {{ form.tipofonte }}
+                </div>
+                <div class="form-group col-md-2">
+<!--                    <label for="{{ form.telefone.id_for_label }}">Telefone (DDD + Telefone):<span style="color: red;">*</span></label>-->
+                    {{ form.telefone }}
+                </div>
+                <div class="form-group col-md-1">
+<!--                    <label for="{{ form.conceito.id_for_label }}">Conceito:<span style="color: red;">*</span></label>-->
+                    {{ form.conceito }}
+                </div>
+                <div class="form-group col-md-1 align-middle">
+<!--                    <label for="{{ form.delete.id_for_label }}">Excluir:</label>-->
+                    {{ form.DELETE }}
+                </div>
+            </div>
+        {% endfor %}
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-10">
+                <label for="{{ form.documentacao.id_for_label }}">Documentação/Anexos:</label>
+                {{ form.documentacao }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="{{ form.observacao.id_for_label }}">Observação:</label>
+                {{ form.observacao }}
+            </div>
+        </div>
+        <br>
+        <hr>
+        <div class="align-middle">
+            {% if perms.processos.change_processo %}
+                {% if processo.status == 'P' or processo.status == 'A' or processo.status == 'R' or processo.status is Null %}
+                    <button type="submit" class="btn ghost-green" onclick="msgconfirmacao()">{{ savebtn }}</button>
+                {% endif %}
+            {% endif %}
+            {% if title == "Novo Processo PJ" %}
+                <button type="reset" class="btn ghost-blue">Limpa</button>
+            {% else %}
+                {% if processo.status != 'C' %}
+                    <a href="{% url 'print-fichacliente' processo.pk %}" class="btn ghost-gray">
+                        <i class="fa fa-print fa-fw" style="font-size:17px;color:black;"></i> Ficha Cliente</a>
+                    <a href="{% url 'print-fichaavalista' processo.pk %}" class="btn ghost-green">
+                        <i class="fa fa-print fa-fw" style="font-size:17px;color:black;"></i> Ficha Avalista</a>
+                {% endif %}
+                {% if processo.status == '2' or processo.status == 'F' or processo.status == 'N' %}
+                    <a href="{% url 'print-parecer' processo.pk %}" class="btn ghost-blue">
+                        <i class="fa fa-print fa-fw" style="font-size:17px;color:black;"></i> Imprime Parecer</a>
+                    <a href="{% url 'print-contrato' processo.pk %}" class="btn ghost-yellow">
+                        <i class="fa fa-print fa-fw" style="font-size:17px;color:black;"></i> Imprime Contrato</a>
+                {% endif %}
+                {% if processo.status == 'F' or processo.status == 'N' %}
+                    <a href="{% url 'print-extratofatura' processo.pk %}" class="btn ghost-darkblue">
+                        <i class="fa fa-print fa-fw" style="font-size:17px;color:black;"></i> Ficha Financeira</a>
+                {% endif %}
+            {% endif %}
+            {% if perms.processos.delete_processo %}
+                {% if processo.status == 'P' or processo.status == 'A' or processo.status == 'R' %}
+                    {% if delbtn %}
+                        <button type="button" class="btn ghost-red" data-toggle="modal" data-target="#myModal6">Apaga</button>
+                    {% endif %}
+                    {% if cancelbtn %}
+                        <button type="button" class="btn ghost-red" data-toggle="modal" data-target="#myModal5">Cancela</button>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+<!--ver ainda em que condições os botões de impressão do processo e do contrato poderão ser habilitados-->
+            <a href="{% url 'processos-list' %}" class="btn ghost-button">Retorna</a>
+        </div>
+
+    <!-- Button trigger modal -->
+    <!-- Modal -->
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Detalhes da Empresa</h4>
+              </div>
+              <div class="modal-body">
+                  <p><b>1. Dados Gerais</b></p>
+                  <b>Nome: {{ razaosocial }} </b> <br>
+                  <b>Porte: </b> {% if porteempresa == '1' %} MEI
+                                    {% elif porteempresa == '2' %} ME
+                                    {% elif porteempresa == '3' %} LTDA
+                                    {% elif porteempresa == '4' %} EIRELI
+                                    {% elif porteempresa == '5' %} EPP
+                                    {% elif porteempresa == '6' %} INFORMAL
+                                    {% endif %} <br>
+                  <b>Setor Negócio: </b>{{ setornegocio|default_if_none:"---" }}  <br>
+                  <b>Ramo Atividade: </b>{{ ramoatividade|default_if_none:"---" }}  <br>
+                  <b>Início Atividade: </b> {{ dtiniatividade }} <br>
+                  <b>C.N.P.J.: </b> {{ numcnpj|default_if_none:"---" }} <br>
+                  <b>Telefone(s): </b> {{ telefonespj }} <br>
+                  <b>Observação: </b> {{ observacao }} <br>
+                  <br>
+                  <p><b>2. Sociedade e Cotas</b></p>
+                  {% for socio in socios %}
+                      <b>Sócio: </b> {{ socio.socio.nome }} - {{ socio.cota|floatformat:0 }}%<br>
+                  {% endfor %}
+                  <br><small>* Para maiores informações acessar o cadastro completo da empresa.</small><br>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% if title != "Novo Processo PJ" %}
+            <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel3">Altera CC do Cliente</h5>
+                  </div>
+                  <form id="outrosDadosProcessoForm" method="post" action="{% url 'atualizar_outros_dados_processo' processo.pk %}">
+                    <div class="modal-body">
+                      {% csrf_token %}
+                      Banco: {{ form.banco }} <br>
+                      Agência: {{ form.agencia }}<br>
+                      Conta: {{ form.conta }}<br>
+                      Tipo: {{ form.tipconta }} <br>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary"><small>Salvar</small></button>
+                      <button type="button" class="btn btn-default" data-dismiss="modal"><small>Fechar</small></button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+        {% endif %}
+
+        {% if title != "Novo Processo PJ" %}
+            <div class="modal fade" id="myModal5" tabindex="-1" role="dialog" aria-labelledby="myModalLabel5">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="myModalLabel5">Cancela o Processo</h5>
+                        </div>
+                        <form id="CancelaProcessoForm" method="post" action="{% url 'cancelar_processo' processo.pk %}">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <p><b>Tem certeza que deseja cancelar o processo abaixo?</b></p>
+                            Número: {{ object.numprocesso }} <br>
+                            Cliente: {{ object.clientepj.razaosocial }} <br>
+                            Data: {{ object.dtprocesso }}<br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary"><small>Sim</small></button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><small>Não</small></button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if title != "Novo Processo PJ" %}
+            <div class="modal fade" id="myModal6" tabindex="-1" role="dialog" aria-labelledby="myModalLabel6">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="myModalLabel6">Apaga o Processo</h5>
+                        </div>
+                        <form id="ApagaProcessoForm" method="post" action="{% url 'apagar_processo' processo.pk %}">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <p><b>Tem certeza que deseja apagar o processo abaixo?</b></p>
+                            Número: {{ object.numprocesso }} <br>
+                            Cliente: {{ object.clientepj.razaosocial }} <br>
+                            Data: {{ object.dtprocesso }}<br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary"><small>Sim</small></button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><small>Não</small></button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+
+    </form>
+    {% include "../rodape.html" %}
+
+<!--    <script>-->
+<!--        function duplicaagencia() {-->
+<!--            const agencia = document.getElementById("id_agencia").value;-->
+<!--            document.getElementById('id_agencia1').value=agencia;-->
+<!--        }-->
+<!--        function duplicaconta() {-->
+<!--            const conta = document.getElementById("id_conta").value;-->
+<!--            document.getElementById('id_conta1').value=conta;-->
+<!--        }-->
+<!--    </script>-->
+
+    <script>
+        function msgconfirmacao() {
+            numprotocolo = "{{ form.numprotocolo.value }}";
+            alert ("Será gravado/atualizado o processo de Protocolo N° " + numprotocolo);
+        }
+    </script>
+
+<!--    <script>-->
+<!--      $('#dadosBancariosForm').on('submit', function(e){-->
+<!--        e.preventDefault();-->
+
+<!--        $.ajax({-->
+<!--          type: $(this).attr('method'),-->
+<!--          url: $(this).attr('action'),-->
+<!--          data: $(this).serialize(),-->
+<!--          success: function(response) {-->
+<!--            if(response.status == 'success') {-->
+<!--              alert("Dados bancários atualizados com sucesso!");-->
+<!--              $('#myModal3').modal('hide');-->
+<!--            } else {-->
+<!--              alert("Erro ao atualizar os dados: " + response.errors);-->
+<!--            }-->
+<!--          },-->
+<!--          error: function() {-->
+<!--            alert("Erro ao enviar os dados.");-->
+<!--          }-->
+<!--        });-->
+<!--      });-->
+<!--    </script>-->
+
+{% endblock content %}

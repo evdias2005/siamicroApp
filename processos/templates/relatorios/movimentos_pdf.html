@@ -1,0 +1,77 @@
+{% load static %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 30pt; height: 100pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 130pt; height: 632pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 800pt; height: 60pt; font-size: 8pt;
+        }
+    }
+</style>
+<div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+    <p align="center"><b><<< RELATÓRIO DA MOVIMENTAÇÃO FINANCEIRA NO PERÍODO >>></b></p>
+     <hr size="0.5">
+     <table>
+<!--             <tr bgcolor="#696969">-->
+         <tr><b>
+            <td width="3%">#</td>
+            <td width="40%">Cliente</td>
+            <td width="8%">Emissão</td>
+            <td width="8%">Dt.Vencto</td>
+            <td width="8%">Vlr.Título</td>
+            <td width="8%">Vlr.Pago</td>
+            <td width="8%">Dt.Movto</td>
+            <td width="8%">Status</td>
+            <td width="10%">Criado por</td>
+         </b></tr>
+     </table>
+     <hr size="0.5">
+</div>
+
+</head>
+
+<body>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <table>
+        {% for r in qs %}
+            <tr>
+                <td width="3%"><small> {{ forloop.counter }} </small></td>
+                <td width="40%"><small> {% if r.processo.clientepf %} {{ r.processo.clientepf.nome }} {% else %}
+                    {{ r.processo.clientepj.razaosocial }} {% endif %}</small></td>
+                <td width="8%"><small> {{ r.dtemissao|date:"SHORT_DATE_FORMAT" }} </small></b></td>
+                <td width="8%"><small> {{ r.dtvencimento|date:"SHORT_DATE_FORMAT" }} </small></b></td>
+                <td width="8%"><small> {{ r.valorparcela }} </small></b></td>
+                <td width="8%"><small> {{ r.valorpago }} </small></b></td>
+                <td width="8%"><small> {{ r.data_edicao|date:"SHORT_DATE_FORMAT" }} </small></b></td>
+                <td width="8%"><small> {{ r.status }} </small></b></td>
+                <td width="10%"><small>{{ r.processo.criado_por }} </small></b></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <hr size="0.5">
+    <table>
+        <tr>
+            <td width="3%"><small> </small></td>
+            <td width="30%"><small><b>Total Pago: R$ {{ valortotal }}</b></small></td>
+        </tr>
+    </table>
+    <hr size="0.5">
+</body>
+</html>

@@ -1,0 +1,23 @@
+-- novo select mais refinado para captura dos dados do cliente (lembrar de fazer o mesmo para a carga dos avalistas)
+select c.id, c.nome, c.cpf, c.documento_identificacao, c.emissor, c.data_emissao, c.data_nascimento, c.naturalidade, c.nacionalidade, c.sexo, c.email, c.tempo_residencia,
+       c.residencia_propria, c.profissao, c.numero_filhos, c.dependentes, c.nome_pai, c.nome_mae, c.nome_conjuge, c.cpf_conjuge, c.created_at, c.updated_at,
+       e.logradouro, e.bairro, e.cep, e.numero, e.complemento, m.descricao municipio, e2.sigla estado, e3.descricao escolaridade, ec.descricao estadocivil,
+       o2.nome_empresa , o2.data_admissao, o2.cargo, o2.renda_liquida, o2.numero_beneficio, o2.rendimentos_alugueis
+from clientes c left join enderecos e on e.cliente_id = c.id
+                left join municipios m on m.id = e.municipio_id
+                left join estados e2 on e2.id = m.estado_id
+                left join escolaridades e3 on e3.id = c.escolaridade_id
+                left join estados_civis ec on ec.id = c.estado_civil_id
+                left join outras_rendas o2 on o2.cliente_id = c.id
+
+-- novo select mais refinado para captura dos dados do avalista
+select c.id, c.nome, c.cpf, c.documento_identificacao, c.emissor, c.data_emissao, c.data_nascimento, c.naturalidade, c.nacionalidade, c.sexo, c.email, c.tempo_residencia,
+       c.residencia_propria, c.profissao, c.numero_filhos, c.nome_pai, c.nome_mae, c.nome_conjuge, c.cpf_conjuge, c.created_at, c.updated_at,
+       e.logradouro, e.bairro, e.cep, e.numero, e.complemento, m.descricao municipio, e2.sigla estado, e3.descricao escolaridade, ec.descricao estadocivil,
+       o2.nome_empresa , o2.data_admissao, o2.cargo, o2.renda_liquida, o2.numero_beneficio, o2.rendimentos_alugueis
+from avalistas c left join enderecos e on e.cliente_id = c.id
+                left join municipios m on m.id = e.municipio_id
+                left join estados e2 on e2.id = m.estado_id
+                left join escolaridades e3 on e3.id = c.escolaridade_id
+                left join estados_civis ec on ec.id = c.estado_civil_id
+                left join outras_rendas o2 on o2.cliente_id = c.id

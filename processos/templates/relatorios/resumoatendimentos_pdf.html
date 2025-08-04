@@ -1,0 +1,81 @@
+{% load static %}
+<html>
+<head>
+<style>
+    @page {
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 30pt; height: 100pt;
+        }
+        @frame content_frame {          /* Content Frame */
+            left: 50pt; width: 512pt; top: 130pt; height: 632pt;
+        }
+        @frame footer_frame {           /* Another static Frame */
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 800pt; height: 60pt; font-size: 8pt;
+        }
+    }
+</style>
+<div id="header_content">{{ linhalogo1 }}<br>
+                         {{ linhalogo2 }}<br>
+                         {{ linhalogo3 }}<br><br>
+    <p align="center"><b><<< RESUMO MENSAL DOS ATENDIMENTOS POR AGENTE >>></b></p>
+     <hr size="0.5">
+     <table>
+<!--             <tr bgcolor="#696969">-->
+         <tr><b>
+            <td width="3%">#</td>
+            <td width="20%">Agente</td>
+            <td width="5%">Jan</td>
+            <td width="5%">Fev</td>
+            <td width="5%">Mar</td>
+            <td width="5%">Abr</td>
+            <td width="5%">Mai</td>
+            <td width="5%">Jun</td>
+            <td width="5%">Jul</td>
+            <td width="5%">Ago</td>
+            <td width="5%">Set</td>
+            <td width="5%">Out</td>
+            <td width="5%">Mov</td>
+            <td width="5%">Dez</td>
+            <td width="10%">Total</td>
+         </b></tr>
+     </table>
+     <hr size="0.5">
+</div>
+
+</head>
+
+<body>
+    <div id="footer_content">
+        <small>Impresso em {{ emissao }} por {{ user }} - LGPD: Relatório pode conter dados pessoais e/ou sensíveis. Recomenda-se a destruição após o uso.</small>
+        <hr size="0.5">
+        <p align="center">
+            Página <pdf:pagenumber/>
+        </p>
+    </div>
+    <table>
+        {% for r in qs %}
+            <tr>
+                <td width="3%"> {{ forloop.counter }} </td>
+                <td width="20%"><b> {{ r.criado_por__first_name }} </b></td>
+                <td width="5%"><p align="center"> {{ r.Jan }}</td>
+                <td width="5%"><p align="center"> {{ r.Fev }}</td>
+                <td width="5%"><p align="center"> {{ r.Mar }}</td>
+                <td width="5%"><p align="center"> {{ r.Abr }}</td>
+                <td width="5%"><p align="center"> {{ r.Mai }}</td>
+                <td width="5%"><p align="center"> {{ r.Jun }}</td>
+                <td width="5%"><p align="center"> {{ r.Jul }}</td>
+                <td width="5%"><p align="center"> {{ r.Ago }}</td>
+                <td width="5%"><p align="center"> {{ r.Set }}</td>
+                <td width="5%"><p align="center"> {{ r.Out }}</td>
+                <td width="5%"><p align="center"> {{ r.Nov }}</td>
+                <td width="5%"><p align="center"> {{ r.Dez }}</td>
+                <td width="10%"><p align="center"> {{ r.Total }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+<hr size="0.5">
+</html>

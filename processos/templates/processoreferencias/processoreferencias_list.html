@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+
+{% block title %} Referências {% endblock title %}
+
+
+{% block content %}
+    <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">
+        Referências
+    </div>
+    <div class="row" style="color: black; font-style: bold; font-size: 1rem;">
+        <div class="col-md-10">Processo Nº {{ numprocesso }} | Cliente {{ clienteprocesso }} | Status: {{ statusprocesso }}
+        </div>
+        <div class="col-md-2">
+            {% if perms.processos.add_referencia %}
+                <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-processoreferencia' idprocesso %}"><i class="fa fa-plus-square fa-fw fa-1x"></i>
+                    <small>Referência</small></a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+
+<!--    <div style="border-bottom: 1px solid white;"></div>-->
+
+    <table class="table table-striped">
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="5%"><small><b>Id</b></small></th>
+                <th width="35%"><small><b>Cliente</b></small></th>
+                <th width="30%"><small><b>Referência</b></small></th>
+                <th width="15%"><small><b>Telefone</b></small></th>
+                <th width="5%"><small><b>Conceito</b></small></th>
+                <th width="10%"><small><b>Visualiza</b></small></th>
+            </tr>
+        </thead>
+
+{% if object_list %}
+
+        <tbody>
+            {% for referencia in object_list %}
+            <tr>
+                <td class="align-middle"><small> {{ referencia.id }} </small></td>
+                {% if referencia.processo.clientepf_id %}
+                    <td class="align-middle"><small>{{ referencia.processo.clientepf.nome }}</small>
+                {% else %}
+                    <td class="align-middle"><small>{{ referencia.processo.clientepj.razaosocial }}</small>
+                {% endif %}
+                <td class="align-middle"><small>{{ referencia.nome }}</small></td>
+                <td class="align-middle"><small>{{ referencia.telefone }}</small></td>
+                <td class="align-middle"><small>{{ referencia.conceito }}</small></td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if perms.processos.view_referencia %}
+                            <a href="{% url 'edit-processoreferencia' referencia.pk %}" class="btn ghost-button"><i class="fa fa-search fa-fw fa-1x"></i></a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+    <div class="align-middle">
+        {% if is_paginated %}
+
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1"> << </a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}"> < </a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}"> > </a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}"> >> </a>
+            {% endif %}
+
+        {% endif %}
+    </div>
+
+{% else %}
+
+        <tbody></tbody>   
+    </table>
+
+    <br><br><br><br><br><br><br><br>
+    <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>
+
+{% endif %}
+
+
+{% endblock content %}

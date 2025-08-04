@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+
+{% block title %} Lista de Bairros {% endblock title %}
+
+
+{% block content %}
+    
+    <div class="row" style="color: #4682B4; font-style: bold; font-size: 1.5rem;">
+        <div class="col-md-8">Bairros</div>
+        <div class="col-md-4">               
+            {% if perms.tabelas.add_bairro %}
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-bairro' %}"><i class="fa fa-plus-square fa-fw fa-1x"></i>
+                <small>Bairro</small></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <form method="get">
+        <nav class="navbar navbar-light bg-light">
+            <form class="form-inline">
+            {% render_field filter.form.q class="form-control mr-sm-2" type="search" placeholder="Busca pelo nome da cidade ou bairro" aria-label="Search" %}
+            </form>
+        </nav>
+    </form>
+
+    <table class="table table-striped">
+        
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="5%"><small>ID</small></th>
+                <th width="1%"><small> </small></th>
+                <th width="39%"><small>Cidade</small></th>
+                <th width="35%"><small>Bairro</small></th>
+                <th width="10%"><small>Ações</small></th>
+            </tr>
+        </thead>
+
+    {% if object_list %}
+
+        <tbody>
+            {% for bairro in object_list %}
+            <tr>
+                <td class="align-middle"> <small>{{ bairro.id }} </small></td>
+                <td class="align-middle"><small>{% if bairro.is_deleted %} <i class="fa fa-ban fa-fw fa-1x" style="color:red"></i> {% else %}  {% endif %}</small></td>
+                <td class="align-left"> <small>{{ bairro.cidade.nome }} </small></td>
+                <td class="align-left"> <small>{{ bairro.nome }} </small></td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if perms.tabelas.view_bairro %}
+                        <a href="{% url 'edit-bairro' bairro.pk %}" class="btn ghost-button"><i class="fa fa-search fa-fw fa-1x"></i></a>
+                        {% endif %}
+                    </div>
+                </td>              
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+    <div class="align-middle">
+        {% if is_paginated %}
+
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1"><i class="fa fa-fast-backward fa-1x"></i></a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}"><i class="fa fa-backward fa-1x"></i></a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}"><i class="fa fa-forward fa-1x"></i></a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}"><i class="fa fa-fast-forward fa-1x"></i></a>
+            {% endif %}
+
+        {% endif %}
+    </div>
+
+    {% else %}
+
+        <tbody></tbody>   
+    </table>
+
+    <br><br><br><br><br><br><br><br>
+    <div style="color: #4682B4; font-style: bold; font-size: 1.5rem; text-align: center;">Não foram encontrados registros !!!</div>
+
+    {% endif %}
+
+{% endblock content %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %} Veículos - Bem Garantidor {% endblock title %}
+
+{% block content %}
+    
+    <div class="row" style="color: #4682B4; font-style: bold; font-size: 1.5rem;">
+        <div class="col-md-8">Veículos - Bem Garantidor</div>
+        <div class="col-md-4">
+            {% if perms.tabelas.add_veiculo %}
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-veiculo' %}"><i class="fa fa-plus-square fa-fw fa-1x"></i>
+                <small> Veículo</small></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+
+    <table class="table table-striped table-bordered" style="width:100%" id="tabela-listar">
+        <thead class="thead-dark align-middle">
+            <tr>
+                <th width="3%"><small>Id</small></th>
+                <th width="1%"><small>X</small></th>
+                <th width="1%"><small>V</small></th>
+                <th width="10%"><small>Marca</small></th>
+                <th width="17%"><small>Modelo</small></th>
+                <th width="22%"><small>Cliente</small></th>
+                <th width="5%"><small>Ano Fab</small></th>
+                <th width="5%"><small>Ano Mod</small></th>
+                <th width="24%"><small>Fornecedor</small></th>
+                <th width="7%"><small>Combustível</small></th>
+                <th width="5%"><small>Ações</small></th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% if object_list %}
+            {% for veiculo in object_list %}
+            <tr>
+                <td class="align-middle"> <small>{{ veiculo.id|stringformat:"04d" }} </small></td>
+                <td class="align-middle" title="Indicador que o veículo foi excluído">
+                    <small>{% if veiculo.is_deleted %} <i class="fa fa-ban fa-fw fa-1x" style="color:red"></i>
+                            {% else %}
+                            {% endif %}
+                    </small>
+                </td>
+                <td class="align-middle" title="Indicador que o veículo foi vendido">
+                    <small>{% if veiculo.is_vendido %} <i class="fa fa-check fa-fw fa-1x" style="color:green"></i>
+                            {% else %}
+                            {% endif %}
+                    </small>
+                </td>
+                <td class="align-middle"> <small>{{ veiculo.marca }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.modelo }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.clientepf.nome }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.anofabr }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.anomodelo }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.fornecedor }} </small></td>
+                <td class="align-middle"> <small>{{ veiculo.combustivel }} </small></td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        {% if perms.tabelas.view_veiculo %}
+                            <a href="{% url 'edit-veiculo' veiculo.pk %}" class="btn ghost-button"><i class="fa fa-search fa-fw fa-1x"></i></a>
+                        {% endif %}
+                    </div>
+                </td>
+            {% empty %}
+                <tr>
+                    <td colspan="10" class="text-center">Não foram encontrados registros!!!</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $("#tabela-listar").DataTable({
+            scrollX: true,
+            responsive: true,
+            pageLength: 10,
+            "language": {
+                "search": "Procurar:",
+                "infoEmpty": "Mostrando de 0 até 0 de 0 registros",
+                "infoFiltered": " (filtrado de _MAX_ registros no total)",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "paginate": {
+                    "first": "<<",
+                    "last": ">>",
+                    "next": ">",
+                    "previous": "<"
+                },
+                "zeroRecords": "Não foram encontrados registros!!!",
+                "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            },
+            order: [[0, 'desc']]
+        });
+    });
+</script>
+
+{% endblock %}
+
+{% endblock content %}

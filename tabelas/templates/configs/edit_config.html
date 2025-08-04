@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+{% include "../cabecalho.html" %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.exercicio.errors }}
+        {{ form.multa.errors }}
+        {{ form.juros.errors }}
+        {{ form.metaagente.errors }}
+        {{ form.tmpconclusaoprocesso.errors }}
+        {{ form.ultenviobanco.errors }}
+        {{ form.ultnossonumero.errors }}
+        {{ form.cidade_default.errors }}
+        {{ form.banco_default.errors }}
+        {{ form.estcivil_default.errors }}
+        {{ form.regimebens_default.errors }}
+        {{ form.linhacredito_default.errors }}
+        {{ form.finalidadecredito_default.errors }}
+        {{ form.setornegocio_default.errors }}
+        {{ form.cep_default.errors }}
+        {{ form.tipdocumento_default.errors }}
+        {{ form.conhecimentoprograma_default.errors }}
+        {{ form.situacaonegocio_default.errors }}
+        {{ form.graurelacao_default.errors }}
+        {{ form.representanteconselho.errors }}
+        {{ form.representantegoverno.errors }}
+        {{ form.agentefinanceiro.errors }}
+        {{ form.testemunha1.errors }}
+        {{ form.is_tstremessa.errors }}
+        {{ form.mostratitscancelados.errors }}
+        {{ form.mostraregistroscancelados.errors }}
+        {{ form.modelocalculo_financ.errors }}
+        {{ form.linhalogo1.errors }}
+        {{ form.linhalogo2.errors }}
+        {{ form.linhalogo3.errors }}
+        {{ form.taxaboleto.erros }}
+        {{ form.multaboleto.erros }}
+
+        <div class="form-group">
+            {{ form.nome.errors }}
+            <label for="{{ form.nome.id_for_label }}">{{ form.nome.label }}</label>
+            {{ form.nome }}
+            {% if form.nome.help_text %}
+                <small class="form-text text-muted">{{ form.nome.help_text }}</small>
+            {% endif %}
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#inf_gerais">Informações Gerais</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#inf_cadastro">Informações de Cadastro</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#inf_contrato">Informações p/ o Contrato</a>
+            </li>
+        </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane container active" id="inf_gerais"><br><b>Informações Gerais</b><br><br>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.exercicio.id_for_label }}">{{ form.exercicio.label }}</label>
+                            {{ form.exercicio }}
+                            <small class="form-text text-muted">{{ form.exercicio.help_text }}</small>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.multa.id_for_label }}">{{ form.multa.label }}</label>
+                            {{ form.multa }}
+                            {% if form.multa.help_text %}
+                                <small class="form-text text-muted">{{ form.multa.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.juros.id_for_label }}">{{ form.juros.label }}</label>
+                            {{ form.juros }}
+                            <small class="form-text text-muted">{{ form.juros.help_text }}</small>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.modelocalculo_financ.id_for_label }}">{{ form.modelocalculo_financ.label }}</label>
+                            {{ form.modelocalculo_financ }}
+                            <small class="form-text text-muted">{{ form.modelocalculo_financ.help_text }}</small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.metaagente.id_for_label }}">Meta Mensal(Agente):</label>
+                            {{ form.metaagente }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.tmpconclusaoprocesso.id_for_label }}">Tempo médio - processo:</label>
+                            {{ form.tmpconclusaoprocesso }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.mostratitcancelados.id_for_label }}">Mostra Tit.Cancelados:</label>
+                            {{ form.mostratitcancelados }}
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.mostraregcancelados.id_for_label }}">Mostra Regs.Cancelados:</label>
+                            {{ form.mostraregcancelados }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <label for="{{ form.linhalogo1.id_for_label }}">{{ form.linhalogo1.label }}</label>
+                            {{ form.linhalogo1 }}
+                            <small class="form-text text-muted">{{ form.linhalogo1.help_text }}</small>
+                        </div>
+                        <div class="form-group col-md-10">
+                            <label for="{{ form.linhalogo2.id_for_label }}">{{ form.linhalogo2.label }}</label>
+                            {{ form.linhalogo2 }}
+                            <small class="form-text text-muted">{{ form.linhalogo2.help_text }}</small>
+                        </div>
+                        <div class="form-group col-md-10">
+                            <label for="{{ form.linhalogo3.id_for_label }}">{{ form.linhalogo3.label }}</label>
+                            {{ form.linhalogo3 }}
+                            <small class="form-text text-muted">{{ form.linhalogo3.help_text }}</small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.taxaboleto.id_for_label }}">{{ form.taxaboleto.label }}</label>
+                            {{ form.taxaboleto }}
+                            <small class="form-text text-muted">{{ form.taxaboleto.help_text }}</small>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.multaboleto.id_for_label }}">{{ form.multaboleto.label }}</label>
+                            {{ form.multaboleto }}
+                            <small class="form-text text-muted">{{ form.multaboleto.help_text }}</small>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="{{ form.ultenviobanco.id_for_label }}">{{ form.ultenviobanco.label }}</label>
+                            {{ form.ultenviobanco }}
+                            <small class="form-text text-muted">{{ form.ultenviobanco.help_text }}</small>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.ultnossonumero.id_for_label }}">{{ form.ultnossonumero.label }}</label>
+                            {{ form.ultnossonumero }}
+                            <small class="form-text text-muted">{{ form.ultnossonumero.help_text }}</small>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="{{ form.is_tstremessa.id_for_label }}">{{ form.is_tstremessa.label }}</label>
+                            {{ form.is_tstremessa }}
+                            <small class="form-text text-muted">{{ form.is_tstremessa.help_text }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane container fade" id="inf_cadastro"><br><b>Informações de Cadastro</b><br><br>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.cidade_default.id_for_label }}">Cidade/Naturalidade Default:</label>
+                            {{ form.cidade_default }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.banco_default.id_for_label }}">Banco Default:</label>
+                            {{ form.banco_default }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.estcivil_default.id_for_label }}">Estado Civil Default:</label>
+                            {{ form.estcivil_default }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.regimebens_default.id_for_label }}">Regime de Bens Default:</label>
+                            {{ form.regimebens_default }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.linhacredito_default.id_for_label }}">Linha de Crédito Default:</label>
+                            {{ form.linhacredito_default }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.finalidadecredito_default.id_for_label }}">Finalidade de Crédito Default:</label>
+                            {{ form.finalidadecredito_default }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.setornegocio_default.id_for_label }}">Setor de Negócio Default:</label>
+                            {{ form.setornegocio_default }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.cep_default.id_for_label }}">CEP Default:</label>
+                            {{ form.cep_default }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.tipdocumento_default.id_for_label }}">Tipo de Documento Default:</label>
+                            {{ form.tipdocumento_default }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.conhecimentoprograma_default.id_for_label }}">Conhecimento do Programa Default:</label>
+                            {{ form.conhecimentoprograma_default }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.situacaonegocio_default.id_for_label }}">Situação do Negócio Default:</label>
+                            {{ form.situacaonegocio_default }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="{{ form.graurelacao_default.id_for_label }}">Grau de Relação Default - Avalistas:</label>
+                            {{ form.graurelacao_default }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane container fade" id="inf_contrato"><br><b>Informações p/ o Contrato - Textos</b><br><br>
+                    <div class="form-group">
+                        {{ form.representanteconselho.errors }}
+                        <label for="{{ form.representanteconselho.id_for_label }}">Conselho - Detalhes Representante:</label>
+                        {{ form.representanteconselho }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.representantegoverno.id_for_label }}">Governo - Detalhes Representante:</label>
+                        {{ form.representantegoverno }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.agentefinanceiro.id_for_label }}">Agente Financeiro - Detalhes Representante:</label>
+                        {{ form.agentefinanceiro }}
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="{{ form.testemunha1.id_for_label }}">Testemunha 1:</label>
+                            {{ form.testemunha1 }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <br>
+        <br>
+        <div class="align-middle">
+            <button type="submit" class="btn ghost-green">{{ savebtn }}</button>
+            {% if title == "Nova Configuração" %}
+                <button type="reset" class="btn ghost-blue">Limpa</button>
+            {% endif %}
+            {% if delbtn %}
+                <a href="{% url 'delete-config' object.pk %}" class="btn ghost-red">Apaga</a>
+            {% endif %}
+            <a href="{% url 'configs-list' %}" class="btn ghost-button">Cancela</a>
+        </div>
+    </form>
+
+{% endblock content %}
