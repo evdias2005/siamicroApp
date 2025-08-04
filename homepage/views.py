@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, reverse
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -30,7 +31,10 @@ class CustomLoginView(LoginView):
         return response
 
 
-class HomeView(View):
+
+
+class HomeView(LoginRequiredMixin, View):
+
     template_name = "home.html"
 
     def get(self, request):
