@@ -45,7 +45,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'login_required.middleware.LoginRequiredMiddleware',    # middleware used for global login
+#    'login_required.middleware.LoginRequiredMiddleware',    # middleware used for global login
     'simple_history.middleware.HistoryRequestMiddleware',   # middleware usado para registro de logs
 ]
 

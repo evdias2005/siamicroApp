@@ -9,7 +9,6 @@ generate_secret_key.py
 .tabelas/__pycache__/
 tokenGit
 init.sql
-entreypoint.sh
 
 
 ## ignonar arquivos texto e xlsx de carga de tabelas básicas
