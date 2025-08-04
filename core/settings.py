@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -123,8 +124,14 @@ USE_THOUSAND_SEPARATOR = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'homepage/staticfiles')]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # onde o collectstatic vai colocar os arquivos
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'homepage/staticfiles'),  # ou o diretório das suas apps
+]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 
