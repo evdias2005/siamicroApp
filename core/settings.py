@@ -46,7 +46,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-#    'login_required.middleware.LoginRequiredMiddleware',    # middleware used for global login
+    'login_required.middleware.LoginRequiredMiddleware',    # middleware used for global login
     'simple_history.middleware.HistoryRequestMiddleware',   # middleware usado para registro de logs
 ]
 
@@ -153,7 +153,7 @@ LOGIN_REDIRECT_URL = 'home'                             # sets the login redirec
 LOGIN_URL = 'login'                                     # sets the 'login' page as default when user tries to illegally access profile or other hidden pages
 
 LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [                    # urls ignored by the login_required. Can be accessed KRwith out logging in
-    'login',
+    # 'login',
     'logout',
     'about',
 
