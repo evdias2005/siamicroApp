@@ -15,7 +15,6 @@ from dotenv import load_dotenv
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, reverse
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -31,7 +30,7 @@ class CustomLoginView(LoginView):
         return response
 
 
-class HomeView(LoginRequiredMixin, View):
+class HomeView(View):
     template_name = "home.html"
 
     def get(self, request):
@@ -48,6 +47,7 @@ class HomeView(LoginRequiredMixin, View):
         #     nomebase = '[LOCAL]'
 
         nomebase = '[BASE TESTE]'
+
 
         # informações para montagem do gráfico de barras (qtde processos por Mẽs)
         meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
