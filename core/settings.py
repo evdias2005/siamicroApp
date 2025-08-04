@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'widget_tweaks',                            # uses 'django-widget-tweaks' app
     'crispy_forms',                             # uses 'django-crispy-forms' app
     'crispy_bootstrap4',
-    'login_required',                           # uses 'django-login-required-middleware' app
+    # 'login_required',                           # uses 'django-login-required-middleware' app
 
     'homepage.apps.HomepageConfig',
     'tabelas.apps.TabelasConfig',
@@ -46,7 +46,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'login_required.middleware.LoginRequiredMiddleware',    # middleware used for global login
+    # 'login_required.middleware.LoginRequiredMiddleware',    # middleware used for global login
     'simple_history.middleware.HistoryRequestMiddleware',   # middleware usado para registro de logs
 ]
 
