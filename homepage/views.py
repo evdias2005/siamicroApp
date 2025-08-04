@@ -34,16 +34,18 @@ class HomeView(View):
 
     def get(self, request):
 
-        # Check if the .env file exists
-        if os.path.isfile('.env'):
-            load_dotenv()
+        # # Check if the .env file exists
+        # if os.path.isfile('.env'):
+        #     load_dotenv()
 
-        if 'production' in os.getenv('DB_NAME'):
-            nomebase = '[PRODUÇÃO]'
-        elif 'staging' in os.getenv('DB_NAME'):
-            nomebase = '[TESTE]'
-        else:
-            nomebase = '[LOCAL]'
+        # if 'production' in os.getenv('DB_NAME'):
+        #     nomebase = '[PRODUÇÃO]'
+        # elif 'staging' in os.getenv('DB_NAME'):
+        #     nomebase = '[TESTE]'
+        # else:
+        #     nomebase = '[LOCAL]'
+
+        nomebase = '[BASE TESTE]'
 
         # informações para montagem do gráfico de barras (qtde processos por Mẽs)
         meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
