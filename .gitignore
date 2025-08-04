@@ -4,7 +4,6 @@
 .Documentos
 .documentos
 .Arquivos
-ppmicro.py
 generate_secret_key.py
 .processos/__pycache__/
 .tabelas/__pycache__/
