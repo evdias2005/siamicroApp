@@ -12,8 +12,8 @@ if os.path.isfile('.env'):
 SECRET_KEY = os.getenv('SECRET_KEY')
 # DEBUG = os.getenv('DEBUG', 'False')
 # getenv não está funcionando
-DEBUG=True
-ALLOWED_HOSTS = ['*']
+DEBUG = False
+ALLOWED_HOSTS = ['*', 'siamicroapp.onrender.com']
 
 # Application definition
 INSTALLED_APPS = [
