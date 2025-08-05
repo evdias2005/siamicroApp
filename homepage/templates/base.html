@@ -192,7 +192,7 @@
 
             <div class="sidebar-header align-middle">
                 <a class="navbar-brand titlefont align-middle mr-4" href="{% url 'home' %}"><h4>SIAMICRO</h4></a>
-                <div class="align-middle"><small><b>Versão 2025-06-09.1</b></small></div>
+                <div class="align-middle"><small><b>Versão 2025 v1 - Demo</b></small></div>
             </div>
             <ul class="list-unstyled sidebar-components">
                 {# <p class="sidebar-paragraph">Dummy Heading</p> #}
@@ -345,9 +345,14 @@
                     <a class="dropdown-toggle sidebar-text right-arrow sidebar-button" href="{% url 'about' %}">
                     <i class="fa fa-pencil fa-fw"></i> Sobre</a>
                 </li>
-                <li> <a class="dropdown-toggle sidebar-text right-arrow sidebar-button" href="{% url 'logout' %}">
-                    <i class="fa fa-sign-out fa-fw"></i> Sair</a>
+                <li>
+                    <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="sidebar-button sidebar-text"><i class="fa fa-sign-out fa-fw"></i>Sair</button>
                 </li>
+</form>
+
+
             </ul>
         </nav>
 

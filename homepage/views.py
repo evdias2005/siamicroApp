@@ -17,6 +17,7 @@ from django.shortcuts import redirect, reverse
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+
 class CustomLoginView(LoginView):
     template_name = 'login.html'
 
@@ -29,8 +30,6 @@ class CustomLoginView(LoginView):
             return redirect(reverse('password_change'))  # ou o nome da sua view de troca de senha
 
         return response
-
-
 
 
 class HomeView(LoginRequiredMixin, View):
