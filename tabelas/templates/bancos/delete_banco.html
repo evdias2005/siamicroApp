@@ -1,27 +1,26 @@
+
 {% extends "base.html" %}
 
+{% load widget_tweaks %}
 
 {% block title %} Delete Banco {% endblock title %}
 
-
 {% block content %}
-                
-    <form method="post">
-        
-        {% csrf_token %}
-        
-        <fieldset class="form-group">
-            <div style="color:#4682B4; font-style: bold; font-size: 1.5rem; border-bottom: 1px solid white;">Apaga Banco</div> <hr><br>
-            <h4 style="color:black;">Tem certeza que deseja apagar o Banco "{{ object.nome }}"?</h4>
-        </fieldset>
 
-        <br>
+    <div class="container mt-5">
+        <form method="post">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <div class="text-primary fw-bold mb-3" style="font-size: 1.5rem;">Apaga Banco</div>
+                <hr>
+                <h5 class="text-dark">Tem certeza que deseja apagar o Banco <strong>"{{ object.nome }}"</strong>?</h5>
+            </fieldset>
 
-        <div class="form-group">  
-            <button type="submit" class="btn ghost-red">Sim, Apaga</button>
-            <a href="{% url 'bancos-list' %}" class="btn ghost-button">Cancela</a>
-        </div>
-        
-    </form>
+            <div class="form-group mt-4">
+                <button type="submit" class="btn ghost-red me-2">Sim, Apaga</button>
+                <a href="{% url 'bancos-list' %}" class="btn ghost-button">Cancela</a>
+            </div>
+        </form>
+    </div>
 
 {% endblock content %}
