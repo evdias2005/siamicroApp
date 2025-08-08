@@ -7,9 +7,9 @@
 
 {% block content %}
 
-    {% include "../cabecalho.html" %}
 
     <div class="container mt-4">
+        {% include "../cabecalho.html" %}
         <hr>
         <form method="post">
             {% csrf_token %}
@@ -61,6 +61,9 @@
                 <a href="{% url 'bancos-list' %}" class="btn ghost-button">Retorna</a>
             </div>
         </form>
+
+
+
     </div>
 
 {% endblock content %}
